@@ -7,7 +7,7 @@
 []
 
 [Variables]
-  [./disp_x]
+    [./disp_x]
     [../]
     [./disp_y]
     [../]

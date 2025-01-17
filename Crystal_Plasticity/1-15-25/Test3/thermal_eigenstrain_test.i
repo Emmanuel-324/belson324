@@ -15,8 +15,7 @@
   [../]
   [./disp_y]
   [../]
-   
-  
+    
   # order parameter 0
   [./eta0]
     initial_from_file_var = eta1
