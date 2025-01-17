@@ -137,7 +137,7 @@
     fill_method = symmetric9
   []
   [stress]
-    type = ComputeMultipleCrystalPlasticityStress_abs
+    type = ComputeMultipleCrystalPlasticityStress_new
     crystal_plasticity_models = 'trial_xtalpl'
     eigenstrain_names = thermal_eigenstrain
     tan_mod_type = exact
