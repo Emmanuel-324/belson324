@@ -131,9 +131,9 @@
     base_name = phase0
   []
   [stress_phase0]
-    type = ComputeMultipleCrystalPlasticityStress_abs
+    type = ComputeMultipleCrystalPlasticityStress
     crystal_plasticity_models = 'trial_xtalpl_phase0'
-    eigenstrain_names = 'thermal_eigenstrain'
+    eigenstrain_names = 'eigenstrain_0'
     tan_mod_type = exact
     rtol = 1e-08
     base_name = phase0
@@ -154,13 +154,90 @@
     gss_initial = 600
     base_name = phase0
   []
-  [thermal_eigenstrain]
+  [eigenstrain_0]
     type = ComputeCrystalPlasticityThermalEigenstrain
     eigenstrain_name = thermal_eigenstrain
     deformation_gradient_name = thermal_deformation_gradient
     temperature = temperature
     thermal_expansion_coefficients = '12.8e-06 12.8e-06 12.8e-06'
+    base_name = phase0
   []
+  [./strain_phase0]
+    type = ComputeFiniteStrain
+    displacements = 'disp_x disp_y'
+    base_name = phase0
+   # eigenstrain_names = 'eigenstrain_phase0'
+  [../]
+    [elasticity_tensor_phase1]
+      type = ComputeElasticityTensorCP
+      C_ijkl = '2.721e5 1.69e5 1.69e5 2.721e5 1.69e5 2.721e5 1.31e5 1.31e5 1.31e5'
+      fill_method = symmetric9
+      euler_angle_1 = 0.0
+      euler_angle_2 = 0.0
+      euler_angle_3 = 0.0
+      base_name = phase1
+    []
+    [stress_phase1]
+      type = ComputeMultipleCrystalPlasticityStress
+      crystal_plasticity_models = 'trial_xtalpl_phase1'
+      tan_mod_type = exact
+      rtol = 1e-08
+      base_name = phase1
+    []
+    [trial_xtalpl_phase1]
+      type = CrystalPlasticityKalidindiUpdate
+      number_slip_systems = 12
+      slip_sys_file_name = input_slip_sys.txt
+      crystal_lattice_type = FCC
+      resistance_tol = 0.01
+      r = 1.0             
+      h = 6000            
+      t_sat = 598.5        
+      gss_a = 1.5         
+      ao = 0.001           
+      xm = 0.017             
+      gss_initial = 465.5 
+      base_name = phase1
+    [] 
+    [./strain_phase1]
+      type = ComputeFiniteStrain
+      displacements = 'disp_x disp_y'
+      base_name = phase1
+    [../]
+   
+     # Switching functions for each phase
+     [./h0]
+      type = SwitchingFunctionMultiPhaseMaterial
+      phase_etas = eta0
+      all_etas = 'eta0 eta1'
+      h_name = h0
+    [../]
+    [./h1]
+      type = SwitchingFunctionMultiPhaseMaterial
+      phase_etas = eta1
+      all_etas = 'eta0 eta1'
+      h_name = h1
+    [../]
+   
+    # Generate the global stress from the phase stresses
+    [./global_stress]
+      type = MultiPhaseStressMaterial
+      phase_base = 'phase0 phase1'
+      h          = 'h0     h1'
+    [../]
+[]
+
+
+
+[Kernels]
+  [./eta0_dt]
+    type = TimeDerivative
+    variable = eta0
+  [../]
+  [./eta1_dt]
+    type = TimeDerivative
+    variable = eta1
+  [../]
 []
 
 [Postprocessors]

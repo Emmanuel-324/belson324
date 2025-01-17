@@ -70,7 +70,7 @@
   [eth_xx]
     type = RankTwoAux
     variable = eth_xx
-    rank_two_tensor = thermal_eigenstrain
+    rank_two_tensor = eigenstrain_deformation_gradient
     index_j = 0
     index_i = 0
     execute_on = timestep_end
@@ -78,7 +78,7 @@
   [eth_yy]
     type = RankTwoAux
     variable = eth_yy
-    rank_two_tensor = thermal_eigenstrain
+    rank_two_tensor = eigenstrain_deformation_gradient
     index_j = 1
     index_i = 1
     execute_on = timestep_end
@@ -87,7 +87,7 @@
   [fth_xx]
     type = RankTwoAux
     variable = fth_xx
-    rank_two_tensor = thermal_deformation_gradient
+    rank_two_tensor = phase0_deformation_gradient_1
     index_j = 0
     index_i = 0
     execute_on = timestep_end
@@ -95,7 +95,7 @@
   [fth_yy]
     type = RankTwoAux
     variable = fth_yy
-    rank_two_tensor = thermal_deformation_gradient
+    rank_two_tensor = phase0_deformation_gradient_1
     index_j = 1
     index_i = 1
     execute_on = timestep_end
@@ -135,7 +135,7 @@
   [stress_phase0]
     type = ComputeMultipleCrystalPlasticityStress_abs
     crystal_plasticity_models = 'trial_xtalpl_phase0'
-    eigenstrain_names = 'thermal_eigenstrain'
+    eigenstrain_names = 'eigenstrain_0'
     tan_mod_type = exact
     rtol = 1e-08
     base_name = phase0
@@ -156,10 +156,10 @@
     gss_initial = 600
     base_name = phase0
   []
-  [thermal_eigenstrain]
+  [eigenstrain_0]
     type = ComputeCrystalPlasticityThermalEigenstrain
-    eigenstrain_name = phase0_thermal_eigenstrain
-    deformation_gradient_name = thermal_deformation_gradient
+    eigenstrain_name = eigenstrain_0
+    deformation_gradient_name = deformation_gradient_1
     temperature = temperature
     thermal_expansion_coefficients = '12.8e-06 12.8e-06 12.8e-06'
     base_name = phase0
