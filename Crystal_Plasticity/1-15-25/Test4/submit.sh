@@ -6,7 +6,7 @@
 #SBATCH --cpus-per-task 8
 #SBATCH --account amcorrosion                                                  
 ##SBATCH --partition normal_q                                                   
-#SBATCH --time=64:00:00    
+#SBATCH --time=100:00:00    
 ##SBATCH --mem=gpu:pascal:4                                                     
 #SBATCH --export=NONE # this makes sure the compute environment is clean        
 #SBATCH --mail-user emmanuel324@vt.edu

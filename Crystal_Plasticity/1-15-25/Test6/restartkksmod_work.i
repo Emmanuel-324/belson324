@@ -80,9 +80,6 @@
      type = ComputeElasticityTensorCP
      C_ijkl = '2.906e5 1.87e5 1.87e5 2.906e5 1.87e5 2.906e5 1.142e5 1.142e5 1.142e5'
      fill_method = symmetric9
-     euler_angle_1 = 0.0
-     euler_angle_2 = 0.0
-     euler_angle_3 = 0.0
      base_name = phase0
    []
    [stress_phase0]
@@ -98,7 +95,7 @@
      slip_sys_file_name = input_slip_sys_bcc48.txt
      crystal_lattice_type = BCC
      resistance_tol = 0.01
-     r = 1.0             
+     r = 1.4             
      h = 6000            
      t_sat = 598.5        
      gss_a = 1.5         
@@ -118,9 +115,6 @@
      type = ComputeElasticityTensorCP
      C_ijkl = '2.721e5 1.69e5 1.69e5 2.721e5 1.69e5 2.721e5 1.31e5 1.31e5 1.31e5'
      fill_method = symmetric9
-     euler_angle_1 = 0.0
-     euler_angle_2 = 0.0
-     euler_angle_3 = 0.0
      base_name = phase1
    []
    [stress_phase1]
@@ -184,10 +178,13 @@
      type = TimeDerivative
      variable = eta1
    [../]
-   
- 
+
    [./TensorMechanics]
      displacements = 'disp_x disp_y'
+     strain = FINITE
+     incremental = true
+     add_variables = true
+     generate_output = stress_xx
    [../]
  []
  

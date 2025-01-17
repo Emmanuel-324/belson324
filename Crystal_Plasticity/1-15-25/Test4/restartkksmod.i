@@ -12,7 +12,6 @@
     [./disp_y]
     [../]
      
-    
     # order parameter 0
     [./eta0]
       initial_from_file_var = eta1
@@ -20,9 +19,7 @@
     # order parameter 1
     [./eta1]
       initial_from_file_var = eta3
-    [../]
-  
-  
+    [../] 
 []
 
 [AuxVariables]
@@ -81,8 +78,11 @@
 [Materials]
   [elasticity_tensor_phase0]
     type = ComputeElasticityTensorCP
-    C_ijkl = '1.684e5 1.214e5 1.214e5 1.684e5 1.214e5 1.684e5 0.754e5 0.754e5 0.754e5'
+    C_ijkl = '2.906e5 1.87e5 1.87e5 2.906e5 1.87e5 2.906e5 1.142e5 1.142e5 1.142e5'
     fill_method = symmetric9
+    euler_angle_1 = 0.0
+    euler_angle_2 = 0.0
+    euler_angle_3 = 0.0
     base_name = phase0
   []
   [stress_phase0]
@@ -150,41 +150,6 @@
     base_name = phase1
   [../]
 
-  [elasticity_tensor_phase2]
-    type = ComputeElasticityTensorCP
-    C_ijkl = '2.721e5 1.69e5 1.69e5 2.721e5 1.69e5 2.721e5 1.31e5 1.31e5 1.31e5'
-    fill_method = symmetric9
-    euler_angle_1 = 0.0
-    euler_angle_2 = 0.0
-    euler_angle_3 = 0.0
-    base_name = phase2
-  []
-  [stress_phase2]
-    type = ComputeMultipleCrystalPlasticityStress
-    crystal_plasticity_models = 'trial_xtalpl_phase1'
-    tan_mod_type = exact
-    base_name = phase2
-  []
-  [trial_xtalpl_phase2]
-    type = CrystalPlasticityKalidindiUpdate
-    number_slip_systems = 12
-    slip_sys_file_name = input_slip_sys.txt
-    crystal_lattice_type = FCC
-    r = 1.0             
-    h = 6000            
-    t_sat = 598.5        
-    gss_a = 1.5         
-    ao = 0.001           
-    xm = 0.017             
-    gss_initial = 465.5 
-    base_name = phase2
-  []
-  [./strain_phase2]
-    type = ComputeFiniteStrain
-    displacements = 'disp_x disp_y'
-    base_name = phase2
-  [../]
-
   # Switching functions for each phase
   [./h0]
     type = SwitchingFunctionMultiPhaseMaterial
@@ -221,6 +186,10 @@
   
   [./TensorMechanics]
     displacements = 'disp_x disp_y'
+    strain = FINITE
+    incremental = true
+    add_variables = true
+    generate_output = stress_xx
   [../]
 []
 
