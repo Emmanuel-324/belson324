@@ -1,6 +1,4 @@
-[GlobalParams]
-  displacements = 'disp_x disp_y'
-[]
+
 
 [Mesh]
   [file]
@@ -28,54 +26,97 @@
 
 []
 [AuxVariables]
-  [pk2]
+  [./vonmises]
+    order = CONSTANT
+    family = MONOMIAL
+  [../]
+  [./stress_xx]
+    order = CONSTANT
+    family = MONOMIAL
+    block = 0
+  [../]
+  [temperature]
+    order = FIRST
+    family = LAGRANGE
+  []
+  [eth_xx]
     order = CONSTANT
     family = MONOMIAL
   []
-  [fp_xx]
-    order = CONSTANT
-    family = MONOMIAL
-  []
-  [e_xx]
+  [eth_yy]
     order = CONSTANT
     family = MONOMIAL
   []
   
+  [fth_xx]
+    order = CONSTANT
+    family = MONOMIAL
+  []
+  [fth_yy]
+    order = CONSTANT
+    family = MONOMIAL
+  []
   
 []
 
-[Physics/SolidMechanics/QuasiStatic/all]
-  strain = FINITE
-  incremental = true
-  add_variables = true
-  generate_output = stress_xx
-[]
 
 [AuxKernels]
-  [pk2]
-    type = RankTwoAux
-    variable = pk2
-    rank_two_tensor = second_piola_kirchhoff_stress
-    index_j = 2
-    index_i = 2
+  [./vonmises]
+    type = RankTwoScalarAux
+    rank_two_tensor = stress
+    variable = vonmises
+    scalar_type = VonMisesStress
     execute_on = timestep_end
-  []
-  [fp_xx]
+#   block = 0
+  [../]
+  [./stress_xx]
     type = RankTwoAux
-    variable = fp_xx
-    rank_two_tensor = plastic_deformation_gradient
+    rank_two_tensor = stress
+    variable = stress_xx
+    index_j = 0
+    index_i = 0
+    execute_on = timestep_end
+    block = 0
+  [../]
+  [temperature]
+    type = FunctionAux
+    variable = temperature
+    function = '300' # temperature increases at a constant rate
+    execute_on = timestep_begin
+  []
+  [eth_xx]
+    type = RankTwoAux
+    variable = eth_xx
+    rank_two_tensor = eigenstrain_deformation_gradient
     index_j = 0
     index_i = 0
     execute_on = timestep_end
   []
-  [e_xx]
+  [eth_yy]
     type = RankTwoAux
-    variable = e_xx
-    rank_two_tensor = total_lagrangian_strain
+    variable = eth_yy
+    rank_two_tensor = eigenstrain_deformation_gradient
+    index_j = 1
+    index_i = 1
+    execute_on = timestep_end
+  []
+  
+  [fth_xx]
+    type = RankTwoAux
+    variable = fth_xx
+    rank_two_tensor = phase0_deformation_gradient_1
     index_j = 0
     index_i = 0
     execute_on = timestep_end
-  [] 
+  []
+  [fth_yy]
+    type = RankTwoAux
+    variable = fth_yy
+    rank_two_tensor = phase0_deformation_gradient_1
+    index_j = 1
+    index_i = 1
+    execute_on = timestep_end
+  []
   
 []
 
@@ -109,8 +150,9 @@
     base_name = phase0
   []
   [stress_phase0]
-    type = ComputeMultipleCrystalPlasticityStress
+    type = ComputeMultipleCrystalPlasticityStress_abs
     crystal_plasticity_models = 'trial_xtalpl_phase0'
+    eigenstrain_names = 'eigenstrain_0'
     tan_mod_type = exact
     rtol = 1e-08
     base_name = phase0
@@ -131,7 +173,14 @@
     gss_initial = 600
     base_name = phase0
   []
- 
+  [eigenstrain_0]
+    type = ComputeCrystalPlasticityThermalEigenstrain
+    eigenstrain_name = eigenstrain_0
+    deformation_gradient_name = deformation_gradient_1
+    temperature = temperature
+    thermal_expansion_coefficients = '12.8e-06 12.8e-06 12.8e-06'
+    base_name = phase0
+  []
   
   [./strain_phase0]
     type = ComputeFiniteStrain
@@ -209,6 +258,13 @@
     type = TimeDerivative
     variable = eta1
   [../]
+  [./TensorMechanics]
+    displacements = 'disp_x disp_y'
+    strain = FINITE
+    incremental = true
+    add_variables = true
+    generate_output = stress_xx
+  [../]
 []
 
 [Postprocessors]
@@ -216,19 +272,28 @@
     type = ElementAverageValue
     variable = stress_xx
   []
-  [pk2]
+  [eth_xx]
     type = ElementAverageValue
-    variable = pk2
+    variable = eth_xx
   []
-  [fp_xx]
+  [eth_yy]
     type = ElementAverageValue
-    variable = fp_xx
+    variable = eth_yy
   []
-  [e_xx]
+  
+  [fth_xx]
     type = ElementAverageValue
-    variable = e_xx
+    variable = fth_xx
   []
- 
+  [fth_yy]
+    type = ElementAverageValue
+    variable = fth_yy
+  []
+  
+  [temperature]
+    type = ElementAverageValue
+    variable = temperature
+  []
 []
 
 [Preconditioning]
@@ -266,6 +331,7 @@
 
 [Outputs]
   csv = true
+  exodus = true
   [console]
     type = Console
     max_rows = 5

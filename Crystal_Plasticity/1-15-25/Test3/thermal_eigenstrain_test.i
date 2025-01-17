@@ -131,9 +131,9 @@
     base_name = phase0
   []
   [stress_phase0]
-    type = ComputeMultipleCrystalPlasticityStress
+    type = ComputeMultipleCrystalPlasticityStress_new
     crystal_plasticity_models = 'trial_xtalpl_phase0'
-    eigenstrain_names = 'eigenstrain_0'
+    eigenstrain_names = 'thermal_eigenstrain'
     tan_mod_type = exact
     rtol = 1e-08
     base_name = phase0
@@ -154,7 +154,7 @@
     gss_initial = 600
     base_name = phase0
   []
-  [eigenstrain_0]
+  [thermal_eigenstrain]
     type = ComputeCrystalPlasticityThermalEigenstrain
     eigenstrain_name = thermal_eigenstrain
     deformation_gradient_name = thermal_deformation_gradient
@@ -178,7 +178,7 @@
       base_name = phase1
     []
     [stress_phase1]
-      type = ComputeMultipleCrystalPlasticityStress
+      type = ComputeMultipleCrystalPlasticityStress_new
       crystal_plasticity_models = 'trial_xtalpl_phase1'
       tan_mod_type = exact
       rtol = 1e-08
