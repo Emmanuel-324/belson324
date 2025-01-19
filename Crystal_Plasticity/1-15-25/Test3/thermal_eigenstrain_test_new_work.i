@@ -67,7 +67,7 @@
   [eth_xx]
     type = RankTwoAux
     variable = eth_xx
-    rank_two_tensor = thermal_eigenstrain
+    rank_two_tensor = phase0_thermal_eigenstrain
     index_j = 0
     index_i = 0
     execute_on = timestep_end
@@ -75,7 +75,7 @@
   [eth_yy]
     type = RankTwoAux
     variable = eth_yy
-    rank_two_tensor = thermal_eigenstrain
+    rank_two_tensor = phase0_thermal_eigenstrain
     index_j = 1
     index_i = 1
     execute_on = timestep_end
@@ -84,7 +84,7 @@
   [fth_xx]
     type = RankTwoAux
     variable = fth_xx
-    rank_two_tensor = thermal_deformation_gradient
+    rank_two_tensor = phase0_thermal_deformation_gradient
     index_j = 0
     index_i = 0
     execute_on = timestep_end
@@ -92,7 +92,7 @@
   [fth_yy]
     type = RankTwoAux
     variable = fth_yy
-    rank_two_tensor = thermal_deformation_gradient
+    rank_two_tensor = phase0_thermal_deformation_gradient
     index_j = 1
     index_i = 1
     execute_on = timestep_end
@@ -130,7 +130,7 @@
     base_name = phase0
   []
   [stress_phase0]
-    type = ComputeMultipleCrystalPlasticityStress_new
+    type = ComputeMultipleCrystalPlasticityStress_abs
     crystal_plasticity_models = 'trial_xtalpl_phase0'
     eigenstrain_names = 'thermal_eigenstrain'
     tan_mod_type = exact
@@ -177,7 +177,7 @@
       base_name = phase1
     []
     [stress_phase1]
-      type = ComputeMultipleCrystalPlasticityStress_new
+      type = ComputeMultipleCrystalPlasticityStress_abs
       crystal_plasticity_models = 'trial_xtalpl_phase1'
       tan_mod_type = exact
       rtol = 1e-08
