@@ -55,7 +55,32 @@
   [../]
 []
 
+
+
 [AuxKernels]
+  
+    [./thermal_expansion_coeff_xx]
+      type = ParsedAux
+      variable = thermal_expansion_coeff_xx
+      function = 'min(12.8e-06, t * 1.28e-07)' # Increment xx coefficient
+      execute_on = timestep_begin
+    [../]
+  
+    [./thermal_expansion_coeff_yy]
+      type = ParsedAux
+      variable = thermal_expansion_coeff_yy
+      function = 'min(12.8e-06, t * 1.28e-07)' # Increment yy coefficient
+      execute_on = timestep_begin
+    [../]
+  
+    [./thermal_expansion_coeff_zz]
+      type = ParsedAux
+      variable = thermal_expansion_coeff_zz
+      function = 'min(5.8e-06, t * 5.8e-08)' # Increment zz coefficient
+      execute_on = timestep_begin
+    [../]
+
+  
   [temperature]
     type = FunctionAux
     variable = temperature
@@ -167,14 +192,20 @@
     gss_initial = 600
     base_name = phase0
   []
-  [thermal_eigenstrain]
-    type = ComputeCrystalPlasticityThermalEigenstrain
-    eigenstrain_name = thermal_eigenstrain
-    deformation_gradient_name = thermal_deformation_gradient
-    temperature = temperature
-    thermal_expansion_coefficients = '12.8e-06 12.8e-06 12.8e-06'
-    base_name = phase0
-  []
+  
+
+    [./thermal_eigenstrain]
+      type = ComputeCrystalPlasticityThermalEigenstrain
+      eigenstrain_name = thermal_eigenstrain
+      deformation_gradient_name = thermal_deformation_gradient
+      temperature = temperature
+      thermal_expansion_coefficients = 'thermal_expansion_coeff_xx thermal_expansion_coeff_yy thermal_expansion_coeff_zz'
+      base_name = phase0
+    [../]
+ 
+  
+
+  
   [./strain_phase0]
     type = ComputeFiniteStrain
     displacements = 'disp_x disp_y'
@@ -314,7 +345,7 @@
 #  petsc_options_iname = '-pc_type -pc_asm_overlap -sub_pc_type -ksp_type -ksp_gmres_restart'
 #  petsc_options_value = ' asm      2              lu            gmres     200'
   l_max_its = 30
-  nl_max_its = 10
+  nl_max_its = 30
   nl_rel_tol = 1.0e-6
   nl_abs_tol = 1.0e-9
 

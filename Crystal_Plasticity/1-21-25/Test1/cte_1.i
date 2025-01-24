@@ -172,7 +172,7 @@
     eigenstrain_name = thermal_eigenstrain
     deformation_gradient_name = thermal_deformation_gradient
     temperature = temperature
-    thermal_expansion_coefficients = '12.8e-06 12.8e-06 12.8e-06'
+    thermal_expansion_coefficients = '12.8e-06 12.8e-06 1.8e-06'
     base_name = phase0
   []
   [./strain_phase0]

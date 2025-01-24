@@ -1,6 +1,6 @@
 #!/bin/bash                                                                     
-#SBATCH --job-name   Three_phase                                            
-#SBATCH --out  Three_phase.out        
+#SBATCH --job-name   cte_3                                           
+#SBATCH --out  cte_3.out        
 #SBATCH --nodes 1                                                              
 #SBATCH --ntasks 2
 #SBATCH --cpus-per-task 8
@@ -17,7 +17,7 @@
 module reset
 module load Miniforge3/24.1.2-0
 source activate /home/emmanuel324/mambaforge3/envs/moose 
-/home/emmanuel324/projects/belson324/belson324-opt  -i  Three_phase.i
+/home/emmanuel324/projects/belson324/belson324-opt  -i cte_3.i
 
 conda env list
 
