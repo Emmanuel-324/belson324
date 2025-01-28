@@ -1,33 +1,28 @@
-[GlobalParams]
-  displacements = 'disp_x disp_y'
-[]
-
 [Mesh]
-  [file]
-     type = FileMeshGenerator
-     file = Conc1_out.e-s202
-     use_for_exodus_restart = true
-   []
- []
-
- [Variables]
-  [./disp_x]
-  [../]
-  [./disp_y]
-  [../]
-    
-  # order parameter 0
-  [./eta0]
-    initial_from_file_var = eta1
-  [../]
-  # order parameter 1
-  [./eta1]
-    initial_from_file_var = eta3
-  [../]
-
+ [file]
+    type = FileMeshGenerator
+    file = Conc1_out.e-s202
+    use_for_exodus_restart = true
+  []
 []
+
+[Variables]
+    [./disp_x]
+    [../]
+    [./disp_y]
+    [../]
+     
+    # order parameter 0
+    [./eta0]
+      initial_from_file_var = eta1
+    [../]
+    # order parameter 1
+    [./eta1]
+      initial_from_file_var = eta3
+    [../] 
+[]
+
 [AuxVariables]
-  
   [temperature]
     order = FIRST
     family = LAGRANGE
@@ -49,19 +44,22 @@
     order = CONSTANT
     family = MONOMIAL
   []
-[]
-[Physics/SolidMechanics/QuasiStatic/all]
-  strain = FINITE
-  incremental = true
-  add_variables = true
-  generate_output = stress_xx
+  [./vonmises]
+    order = CONSTANT
+    family = MONOMIAL
+  [../]
+  [./stress_xx]
+    order = CONSTANT
+    family = MONOMIAL
+    block = 0
+  [../]
 []
 
 [AuxKernels]
   [temperature]
     type = FunctionAux
     variable = temperature
-    function = '300' # temperature increases at a constant rate
+    function = '297' # temperature increases at a constant rate
     execute_on = timestep_begin
   []
   [eth_xx]
@@ -97,7 +95,23 @@
     index_i = 1
     execute_on = timestep_end
   []
-  
+  [./vonmises]
+    type = RankTwoScalarAux
+    rank_two_tensor = stress
+    variable = vonmises
+    scalar_type = VonMisesStress
+    execute_on = timestep_end
+#   block = 0
+  [../]
+  [./stress_xx]
+    type = RankTwoAux
+    rank_two_tensor = stress
+    variable = stress_xx
+    index_j = 0
+    index_i = 0
+    execute_on = timestep_end
+    block = 0
+  [../]
 []
 
 [BCs]
@@ -113,7 +127,6 @@
     boundary = left
     value = 0
   []
-  
   [tdisp]
     type = FunctionDirichletBC
     variable = disp_x
@@ -132,17 +145,15 @@
   [stress_phase0]
     type = ComputeMultipleCrystalPlasticityStress_abs
     crystal_plasticity_models = 'trial_xtalpl_phase0'
-    eigenstrain_names = 'thermal_eigenstrain'
     tan_mod_type = exact
     rtol = 1e-08
     base_name = phase0
   []
-  
   [trial_xtalpl_phase0]
     type = CrystalPlasticityKalidindiUpdate
-    number_slip_systems = 12
-    slip_sys_file_name = input_slip_sys.txt
-    crystal_lattice_type = BCC
+    number_slip_systems = 48
+    slip_sys_file_name = input_slip_sys_bcc48.txt
+    crystal_lattice_type = FCC
     resistance_tol = 0.01
     r = 1.4             
     h = 6000            
@@ -158,75 +169,72 @@
     eigenstrain_name = thermal_eigenstrain
     deformation_gradient_name = thermal_deformation_gradient
     temperature = temperature
-    thermal_expansion_coefficients = '12.8e-06 12.8e-06 12.8e-09'
+    thermal_expansion_coefficients = '10.8e-06 10.8e-06 10.8e-06'
     base_name = phase0
   []
   [./strain_phase0]
     type = ComputeFiniteStrain
     displacements = 'disp_x disp_y'
     base_name = phase0
-   # eigenstrain_names = 'eigenstrain_phase0'
+#    eigenstrain_names = eigenstrain2
   [../]
-    [elasticity_tensor_phase1]
-      type = ComputeElasticityTensorCP
-      C_ijkl = '2.721e5 1.69e5 1.69e5 2.721e5 1.69e5 2.721e5 1.31e5 1.31e5 1.31e5'
-      fill_method = symmetric9
-      euler_angle_1 = 0.0
-      euler_angle_2 = 0.0
-      euler_angle_3 = 0.0
-      base_name = phase1
-    []
-    [stress_phase1]
-      type = ComputeMultipleCrystalPlasticityStress_abs
-      crystal_plasticity_models = 'trial_xtalpl_phase1'
-      tan_mod_type = exact
-      rtol = 1e-08
-      base_name = phase1
-    []
-    [trial_xtalpl_phase1]
-      type = CrystalPlasticityKalidindiUpdate
-      number_slip_systems = 12
-      slip_sys_file_name = input_slip_sys.txt
-      crystal_lattice_type = FCC
-      resistance_tol = 0.01
-      r = 1.0             
-      h = 6000            
-      t_sat = 598.5        
-      gss_a = 1.5         
-      ao = 0.001           
-      xm = 0.017             
-      gss_initial = 465.5 
-      base_name = phase1
-    [] 
-    [./strain_phase1]
-      type = ComputeFiniteStrain
-      displacements = 'disp_x disp_y'
-      base_name = phase1
-    [../]
-   
-     # Switching functions for each phase
-     [./h0]
-      type = SwitchingFunctionMultiPhaseMaterial
-      phase_etas = eta0
-      all_etas = 'eta0 eta1'
-      h_name = h0
-    [../]
-    [./h1]
-      type = SwitchingFunctionMultiPhaseMaterial
-      phase_etas = eta1
-      all_etas = 'eta0 eta1'
-      h_name = h1
-    [../]
-   
-    # Generate the global stress from the phase stresses
-    [./global_stress]
-      type = MultiPhaseStressMaterial
-      phase_base = 'phase0 phase1'
-      h          = 'h0     h1'
-    [../]
+
+  [elasticity_tensor_phase1]
+    type = ComputeElasticityTensorCP
+    C_ijkl = '2.721e5 1.69e5 1.69e5 2.721e5 1.69e5 2.721e5 1.31e5 1.31e5 1.31e5'
+    fill_method = symmetric9
+    base_name = phase1
+  []
+  [stress_phase1]
+    type = ComputeMultipleCrystalPlasticityStress_abs
+    crystal_plasticity_models = 'trial_xtalpl_phase1'
+    tan_mod_type = exact
+    rtol = 1e-08
+    base_name = phase1
+  []
+  [trial_xtalpl_phase1]
+    type = CrystalPlasticityKalidindiUpdate
+    number_slip_systems = 12
+    slip_sys_file_name = input_slip_sys.txt
+    crystal_lattice_type = FCC
+    r = 1.0             
+    h = 6000            
+    t_sat = 598.5        
+    gss_a = 1.5         
+    ao = 0.001           
+    xm = 0.017             
+    gss_initial = 465.5 
+    base_name = phase1
+  []
+  [./strain_phase1]
+    type = ComputeFiniteStrain
+    displacements = 'disp_x disp_y'
+    base_name = phase1
+  [../]
+
+  # Switching functions for each phase
+  [./h0]
+    type = SwitchingFunctionMultiPhaseMaterial
+    phase_etas = eta0
+    all_etas = 'eta0 eta1'
+    h_name = h0
+  [../]
+  [./h1]
+    type = SwitchingFunctionMultiPhaseMaterial
+    phase_etas = eta1
+    all_etas = 'eta0 eta1'
+    h_name = h1
+  [../]
+ 
+
+  # Generate the global stress from the phase stresses
+  [./global_stress]
+    type = MultiPhaseStressMaterial
+    phase_base = 'phase0 phase1'
+    h          = 'h0     h1  '
+  [../]
+
 []
-
-
 
 [Kernels]
   [./eta0_dt]
@@ -237,36 +245,51 @@
     type = TimeDerivative
     variable = eta1
   [../]
+  
+  [./TensorMechanics]
+    displacements = 'disp_x disp_y'
+    strain = FINITE
+    incremental = true
+    add_variables = true
+    generate_output = stress_xx
+  [../]
 []
 
 [Postprocessors]
-  [stress_xx]
+  [./vonmises]
+    type = ElementAverageValue
+    variable = vonmises
+    block = 'ANY_BLOCK_ID 0'
+  [../]
+  [./stress_xx]
     type = ElementAverageValue
     variable = stress_xx
-  []
-  [eth_xx]
-    type = ElementAverageValue
-    variable = eth_xx
-  []
-  [eth_yy]
-    type = ElementAverageValue
-    variable = eth_yy
-  []
-
-  [fth_xx]
-    type = ElementAverageValue
-    variable = fth_xx
-  []
-  [fth_yy]
-    type = ElementAverageValue
-    variable = fth_yy
-  []
- 
-  [temperature]
-    type = ElementAverageValue
-    variable = temperature
-  []
+    block = 'ANY_BLOCK_ID 0'
+  [../]
+    [eth_xx]
+      type = ElementAverageValue
+      variable = eth_xx
+    []
+    [eth_yy]
+      type = ElementAverageValue
+      variable = eth_yy
+    []
+  
+    [fth_xx]
+      type = ElementAverageValue
+      variable = fth_xx
+    []
+    [fth_yy]
+      type = ElementAverageValue
+      variable = fth_yy
+    []
+   
+    [temperature]
+      type = ElementAverageValue
+      variable = temperature
+    []
 []
+
 
 [Preconditioning]
   [smp]
@@ -284,9 +307,9 @@
 
 #  petsc_options_iname = '-pc_type -pc_asm_overlap -sub_pc_type -ksp_type -ksp_gmres_restart'
 #  petsc_options_value = ' asm      2              lu            gmres     200'
-  l_max_its = 40
+  l_max_its = 30
   nl_max_its = 10
-  nl_rel_tol = 1.0e-8
+  nl_rel_tol = 1.0e-6
   nl_abs_tol = 1.0e-9
 
   end_time = 100
@@ -300,7 +323,7 @@
   [../]
     [./Adaptivity]
       initial_adaptivity = 0
-      refine_fraction = 0.8
+      refine_fraction = 0.7
       coarsen_fraction = 0.1
       max_h_level = 1
     [../]
@@ -308,10 +331,6 @@
 []
 
 [Outputs]
+  exodus = true
   csv = true
-  
-  [console]
-    type = Console
-    max_rows = 5
-  []
 []

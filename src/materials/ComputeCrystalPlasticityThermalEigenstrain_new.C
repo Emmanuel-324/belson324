@@ -1,39 +1,7 @@
-//* This file is part of the MOOSE framework
-//* https://www.mooseframework.org
-//*
-//* All rights reserved, see COPYRIGHT for full restrictions
-//* https://github.com/idaholab/moose/blob/master/COPYRIGHT
-//*
-//* Licensed under LGPL 2.1, please see LICENSE for details
-//* https://www.gnu.org/licenses/lgpl-2.1.html
-
 #include "ComputeCrystalPlasticityThermalEigenstrain_new.h"
+#include "Function.h" // Include the full definition of Function
 
 registerMooseObject("belson324App", ComputeCrystalPlasticityThermalEigenstrain_new);
-
-InputParameters
-ComputeCrystalPlasticityThermalEigenstrain_new::validParams()
-{
-  InputParameters params = ComputeCrystalPlasticityEigenstrainBase::validParams();
-  params.addClassDescription("Computes the deformation gradient associated with the linear thermal "
-                             "expansion in a crystal plasticity simulation");
-  params.addCoupledVar("temperature", "Coupled temperature variable");
-
-  // Add new parameters for dynamic coefficients
-  params.addParam<std::vector<std::string>>(
-      "thermal_expansion_coeff_function_names",
-      "Optional names of auxiliary variables or functions defining dynamic coefficients.");
-
-  // Keep the existing fixed coefficients parameter
-  params.addRequiredRangeCheckedParam<std::vector<Real>>(
-      "thermal_expansion_coefficients",
-      "thermal_expansion_coefficients_size=1 | thermal_expansion_coefficients_size=3 | "
-      "thermal_expansion_coefficients_size=6 | thermal_expansion_coefficients_size=9",
-      "Vector of values defining the constant second order thermal expansion coefficients, "
-      "depending on the degree of anisotropy, this should be of size 1, 3, 6 or 9");
-
-  return params;
-}
 
 ComputeCrystalPlasticityThermalEigenstrain_new::ComputeCrystalPlasticityThermalEigenstrain_new(
     const InputParameters & parameters)
@@ -49,41 +17,38 @@ ComputeCrystalPlasticityThermalEigenstrain_new::ComputeCrystalPlasticityThermalE
         "thermal_expansion_coeff_function_names")),
     _lattice_thermal_expansion_coefficients(declareProperty<RankTwoTensor>(
         _eigenstrain_name +
-        "_lattice_thermal_expansion_coefficients")) // avoid duplicated material name by including
-                                                    // the eigenstrain name this coeff corresponds
-                                                    // to
+        "_lattice_thermal_expansion_coefficients"))
 {
   // Check if dynamic coefficients are used
   if (!_thermal_expansion_coeff_function_names.empty())
   {
     for (const std::string & name : _thermal_expansion_coeff_function_names)
     {
-      _thermal_expansion_coeff_functions.push_back(getFunction(name));
+      _thermal_expansion_coeff_functions.push_back(&getFunction(name)); // Store pointers
     }
   }
 }
 
-
-void
-ComputeCrystalPlasticityThermalEigenstrain_new::computeQpDeformationGradient()
+void ComputeCrystalPlasticityThermalEigenstrain_new::computeQpDeformationGradient()
 {
-  std::vector<Real> thermal_coefficients = _thermal_expansion_coefficients;
+  RankTwoTensor thermal_coefficients = _thermal_expansion_coefficients;
 
   // If dynamic coefficients are provided, compute them
   if (!_thermal_expansion_coeff_function_names.empty())
   {
     for (size_t i = 0; i < _thermal_expansion_coeff_functions.size(); ++i)
     {
-      thermal_coefficients[i] =
-          _thermal_expansion_coeff_functions[i]->value(_t, _q_point[_qp]);
+      Real value = _thermal_expansion_coeff_functions[i]->value(_t, _q_point[_qp]);
+      thermal_coefficients(i, i) = value; // Update diagonal terms for anisotropic cases
     }
   }
 
   // Rotate the thermal deformation gradient for crystals based on Euler angles
   _lattice_thermal_expansion_coefficients[_qp] =
-      thermal_coefficients.rotated(_crysrot[_qp]);
+      _crysrot[_qp] * thermal_coefficients * _crysrot[_qp].transpose();
 
   // Compute the deformation gradient due to thermal expansion
+  mooseAssert(_dt > 0, "Time increment (_dt) must be greater than zero.");
   Real dtheta = (_temperature[_qp] - _temperature_old[_qp]) * _substep_dt / _dt;
   RankTwoTensor residual_equivalent_thermal_expansion_increment =
       RankTwoTensor::Identity() - dtheta * _lattice_thermal_expansion_coefficients[_qp];
