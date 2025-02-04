@@ -5,6 +5,7 @@
      type = FileMeshGenerator
      file = Two_phase_noload_out.e-s183
      use_for_exodus_restart = true
+     
    []
  []
 
@@ -23,8 +24,8 @@
   [./eta1]
     initial_from_file_var = eta3
   [../]
+  []
 
-[]
 [AuxVariables]
   [./vonmises]
     order = CONSTANT
@@ -81,7 +82,7 @@
   [temperature]
     type = FunctionAux
     variable = temperature
-    function = '300' # temperature increases at a constant rate
+    function = '300 * t / 20' # temperature increases at a constant rate
     execute_on = timestep_begin
   []
   [eth_xx]
@@ -178,7 +179,7 @@
     eigenstrain_name = thermal_eigenstrain
     deformation_gradient_name = thermal_deformation_gradient
     temperature = temperature
-    thermal_expansion_coefficients = '12.8e-06 12.8e-06 12.8e-06'
+    thermal_expansion_coefficients = '12.8e-05 12.8e-05 12.8e-05'
     base_name = phase0
   []
   
@@ -310,7 +311,7 @@
 #  petsc_options_iname = '-pc_type -pc_asm_overlap -sub_pc_type -ksp_type -ksp_gmres_restart'
 #  petsc_options_value = ' asm      2              lu            gmres     200'
   l_max_its = 20
-  nl_max_its = 10
+  nl_max_its = 20
   nl_rel_tol = 1.0e-8
   nl_abs_tol = 1.0e-9
 
@@ -325,8 +326,8 @@
   [../]
   
     [./Adaptivity]
-      initial_adaptivity = 0
-      refine_fraction = 0.7
+      initial_adaptivity = 1
+      refine_fraction = 0.6
       coarsen_fraction = 0.1
       max_h_level = 1
     [../]
@@ -337,11 +338,13 @@
 [Outputs]
   csv = true
   exodus = true
+  print_linear_residuals = true
   [console]
     type = Console
     max_rows = 5
   []
 []
+
 [Debug]
-  show_material_props = true
+  show_var_residual_norms = true
 []

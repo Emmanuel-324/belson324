@@ -9,7 +9,7 @@
 
 #include "ComputeMultipleCrystalPlasticityStress_new.h"
 
-#include "CrystalPlasticityStressUpdateBase.h"
+#include "CrystalPlasticityStressUpdateBase_new.h"
 #include "libmesh/utility.h"
 #include "Conversion.h"
 #include "MooseException.h"
@@ -24,7 +24,7 @@ ComputeMultipleCrystalPlasticityStress_new::validParams()
   params.addClassDescription(
       "Crystal Plasticity base class: handles the Newton iteration over the stress residual and "
       "calculates the Jacobian based on constitutive laws from multiple material classes "
-      "that are inherited from CrystalPlasticityStressUpdateBase");
+      "that are inherited from CrystalPlasticityStressUpdateBase_new");
   params.addParam<std::string>(
       "base_name",
       "Optional parameter that allows the user to define multiple mechanics material systems on "
@@ -79,9 +79,9 @@ ComputeMultipleCrystalPlasticityStress_new::ComputeMultipleCrystalPlasticityStre
     _line_search_tolerance(getParam<Real>("line_search_tol")),
     _line_search_max_iterations(getParam<unsigned int>("line_search_maxiter")),
     _line_search_method(getParam<MooseEnum>("line_search_method").getEnum<LineSearchMethod>()),
-    _plastic_deformation_gradient(declareProperty<RankTwoTensor>( "plastic_deformation_gradient")),
+    _plastic_deformation_gradient(declareProperty<RankTwoTensor>(_base_name + "plastic_deformation_gradient")),
     _plastic_deformation_gradient_old(
-        getMaterialPropertyOld<RankTwoTensor>("plastic_deformation_gradient")),
+        getMaterialPropertyOld<RankTwoTensor>(_base_name + "plastic_deformation_gradient")),
     _eigenstrain_deformation_gradient(
         _num_eigenstrains ? &declareProperty<RankTwoTensor>( "eigenstrain_deformation_gradient")
                           : nullptr),
@@ -89,9 +89,9 @@ ComputeMultipleCrystalPlasticityStress_new::ComputeMultipleCrystalPlasticityStre
         _num_eigenstrains
             ? &getMaterialPropertyOld<RankTwoTensor>( "eigenstrain_deformation_gradient")
             : nullptr),
-    _deformation_gradient(getMaterialProperty<RankTwoTensor>("deformation_gradient")),
+    _deformation_gradient(getMaterialProperty<RankTwoTensor>(_base_name + "deformation_gradient")),
     _deformation_gradient_old(
-        getMaterialPropertyOld<RankTwoTensor>("deformation_gradient")),
+        getMaterialPropertyOld<RankTwoTensor>(_base_name + "deformation_gradient")),
     _pk2(declareProperty<RankTwoTensor>(_base_name + "second_piola_kirchhoff_stress")),
     _pk2_old(getMaterialPropertyOld<RankTwoTensor>(_base_name + "second_piola_kirchhoff_stress")),
     _total_lagrangian_strain(
@@ -151,14 +151,14 @@ ComputeMultipleCrystalPlasticityStress_new::initialSetup()
 
   for (unsigned int i = 0; i < _num_models; ++i)
   {
-    CrystalPlasticityStressUpdateBase * model =
-        dynamic_cast<CrystalPlasticityStressUpdateBase *>(&getMaterialByName(model_names[i]));
+      CrystalPlasticityStressUpdateBase_new * model =
+      dynamic_cast<CrystalPlasticityStressUpdateBase_new *>(&getMaterialByName(model_names[i]));
 
-    if (model)
-    {
-      _models.push_back(model);
+  if (model)
+  {
+      _models.push_back(static_cast<CrystalPlasticityStressUpdateBase *>(model));
       // TODO: check to make sure that the material model is compatible with this class
-    }
+  }
     else
       mooseError("Model " + model_names[i] +
                  " is not compatible with ComputeMultipleCrystalPlasticityStress_new");

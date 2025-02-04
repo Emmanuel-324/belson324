@@ -1,7 +1,7 @@
 [Mesh]
   [file]
      type = FileMeshGenerator
-     file = Conc1_out.e-s202
+     file = Two_phase_noload_out.e-s183
      use_for_exodus_restart = true
    []
  []
@@ -101,7 +101,7 @@
      gss_a = 1.5         
      ao = 0.001           
      xm = 0.017             
-     gss_initial = 465.5 
+     gss_initial = 465.5
      base_name = phase0
    []
    [./strain_phase0]
@@ -136,7 +136,7 @@
      gss_a = 1.5         
      ao = 0.001           
      xm = 0.017             
-     gss_initial = 465.5 
+     gss_initial = 465.5
      base_name = phase1
    []
    [./strain_phase1]
@@ -239,6 +239,7 @@
       coarsen_fraction = 0.1
       max_h_level = 1
     [../]
+  
  
  []
  

@@ -298,24 +298,9 @@
     growth_factor = 1.2
     optimal_iterations = 20
   [../]
-  
-    [./Adaptivity]
-      initial_adaptivity = 0
-      refine_fraction = 0.7
-      coarsen_fraction = 0.1
-      max_h_level = 1
-    [../]
 
 []
 
 [Outputs]
   csv = true
-  
-  [console]
-    type = Console
-    max_rows = 5
-  []
-[]
-[Debug]
-  show_material_props = true
 []

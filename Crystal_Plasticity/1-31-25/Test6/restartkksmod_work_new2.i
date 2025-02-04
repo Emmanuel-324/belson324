@@ -1,7 +1,7 @@
 [Mesh]
   [file]
      type = FileMeshGenerator
-     file = Conc1_out.e-s202
+     file = Two_phase_noload_out.e-s183
      use_for_exodus_restart = true
    []
  []
@@ -101,7 +101,7 @@
      gss_a = 1.5         
      ao = 0.001           
      xm = 0.017             
-     gss_initial = 465.5 
+     gss_initial = 600
      base_name = phase0
    []
    [./strain_phase0]
@@ -131,12 +131,12 @@
      crystal_lattice_type = FCC
      resistance_tol = 0.01
      r = 1.0             
-     h = 6000            
+     h = 5500           
      t_sat = 598.5        
      gss_a = 1.5         
      ao = 0.001           
      xm = 0.017             
-     gss_initial = 465.5 
+     gss_initial = 465.5
      base_name = phase1
    []
    [./strain_phase1]
@@ -223,11 +223,11 @@
    nl_rel_tol = 1.0e-8
    nl_abs_tol = 1.0e-9
  
-   end_time = 40
+   end_time = 100
  
    [./TimeStepper]
      type = IterationAdaptiveDT
-     dt = 5e-4
+     dt = 5e-8
      cutback_factor = 0.75
      growth_factor = 1.2
      optimal_iterations = 20
@@ -239,6 +239,7 @@
       coarsen_fraction = 0.1
       max_h_level = 1
     [../]
+  
  
  []
  

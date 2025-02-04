@@ -1,16 +1,11 @@
-
-
 [Mesh]
   [file]
      type = FileMeshGenerator
-     file = Two_phase_noload_out.e-s183
+     file = Conc1_out.e-s202
      use_for_exodus_restart = true
-     
    []
  []
-[Problem]
-  allow_initial_conditions_with_restart = true
-[]
+
  [Variables]
   [./disp_x]
   [../]
@@ -26,16 +21,8 @@
   [./eta1]
     initial_from_file_var = eta3
   [../]
-  []
-  [ICs]
-    [./eta1]
-      variable = eta1
-      type = RandomIC
-      min = -0.1625
-      max = 0.1625
-      seed = 192
-    [../]
-  []
+
+[]
 [AuxVariables]
   [./vonmises]
     order = CONSTANT
@@ -98,7 +85,7 @@
   [eth_xx]
     type = RankTwoAux
     variable = eth_xx
-    rank_two_tensor =  phase0_thermal_eigenstrain
+    rank_two_tensor = eigenstrain_deformation_gradient
     index_j = 0
     index_i = 0
     execute_on = timestep_end
@@ -106,7 +93,7 @@
   [eth_yy]
     type = RankTwoAux
     variable = eth_yy
-    rank_two_tensor = phase0_thermal_eigenstrain
+    rank_two_tensor = eigenstrain_deformation_gradient
     index_j = 1
     index_i = 1
     execute_on = timestep_end
@@ -115,7 +102,7 @@
   [fth_xx]
     type = RankTwoAux
     variable = fth_xx
-    rank_two_tensor = phase0_thermal_deformation_gradient
+    rank_two_tensor = phase0_deformation_gradient_1
     index_j = 0
     index_i = 0
     execute_on = timestep_end
@@ -123,7 +110,7 @@
   [fth_yy]
     type = RankTwoAux
     variable = fth_yy
-    rank_two_tensor = phase0_thermal_deformation_gradient
+    rank_two_tensor = phase0_deformation_gradient_1
     index_j = 1
     index_i = 1
     execute_on = timestep_end
@@ -163,7 +150,7 @@
   [stress_phase0]
     type = ComputeMultipleCrystalPlasticityStress_abs
     crystal_plasticity_models = 'trial_xtalpl_phase0'
-    eigenstrain_names = 'thermal_eigenstrain'
+    eigenstrain_names = 'eigenstrain_0'
     tan_mod_type = exact
     rtol = 1e-08
     base_name = phase0
@@ -173,21 +160,21 @@
     type = CrystalPlasticityKalidindiUpdate
     number_slip_systems = 12
     slip_sys_file_name = input_slip_sys.txt
-    crystal_lattice_type = FCC
+    crystal_lattice_type = BCC
     resistance_tol = 0.01
-    r = 1.0             
+    r = 1.4             
     h = 6000            
     t_sat = 598.5        
     gss_a = 1.5         
     ao = 0.001           
     xm = 0.017             
-    gss_initial = 400
+    gss_initial = 600
     base_name = phase0
   []
-  [thermal_eigenstrain]
+  [eigenstrain_0]
     type = ComputeCrystalPlasticityThermalEigenstrain
-    eigenstrain_name = thermal_eigenstrain
-    deformation_gradient_name = thermal_deformation_gradient
+    eigenstrain_name = eigenstrain_0
+    deformation_gradient_name = deformation_gradient_1
     temperature = temperature
     thermal_expansion_coefficients = '12.8e-06 12.8e-06 12.8e-06'
     base_name = phase0
@@ -205,6 +192,9 @@
     type = ComputeElasticityTensorCP
     C_ijkl = '2.721e5 1.69e5 1.69e5 2.721e5 1.69e5 2.721e5 1.31e5 1.31e5 1.31e5'
     fill_method = symmetric9
+    euler_angle_1 = 0.0
+    euler_angle_2 = 0.0
+    euler_angle_3 = 0.0
     base_name = phase1
   []
   [stress_phase1]
@@ -221,12 +211,12 @@
     crystal_lattice_type = FCC
     resistance_tol = 0.01
     r = 1.0             
-    h = 6000            
+    h = 5800           
     t_sat = 598.5        
     gss_a = 1.5         
     ao = 0.001           
     xm = 0.017             
-    gss_initial = 316 
+    gss_initial = 465.5 
     base_name = phase1
   [] 
   [./strain_phase1]
@@ -334,27 +324,10 @@
     growth_factor = 1.2
     optimal_iterations = 20
   [../]
-  
-    [./Adaptivity]
-      initial_adaptivity = 1
-      refine_fraction = 0.6
-      coarsen_fraction = 0.1
-      max_h_level = 1
-    [../]
-  
-
+    
 []
 
 [Outputs]
   csv = true
   exodus = true
-  print_linear_residuals = true
-  [console]
-    type = Console
-    max_rows = 5
-  []
-[]
-
-[Debug]
-  show_var_residual_norms = true
 []

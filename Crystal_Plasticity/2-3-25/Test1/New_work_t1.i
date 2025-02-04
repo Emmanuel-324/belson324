@@ -1,5 +1,4 @@
 
-
 [Mesh]
   [file]
      type = FileMeshGenerator
@@ -8,9 +7,7 @@
      
    []
  []
-[Problem]
-  allow_initial_conditions_with_restart = true
-[]
+
  [Variables]
   [./disp_x]
   [../]
@@ -27,15 +24,7 @@
     initial_from_file_var = eta3
   [../]
   []
-  [ICs]
-    [./eta1]
-      variable = eta1
-      type = RandomIC
-      min = -0.1625
-      max = 0.1625
-      seed = 192
-    [../]
-  []
+
 [AuxVariables]
   [./vonmises]
     order = CONSTANT
@@ -92,7 +81,7 @@
   [temperature]
     type = FunctionAux
     variable = temperature
-    function = '300' # temperature increases at a constant rate
+    function = '300 * t / 5' # temperature increases at a constant rate
     execute_on = timestep_begin
   []
   [eth_xx]
@@ -321,7 +310,7 @@
 #  petsc_options_iname = '-pc_type -pc_asm_overlap -sub_pc_type -ksp_type -ksp_gmres_restart'
 #  petsc_options_value = ' asm      2              lu            gmres     200'
   l_max_its = 20
-  nl_max_its = 10
+  nl_max_its = 20
   nl_rel_tol = 1.0e-8
   nl_abs_tol = 1.0e-9
 
@@ -334,14 +323,6 @@
     growth_factor = 1.2
     optimal_iterations = 20
   [../]
-  
-    [./Adaptivity]
-      initial_adaptivity = 1
-      refine_fraction = 0.6
-      coarsen_fraction = 0.1
-      max_h_level = 1
-    [../]
-  
 
 []
 
@@ -353,8 +334,4 @@
     type = Console
     max_rows = 5
   []
-[]
-
-[Debug]
-  show_var_residual_norms = true
 []

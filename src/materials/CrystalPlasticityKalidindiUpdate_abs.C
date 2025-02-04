@@ -15,7 +15,7 @@ registerMooseObject("belson324App", CrystalPlasticityKalidindiUpdate_abs);
 InputParameters
 CrystalPlasticityKalidindiUpdate_abs::validParams()
 {
-  InputParameters params = CrystalPlasticityStressUpdateBase::validParams();
+  InputParameters params = CrystalPlasticityStressUpdateBase_new::validParams();
   params.addClassDescription("Kalidindi version of homogeneous crystal plasticity.");
   params.addParam<Real>("r", 1.0, "Latent hardening coefficient");
   params.addParam<Real>("h", 541.5, "hardening constants");
@@ -34,7 +34,7 @@ CrystalPlasticityKalidindiUpdate_abs::validParams()
 
 CrystalPlasticityKalidindiUpdate_abs::CrystalPlasticityKalidindiUpdate_abs(
     const InputParameters & parameters)
-  : CrystalPlasticityStressUpdateBase(parameters),
+  : CrystalPlasticityStressUpdateBase_new(parameters),
     // Constitutive values
     _r(getParam<Real>("r")),
     _h(getParam<Real>("h")),
@@ -63,7 +63,7 @@ CrystalPlasticityKalidindiUpdate_abs::CrystalPlasticityKalidindiUpdate_abs(
 void
 CrystalPlasticityKalidindiUpdate_abs::initQpStatefulProperties()
 {
-  CrystalPlasticityStressUpdateBase::initQpStatefulProperties();
+  CrystalPlasticityStressUpdateBase_new::initQpStatefulProperties();
   for (const auto i : make_range(_number_slip_systems))
   {
     _slip_resistance[_qp][i] = _gss_initial;
@@ -119,7 +119,7 @@ CrystalPlasticityKalidindiUpdate_abs::calculateEquivalentSlipIncrement(
                                    _flow_direction[_qp][i] * _slip_increment[_qp][i] * _substep_dt;
   }
   else // if no twinning volume fraction material property supplied, use base class
-    CrystalPlasticityStressUpdateBase::calculateEquivalentSlipIncrement(equivalent_slip_increment);
+   CrystalPlasticityStressUpdateBase_new::calculateEquivalentSlipIncrement(equivalent_slip_increment);
 }
 
 void

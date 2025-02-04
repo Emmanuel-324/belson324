@@ -5,12 +5,9 @@
      type = FileMeshGenerator
      file = Two_phase_noload_out.e-s183
      use_for_exodus_restart = true
-     
    []
  []
-[Problem]
-  allow_initial_conditions_with_restart = true
-[]
+
  [Variables]
   [./disp_x]
   [../]
@@ -26,16 +23,8 @@
   [./eta1]
     initial_from_file_var = eta3
   [../]
-  []
-  [ICs]
-    [./eta1]
-      variable = eta1
-      type = RandomIC
-      min = -0.1625
-      max = 0.1625
-      seed = 192
-    [../]
-  []
+
+[]
 [AuxVariables]
   [./vonmises]
     order = CONSTANT
@@ -92,13 +81,13 @@
   [temperature]
     type = FunctionAux
     variable = temperature
-    function = '300' # temperature increases at a constant rate
+    function = '300 * t / 20' # temperature increases at a constant rate
     execute_on = timestep_begin
   []
   [eth_xx]
     type = RankTwoAux
     variable = eth_xx
-    rank_two_tensor =  phase0_thermal_eigenstrain
+    rank_two_tensor = phase0_thermal_eigenstrain
     index_j = 0
     index_i = 0
     execute_on = timestep_end
@@ -145,18 +134,50 @@
     value = 0
   []
   
-  [tdisp]
-    type = FunctionDirichletBC
-    variable = disp_x
-    boundary = right
-    function = '0.1*t'
-  []
+ [stress_freex]
+  #Applies the pressure
+  type = Pressure
+  boundary = right
+  factor = 0 # Pa
+  displacements= 'disp_x disp_y'
+  variable = disp_x
+ []
+ [stress_freey]
+  #Applies the pressure
+  type = Pressure
+  boundary = bottom
+  factor = 0 # Pa
+  displacements= 'disp_x disp_y'
+  variable = disp_y
+ []
+ [stress_freex1]
+  #Applies the pressure
+  type = Pressure
+  boundary = left
+  factor = 0 # Pa
+  displacements= 'disp_x disp_y'
+  variable = disp_x
+ []
+ [stress_freey1]
+  #Applies the pressure
+  type = Pressure
+  boundary = top
+  factor = 0 # Pa
+  displacements= 'disp_x disp_y'
+  variable = disp_x
+ []
+ [tdisp]
+  type = FunctionDirichletBC
+  variable = disp_x
+  boundary = right
+  function = '0.1*t'
+ []
 []
 
 [Materials]
   [elasticity_tensor_phase0]
     type = ComputeElasticityTensorCP
-    C_ijkl = '2.906e5 1.87e5 1.87e5 2.906e5 1.87e5 2.906e5 1.142e5 1.142e5 1.142e5'
+    C_ijkl = '2.876e5 1.879e5 1.879e5 2.876e5 1.879e5 2.876e5 1.142e5 1.142e5 1.142e5'
     fill_method = symmetric9
     base_name = phase0
   []
@@ -175,13 +196,13 @@
     slip_sys_file_name = input_slip_sys.txt
     crystal_lattice_type = FCC
     resistance_tol = 0.01
-    r = 1.0             
+    r = 1.4             
     h = 6000            
     t_sat = 598.5        
     gss_a = 1.5         
     ao = 0.001           
     xm = 0.017             
-    gss_initial = 400
+    gss_initial = 600
     base_name = phase0
   []
   [thermal_eigenstrain]
@@ -205,6 +226,9 @@
     type = ComputeElasticityTensorCP
     C_ijkl = '2.721e5 1.69e5 1.69e5 2.721e5 1.69e5 2.721e5 1.31e5 1.31e5 1.31e5'
     fill_method = symmetric9
+    euler_angle_1 = 0.0
+    euler_angle_2 = 0.0
+    euler_angle_3 = 0.0
     base_name = phase1
   []
   [stress_phase1]
@@ -226,7 +250,7 @@
     gss_a = 1.5         
     ao = 0.001           
     xm = 0.017             
-    gss_initial = 316 
+    gss_initial = 465.5 
     base_name = phase1
   [] 
   [./strain_phase1]
@@ -321,7 +345,7 @@
 #  petsc_options_iname = '-pc_type -pc_asm_overlap -sub_pc_type -ksp_type -ksp_gmres_restart'
 #  petsc_options_value = ' asm      2              lu            gmres     200'
   l_max_its = 20
-  nl_max_its = 10
+  nl_max_its = 20
   nl_rel_tol = 1.0e-8
   nl_abs_tol = 1.0e-9
 
@@ -334,27 +358,20 @@
     growth_factor = 1.2
     optimal_iterations = 20
   [../]
-  
     [./Adaptivity]
       initial_adaptivity = 1
       refine_fraction = 0.6
       coarsen_fraction = 0.1
       max_h_level = 1
     [../]
-  
 
 []
 
 [Outputs]
   csv = true
   exodus = true
-  print_linear_residuals = true
   [console]
     type = Console
     max_rows = 5
   []
-[]
-
-[Debug]
-  show_var_residual_norms = true
 []

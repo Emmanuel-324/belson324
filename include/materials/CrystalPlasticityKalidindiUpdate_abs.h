@@ -9,19 +9,19 @@
 
 #pragma once
 
-#include "CrystalPlasticityStressUpdateBase.h"
+#include "CrystalPlasticityStressUpdateBase_new.h"
 
-class CrystalPlasticityKalidindiUpdate;
+class CrystalPlasticityKalidindiUpdate_abs;
 
 /**
- * CrystalPlasticityKalidindiUpdate uses the multiplicative decomposition of the
+ * CrystalPlasticityKalidindiUpdate_abs uses the multiplicative decomposition of the
  * deformation gradient and solves the PK2 stress residual equation at the
  * intermediate configuration to evolve the material state. The internal
  * variables are updated using an interative predictor-corrector algorithm.
  * Backward Euler integration rule is used for the rate equations.
  */
 
-class CrystalPlasticityKalidindiUpdate_abs : public CrystalPlasticityStressUpdateBase
+class CrystalPlasticityKalidindiUpdate_abs : public CrystalPlasticityStressUpdateBase_new
 {
 public:
   static InputParameters validParams();

@@ -1,6 +1,6 @@
 #!/bin/bash                                                                     
-#SBATCH --job-name   New_work5b                                            
-#SBATCH --out  New_work5b.out        
+#SBATCH --job-name   Test3a                                           
+#SBATCH --out  Test3a.out        
 #SBATCH --nodes 1                                                              
 #SBATCH --ntasks 2
 #SBATCH --cpus-per-task 8
@@ -17,7 +17,7 @@
 module reset
 module load Miniforge3/24.1.2-0
 source activate /home/emmanuel324/mambaforge3/envs/moose 
-/home/emmanuel324/projects/belson324/belson324-opt  -i  New_work5b.i
+/home/emmanuel324/projects/belson324/belson324-opt  -i  Test3a.i
 
 conda env list
 
