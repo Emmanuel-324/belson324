@@ -5,7 +5,7 @@
 [Mesh]
   [file]
      type = FileMeshGenerator
-     file = Two_phase_noload_out.e-s183
+     file = Conc1_out.e-s202
      use_for_exodus_restart = true
    []
  []
@@ -31,18 +31,16 @@
      order = CONSTANT
      family = MONOMIAL
    [../]
-   [./stress_xx]
-     order = CONSTANT
-     family = MONOMIAL
-     block = 0
-   [../]
  []
+ 
  [Physics/SolidMechanics/QuasiStatic/all]
   strain = FINITE
   incremental = true
   add_variables = true
-  generate_output = 'stress_xx'
-[]
+  generate_output = 'stress_xx stress_yy stress_zz'
+ []
+
+ 
  [AuxKernels]
    [./vonmises]
      type = RankTwoScalarAux
@@ -50,17 +48,8 @@
      variable = vonmises
      scalar_type = VonMisesStress
      execute_on = timestep_end
- #   block = 0
    [../]
-   [./stress_xx]
-     type = RankTwoAux
-     rank_two_tensor = stress
-     variable = stress_xx
-     index_j = 0
-     index_i = 0
-     execute_on = timestep_end
-     block = 0
-   [../]
+   
  []
  
  [BCs]
@@ -99,7 +88,7 @@
      base_name = phase0
    []
    [trial_xtalpl_phase0]
-     type = CrystalPlasticityKalidindiUpdate
+     type = CrystalPlasticityKalidindiUpdate_abs
      number_slip_systems = 12
      slip_sys_file_name = input_slip_sys.txt
      crystal_lattice_type = FCC
@@ -110,7 +99,7 @@
      gss_a = 1.5         
      ao = 0.001           
      xm = 0.017             
-     gss_initial = 600
+     gss_initial = 600 
      base_name = phase0
    []
    [./strain_phase0]
@@ -134,18 +123,18 @@
      base_name = phase1
    []
    [trial_xtalpl_phase1]
-     type = CrystalPlasticityKalidindiUpdate
+     type = CrystalPlasticityKalidindiUpdate_abs
      number_slip_systems = 12
      slip_sys_file_name = input_slip_sys.txt
      crystal_lattice_type = FCC
      resistance_tol = 0.01
      r = 1.0             
-     h = 5500           
+     h = 6000            
      t_sat = 598.5        
      gss_a = 1.5         
      ao = 0.001           
      xm = 0.017             
-     gss_initial = 465.5
+     gss_initial = 465.5 
      base_name = phase1
    []
    [./strain_phase1]
@@ -193,13 +182,19 @@
    [./vonmises]
      type = ElementAverageValue
      variable = vonmises
-     block = 'ANY_BLOCK_ID 0'
    [../]
    [./stress_xx]
      type = ElementAverageValue
      variable = stress_xx
-     block = 'ANY_BLOCK_ID 0'
    [../]
+    [stress_yy]
+      type = ElementAverageValue
+      variable = stress_yy
+    []
+    [stress_zz]
+      type = ElementAverageValue
+      variable = stress_zz
+    []
  []
  
  
@@ -224,15 +219,16 @@
    nl_rel_tol = 1.0e-8
    nl_abs_tol = 1.0e-9
  
-   end_time = 100
+   end_time = 50
  
    [./TimeStepper]
      type = IterationAdaptiveDT
-     dt = 5e-8
+     dt = 5e-4
      cutback_factor = 0.75
      growth_factor = 1.2
      optimal_iterations = 20
    [../]
+ 
  []
  
  [Outputs]

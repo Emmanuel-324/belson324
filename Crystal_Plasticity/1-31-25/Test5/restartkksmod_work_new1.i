@@ -227,20 +227,12 @@
  
    [./TimeStepper]
      type = IterationAdaptiveDT
-     dt = 5e-8
+     dt = 5e-4
      cutback_factor = 0.75
      growth_factor = 1.2
      optimal_iterations = 20
    [../]
   
-    [./Adaptivity]
-      initial_adaptivity = 1
-      refine_fraction = 0.6
-      coarsen_fraction = 0.1
-      max_h_level = 1
-    [../]
-  
- 
  []
  
  [Outputs]

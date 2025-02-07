@@ -9,7 +9,7 @@
 
 #include "ComputeMultipleCrystalPlasticityStress_abs.h"
 
-#include "CrystalPlasticityStressUpdateBase.h"
+#include "CrystalPlasticityStressUpdateBase_abs.h"
 #include "libmesh/utility.h"
 #include "Conversion.h"
 #include "MooseException.h"
@@ -24,7 +24,7 @@ ComputeMultipleCrystalPlasticityStress_abs::validParams()
   params.addClassDescription(
       "Crystal Plasticity base class: handles the Newton iteration over the stress residual and "
       "calculates the Jacobian based on constitutive laws from multiple material classes "
-      "that are inherited from CrystalPlasticityStressUpdateBase");
+      "that are inherited from CrystalPlasticityStressUpdateBase_abs");
   params.addParam<std::string>(
       "base_name",
       "Optional parameter that allows the user to define multiple mechanics material systems on "
@@ -151,8 +151,8 @@ ComputeMultipleCrystalPlasticityStress_abs::initialSetup()
 
   for (unsigned int i = 0; i < _num_models; ++i)
   {
-    CrystalPlasticityStressUpdateBase * model =
-        dynamic_cast<CrystalPlasticityStressUpdateBase *>(&getMaterialByName(model_names[i]));
+    CrystalPlasticityStressUpdateBase_abs * model =
+        dynamic_cast<CrystalPlasticityStressUpdateBase_abs *>(&getMaterialByName(model_names[i]));
 
     if (model)
     {

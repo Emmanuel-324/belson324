@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "CrystalPlasticityStressUpdateBase_new.h"
+#include "CrystalPlasticityStressUpdateBase_abs.h"
 
 class CrystalPlasticityKalidindiUpdate_abs;
 
@@ -21,7 +21,7 @@ class CrystalPlasticityKalidindiUpdate_abs;
  * Backward Euler integration rule is used for the rate equations.
  */
 
-class CrystalPlasticityKalidindiUpdate_abs : public CrystalPlasticityStressUpdateBase_new
+class CrystalPlasticityKalidindiUpdate_abs : public CrystalPlasticityStressUpdateBase_abs
 {
 public:
   static InputParameters validParams();

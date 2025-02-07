@@ -11,14 +11,14 @@
 
 #include "ComputeFiniteStrainElasticStress.h"
 
-#include "CrystalPlasticityStressUpdateBase.h"
+#include "CrystalPlasticityStressUpdateBase_abs.h"
 #include "ComputeCrystalPlasticityEigenstrainBase.h"
 
 #include "RankTwoTensor.h"
 #include "RankFourTensor.h"
 
 /**
- * ComputeMultipleCrystalPlasticityStress_abs (used together with CrystalPlasticityStressUpdateBase)
+ * ComputeMultipleCrystalPlasticityStress_abs (used together with CrystalPlasticityStressUpdateBase_abs)
  * uses the multiplicative decomposition of the deformation gradient and solves the PK2 stress
  * residual equation at the intermediate configuration to evolve the material state. The internal
  * variables are updated using an iterative predictor-corrector algorithm. Backward Euler
@@ -121,7 +121,7 @@ protected:
   const unsigned _num_models;
 
   /// The user supplied cyrstal plasticity consititutive models
-  std::vector<CrystalPlasticityStressUpdateBase *> _models;
+  std::vector<CrystalPlasticityStressUpdateBase_abs *> _models;
 
   /// number of eigenstrains
   const unsigned _num_eigenstrains;

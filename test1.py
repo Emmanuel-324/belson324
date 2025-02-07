@@ -3,7 +3,7 @@
 import pandas as pd
 
 # Load the CSV file
-input_file = "/home/emmanuel324/projects/belson324/Crystal_Plasticity/1-15-25/Test6a/Data/restartkksmod_work_a_out.csv"
+input_file = "/home/emmanuel324/projects/belson324/Crystal_Plasticity/2-4-25/Case_study/Case_study5/Data/Case_study5_out.csv"
 data = pd.read_csv(input_file)
 df = pd.read_csv(input_file)
 # Ensure 'time' column 
