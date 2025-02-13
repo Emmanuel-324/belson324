@@ -9,7 +9,7 @@
 
 #include "MatReaction_abscouple.h"
 
-registerMooseObject("belsonApp", MatReaction_abscouple);
+registerMooseObject("belson324App", MatReaction_abscouple);
 
 
 InputParameters

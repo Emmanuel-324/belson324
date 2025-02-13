@@ -9,7 +9,7 @@
 
 #include "ElementIntegralVariablePostprocessor_new1.h"
 
-registerMooseObject("belsonApp", ElementIntegralVariablePostprocessor_new1);
+registerMooseObject("belson324App", ElementIntegralVariablePostprocessor_new1);
 
 InputParameters
 ElementIntegralVariablePostprocessor_new1::validParams()

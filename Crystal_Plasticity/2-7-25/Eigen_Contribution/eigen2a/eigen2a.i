@@ -1,9 +1,5 @@
 [GlobalParams]
-  order = FIRST
-  family = LAGRANGE
-  temperature = temperature
   displacements = 'disp_x disp_y'
-  out_of_plane_strain = strain_zz
 []
 
 [Mesh]
@@ -20,8 +16,6 @@
   [./disp_y]
   [../]
     
-    [./strain_zz]
-    [../]  
   # order parameter 0
   [./eta0]
     initial_from_file_var = eta1
@@ -67,13 +61,11 @@
     family = MONOMIAL
   []
 []
-[Physics/SolidMechanics/QuasiStatic]
-  [plane_stress]
-    planar_formulation = WEAK_PLANE_STRESS
-    strain = FINITE
-    generate_output = 'stress_xx stress_xy stress_yy stress_zz strain_xx strain_xy strain_yy'
-    eigenstrain_names = phase0_thermal_eigenstrain
-  []
+[Physics/SolidMechanics/QuasiStatic/all]
+  strain = FINITE
+  incremental = true
+  add_variables = true
+  generate_output = 'stress_xx stress_xy stress_yy stress_zz strain_xx strain_xy strain_yy strain_zz'
 []
 
 [AuxKernels]
@@ -272,11 +264,6 @@
     type = TimeDerivative
     variable = eta1
   [../]
-  [./solid_z]
-    type = WeakPlaneStress
-    variable = strain_zz
-    eigenstrain_names = thermal_eigenstrain
-  [../]  
 []
 
 [Postprocessors]
@@ -284,18 +271,38 @@
     type = ElementAverageValue
     variable = vonmises
   [../]
-  [stress_xx]
-    type = ElementAverageValue
-    variable = stress_xx
-  []
-  [stress_yy]
-    type = ElementAverageValue
-    variable = stress_yy
-  []
-  [stress_zz]
-    type = ElementAverageValue
-    variable = stress_zz
-  []
+    [./stress_xx]
+      type = ElementAverageValue
+      variable = stress_xx
+    [../]
+    [./stress_yy]
+        type = ElementAverageValue
+        variable = stress_yy
+    [../]
+    [./stress_zz]
+        type = ElementAverageValue
+        variable = stress_zz
+    [../]
+    [./stress_xy]
+      type = ElementAverageValue
+      variable = stress_xy
+    [../]
+    [./strain_xx]
+      type = ElementAverageValue
+      variable = strain_xx
+    [../]
+    [./strain_xy]
+      type = ElementAverageValue
+      variable = strain_xy
+    [../]
+    [./strain_yy]
+      type = ElementAverageValue
+      variable = strain_yy
+    [../]
+    [./strain_zz]
+      type = ElementAverageValue
+      variable = strain_zz
+    [../]
   [eth_xx]
     type = ElementAverageValue
     variable = eth_xx
@@ -362,8 +369,4 @@
 [Outputs]
   csv = true
   exodus = true
-[]
-
-[Debug]
-  show_material_props = true
 []

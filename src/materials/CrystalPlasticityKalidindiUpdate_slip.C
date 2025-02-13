@@ -7,17 +7,28 @@
 //* Licensed under LGPL 2.1, please see LICENSE for details
 //* https://www.gnu.org/licenses/lgpl-2.1.html
 
-
-
-#include "CrystalPlasticityKalidindiUpdate_abs.h"
+#include "CrystalPlasticityKalidindiUpdate_slip.h"
 #include "libmesh/int_range.h"
 
-registerMooseObject("belson324App", CrystalPlasticityKalidindiUpdate_abs);
+registerMooseObject("belson324App", CrystalPlasticityKalidindiUpdate_slip);
 
 InputParameters
-CrystalPlasticityKalidindiUpdate_abs::validParams()
+CrystalPlasticityKalidindiUpdate_slip::validParams()
 {
   InputParameters params = CrystalPlasticityStressUpdateBase_abs::validParams();
+  params.addParam<unsigned int>(
+    "slip_system_modes",
+    1,
+    "Number of different types of slip systems, each with its own friction strength.");
+  params.addParam<std::vector<unsigned int>>(
+    "number_slip_systems_per_mode",
+    std::vector<unsigned int>(),
+    "The number of slip systems per slip mode.");
+  params.addParam<std::vector<Real>>(
+    "lattice_friction_per_mode",
+    std::vector<Real>(),
+    "Lattice friction strength for each slip mode in MPa.");
+
   params.addClassDescription("Kalidindi version of homogeneous crystal plasticity.");
   params.addParam<Real>("r", 1.0, "Latent hardening coefficient");
   params.addParam<Real>("h", 541.5, "hardening constants");
@@ -34,10 +45,13 @@ CrystalPlasticityKalidindiUpdate_abs::validParams()
   return params;
 }
 
-CrystalPlasticityKalidindiUpdate_abs::CrystalPlasticityKalidindiUpdate_abs(
+CrystalPlasticityKalidindiUpdate_slip::CrystalPlasticityKalidindiUpdate_slip(
     const InputParameters & parameters)
   : CrystalPlasticityStressUpdateBase_abs(parameters),
     // Constitutive values
+    _slip_system_modes(getParam<unsigned int>("slip_system_modes")),
+    _number_slip_systems_per_mode(getParam<std::vector<unsigned int>>("number_slip_systems_per_mode")),
+    _lattice_friction(getParam<std::vector<Real>>("lattice_friction_per_mode")),
     _r(getParam<Real>("r")),
     _h(getParam<Real>("h")),
     _tau_sat(getParam<Real>("t_sat")),
@@ -60,21 +74,54 @@ CrystalPlasticityKalidindiUpdate_abs::CrystalPlasticityKalidindiUpdate_abs(
                                     ? &getMaterialPropertyOld<Real>("total_twin_volume_fraction")
                                     : nullptr)
 {
+    // check that the number of slip systems is equal to the sum of the types of slip system
+    if (_number_slip_systems_per_mode.size() != _slip_system_modes)
+    paramError("number_slip_systems_per_mode",
+               "The size the number of slip systems per mode is not equal to the number of slip "
+               "system types.");                                
+                                    
+    if (_lattice_friction.size() != _slip_system_modes)
+    paramError("lattice_friction_per_mode",
+               "Please ensure that the size of lattice_friction_per_mode equals the value supplied "
+               "for slip_system_modes");
+
+  unsigned int sum = 0;
+  for (const auto i : make_range(_slip_system_modes))
+    sum += _number_slip_systems_per_mode[i];
+  if (sum != _number_slip_systems)
+    paramError("slip_system_modes",
+               "The number of slip systems and the sum of the slip systems in each of the slip "
+               "system modes are not equal");
+
 }
 
-void
-CrystalPlasticityKalidindiUpdate_abs::initQpStatefulProperties()
+void CrystalPlasticityKalidindiUpdate_slip::initQpStatefulProperties()
 {
   CrystalPlasticityStressUpdateBase_abs::initQpStatefulProperties();
+  
+  // Set initial resistance from lattice friction, which is type dependent
+  unsigned int slip_mode = 0;
+  unsigned int counter_adjustment = 0;
+
   for (const auto i : make_range(_number_slip_systems))
   {
-    _slip_resistance[_qp][i] = _gss_initial;
+    if ((i - counter_adjustment) < _number_slip_systems_per_mode[slip_mode])
+      _slip_resistance[_qp][i] = _lattice_friction[slip_mode];
+    else
+    {
+      counter_adjustment += _number_slip_systems_per_mode[slip_mode];
+      ++slip_mode;
+      _slip_resistance[_qp][i] = _lattice_friction[slip_mode];
+    }
+
     _slip_increment[_qp][i] = 0.0;
   }
+
 }
 
+
 void
-CrystalPlasticityKalidindiUpdate_abs::setInitialConstitutiveVariableValues()
+CrystalPlasticityKalidindiUpdate_slip::setInitialConstitutiveVariableValues()
 {
   // Would also set old dislocation densities here if included in this model
   _slip_resistance[_qp] = _slip_resistance_old[_qp];
@@ -82,14 +129,14 @@ CrystalPlasticityKalidindiUpdate_abs::setInitialConstitutiveVariableValues()
 }
 
 void
-CrystalPlasticityKalidindiUpdate_abs::setSubstepConstitutiveVariableValues()
+CrystalPlasticityKalidindiUpdate_slip::setSubstepConstitutiveVariableValues()
 {
   // Would also set substepped dislocation densities here if included in this model
   _slip_resistance[_qp] = _previous_substep_slip_resistance;
 }
 
 bool
-CrystalPlasticityKalidindiUpdate_abs::calculateSlipRate()
+CrystalPlasticityKalidindiUpdate_slip::calculateSlipRate()
 {
   for (const auto i : make_range(_number_slip_systems))
   {
@@ -111,7 +158,7 @@ CrystalPlasticityKalidindiUpdate_abs::calculateSlipRate()
 }
 
 void
-CrystalPlasticityKalidindiUpdate_abs::calculateEquivalentSlipIncrement(
+CrystalPlasticityKalidindiUpdate_slip::calculateEquivalentSlipIncrement(
     RankTwoTensor & equivalent_slip_increment)
 {
   if (_include_twinning_in_Lp)
@@ -125,7 +172,7 @@ CrystalPlasticityKalidindiUpdate_abs::calculateEquivalentSlipIncrement(
 }
 
 void
-CrystalPlasticityKalidindiUpdate_abs::calculateConstitutiveSlipDerivative(
+CrystalPlasticityKalidindiUpdate_slip::calculateConstitutiveSlipDerivative(
     std::vector<Real> & dslip_dtau)
 {
   for (const auto i : make_range(_number_slip_systems))
@@ -140,7 +187,7 @@ CrystalPlasticityKalidindiUpdate_abs::calculateConstitutiveSlipDerivative(
 }
 
 bool
-CrystalPlasticityKalidindiUpdate_abs::areConstitutiveStateVariablesConverged()
+CrystalPlasticityKalidindiUpdate_slip::areConstitutiveStateVariablesConverged()
 {
   return isConstitutiveStateVariableConverged(_slip_resistance[_qp],
                                               _slip_resistance_before_update,
@@ -149,52 +196,57 @@ CrystalPlasticityKalidindiUpdate_abs::areConstitutiveStateVariablesConverged()
 }
 
 void
-CrystalPlasticityKalidindiUpdate_abs::updateSubstepConstitutiveVariableValues()
+CrystalPlasticityKalidindiUpdate_slip::updateSubstepConstitutiveVariableValues()
 {
   // Would also set substepped dislocation densities here if included in this model
   _previous_substep_slip_resistance = _slip_resistance[_qp];
 }
 
 void
-CrystalPlasticityKalidindiUpdate_abs::cacheStateVariablesBeforeUpdate()
+CrystalPlasticityKalidindiUpdate_slip::cacheStateVariablesBeforeUpdate()
 {
   _slip_resistance_before_update = _slip_resistance[_qp];
 }
 
-void
-CrystalPlasticityKalidindiUpdate_abs::calculateStateVariableEvolutionRateComponent()
+void CrystalPlasticityKalidindiUpdate_slip::calculateStateVariableEvolutionRateComponent()
 {
   for (const auto i : make_range(_number_slip_systems))
   {
-    // Clear out increment from the previous iteration
     _slip_resistance_increment[i] = 0.0;
 
-    _hb[i] = _h * std::pow(std::abs(1.0 - _slip_resistance[_qp][i] / _tau_sat), _gss_a);
-    const Real hsign = 1.0 - _slip_resistance[_qp][i] / _tau_sat;
-    if (hsign < 0.0)
-      _hb[i] *= -1.0;
-  }
-
-  for (const auto i : make_range(_number_slip_systems))
-  {
+    unsigned int slip_mode = 0;
+    unsigned int counter_adjustment = 0;
     for (const auto j : make_range(_number_slip_systems))
     {
-      unsigned int iplane, jplane;
-      iplane = i / 3;
-      jplane = j / 3;
-
-      if (iplane == jplane) // self vs. latent hardening
-        _slip_resistance_increment[i] +=
-            std::abs(_slip_increment[_qp][j]) * _hb[j]; // q_{ab} = 1.0 for self hardening
+      if ((j - counter_adjustment) < _number_slip_systems_per_mode[slip_mode])
+      {
+        _hb[j] = _h * std::pow(std::abs(1.0 - _slip_resistance[_qp][j] / _tau_sat), _gss_a);
+      }
       else
-        _slip_resistance_increment[i] +=
-            std::abs(_slip_increment[_qp][j]) * _r * _hb[j]; // latent hardenign
+      {
+        counter_adjustment += _number_slip_systems_per_mode[slip_mode];
+        ++slip_mode;
+        _hb[j] = _h * std::pow(std::abs(1.0 - _slip_resistance[_qp][j] / _tau_sat), _gss_a);
+      }
+
+      Real hsign = 1.0 - _slip_resistance[_qp][j] / _tau_sat;
+      if (hsign < 0.0)
+        _hb[j] *= -1.0;
+
+      unsigned int iplane = i / 3;
+      unsigned int jplane = j / 3;
+
+      if (iplane == jplane) 
+        _slip_resistance_increment[i] += std::abs(_slip_increment[_qp][j]) * _hb[j];
+      else 
+        _slip_resistance_increment[i] += std::abs(_slip_increment[_qp][j]) * _r * _hb[j];
     }
   }
 }
 
+
 bool
-CrystalPlasticityKalidindiUpdate_abs::updateStateVariables()
+CrystalPlasticityKalidindiUpdate_slip::updateStateVariables()
 {
   // Now perform the check to see if the slip system should be updated
   for (const auto i : make_range(_number_slip_systems))

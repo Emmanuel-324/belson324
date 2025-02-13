@@ -3,7 +3,7 @@
 import pandas as pd
 
 # Load the CSV file
-input_file = "/home/emmanuel324/projects/belson324/Crystal_Plasticity/2-4-25/Case_study/Case_study5/Data/Case_study5_out.csv"
+input_file = "/home/emmanuel324/projects/belson324/Crystal_Plasticity/2-7-25/Eigen_Contribution/eigen3/Data_eigen3/eigen3_out.csv"
 data = pd.read_csv(input_file)
 df = pd.read_csv(input_file)
 # Ensure 'time' column 
@@ -11,7 +11,7 @@ if 'time' not in data.columns:
     raise ValueError("The input CSV file must contain a 'time' column")
 
 
-L = 300  # replace with the actual length of your domain
+L = 300  #length of domain
 
 df['stress_xx'] = df['stress_xx'].abs()
 

@@ -33,6 +33,10 @@
 
 []
 [AuxVariables]
+  [./nl_strain_zz]
+    order = CONSTANT
+    family = MONOMIAL
+  [../]
   [./vonmises]
     order = CONSTANT
     family = MONOMIAL
@@ -83,6 +87,13 @@
     variable = vonmises
     scalar_type = VonMisesStress
     execute_on = timestep_end
+  [../]
+  [./strain_zz]
+    type = RankTwoAux
+    rank_two_tensor = total_strain
+    variable = nl_strain_zz
+    index_i = 2
+    index_j = 2
   [../]
   [temperature]
     type = FunctionAux
@@ -296,6 +307,26 @@
     type = ElementAverageValue
     variable = stress_zz
   []
+  [./stress_xy]
+    type = ElementAverageValue
+    variable = stress_xy
+  [../]
+  [./strain_xx]
+    type = ElementAverageValue
+    variable = strain_xx
+  [../]
+  [./strain_xy]
+    type = ElementAverageValue
+    variable = strain_xy
+  [../]
+  [./strain_yy]
+    type = ElementAverageValue
+    variable = strain_yy
+  [../]
+  [./strain_zz]
+    type = ElementAverageValue
+    variable = strain_zz
+  [../]
   [eth_xx]
     type = ElementAverageValue
     variable = eth_xx
@@ -324,6 +355,22 @@
     type = ElementAverageValue
     variable = temperature
   []
+  [./react_z]
+    type = MaterialTensorIntegral
+    rank_two_tensor = stress
+    index_i = 2
+    index_j = 2
+  [../]
+  [./min_strain_zz]
+    type = NodalExtremeValue
+    variable = strain_zz
+    value_type = min
+  [../]
+  [./max_strain_zz]
+      type = NodalExtremeValue
+      variable = strain_zz
+      value_type = max
+  [../]
 []
 
 [Preconditioning]
