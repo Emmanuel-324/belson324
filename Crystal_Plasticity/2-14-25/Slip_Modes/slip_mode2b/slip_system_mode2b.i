@@ -1,12 +1,8 @@
 [GlobalParams]
-  order = FIRST
-  family = LAGRANGE
   displacements = 'disp_x disp_y'
-  out_of_plane_strain = strain_zz
 []
 
 [Mesh]
-  use_displaced_mesh = true
   [file]
      type = FileMeshGenerator
      file = Conc1_out.e-s202
@@ -19,8 +15,6 @@
    [../]
    [./disp_y]
    [../]
-  [./strain_zz]
-  [../] 
  
    # order parameter 0
    [./eta0]
@@ -39,13 +33,11 @@
    [../]
  []
  
- [Physics/SolidMechanics/QuasiStatic]
-  
-  [plane_stress]
-    planar_formulation = WEAK_PLANE_STRESS
-    strain = FINITE
-    generate_output = 'stress_xx stress_xy stress_yy stress_zz strain_xx strain_xy strain_yy'
-  []
+ [Physics/SolidMechanics/QuasiStatic/all]
+  strain = FINITE
+  incremental = true
+  add_variables = true
+  generate_output = 'stress_xx stress_xy stress_yy stress_zz strain_xx strain_xy strain_yy strain_zz'
  []
 
  
@@ -56,7 +48,8 @@
      variable = vonmises
      scalar_type = VonMisesStress
      execute_on = timestep_end
-   [../]  
+   [../]
+   
  []
  
  [BCs]
@@ -95,18 +88,20 @@
      base_name = phase0
    []
    [trial_xtalpl_phase0]
-     type = CrystalPlasticityKalidindiUpdate_abs
-     number_slip_systems = 12
+     type = CrystalPlasticityKalidindiUpdate_slip
      slip_sys_file_name = input_slip_sys.txt
      crystal_lattice_type = FCC
      resistance_tol = 0.01
+     number_slip_systems = 12
+     slip_system_modes = 2
+     number_slip_systems_per_mode = '3 9'
+     lattice_friction_per_mode = '200  500'
      r = 1.0             
      h = 6000            
      t_sat = 598.5        
      gss_a = 1.5         
      ao = 0.001           
      xm = 0.017             
-     gss_initial = 600 
      base_name = phase0
    []
    [./strain_phase0]
@@ -219,26 +214,10 @@
       variable = strain_yy
     [../]
     [./strain_zz]
-        type = ElementAverageValue
-        variable = strain_zz
-    [../]
-    [./react_z]
-      type = MaterialTensorIntegral
-      rank_two_tensor = stress
-      index_i = 2
-      index_j = 2
-    [../]
-    [./min_strain_zz]
-      type = NodalExtremeValue
+      type = ElementAverageValue
       variable = strain_zz
-      value_type = min
     [../]
-    [./max_strain_zz]
-        type = NodalExtremeValue
-        variable = strain_zz
-        value_type = max
-    [../]
-          
+    
  []
  
  

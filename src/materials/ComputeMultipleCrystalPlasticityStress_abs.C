@@ -83,11 +83,11 @@ ComputeMultipleCrystalPlasticityStress_abs::ComputeMultipleCrystalPlasticityStre
     _plastic_deformation_gradient_old(
         getMaterialPropertyOld<RankTwoTensor>(_base_name + "plastic_deformation_gradient")),
     _eigenstrain_deformation_gradient(
-        _num_eigenstrains ? &declareProperty<RankTwoTensor>( "eigenstrain_deformation_gradient")
+        _num_eigenstrains ? &declareProperty<RankTwoTensor>(_base_name + "eigenstrain_deformation_gradient")
                           : nullptr),
     _eigenstrain_deformation_gradient_old(
         _num_eigenstrains
-            ? &getMaterialPropertyOld<RankTwoTensor>( "eigenstrain_deformation_gradient")
+            ? &getMaterialPropertyOld<RankTwoTensor>(_base_name +  "eigenstrain_deformation_gradient")
             : nullptr),
     _deformation_gradient(getMaterialProperty<RankTwoTensor>(_base_name + "deformation_gradient")),
     _deformation_gradient_old(

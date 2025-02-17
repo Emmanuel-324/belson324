@@ -44,6 +44,7 @@
   [plane_stress]
     planar_formulation = WEAK_PLANE_STRESS
     strain = FINITE
+    add_variables = true
     generate_output = 'stress_xx stress_xy stress_yy stress_zz strain_xx strain_xy strain_yy'
   []
  []
