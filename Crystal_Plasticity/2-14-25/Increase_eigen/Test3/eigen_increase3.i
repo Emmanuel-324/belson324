@@ -396,6 +396,18 @@
     type = ElementAverageValue
     variable = eth_zz
   []
+  [eth1_xx]
+    type = ElementAverageValue
+    variable = eth1_xx
+  []
+  [eth1_yy]
+    type = ElementAverageValue
+    variable = eth1_yy
+  []
+  [eth1_zz]
+    type = ElementAverageValue
+    variable = eth1_zz
+  []
   [fth_xx]
     type = ElementAverageValue
     variable = fth_xx
@@ -449,6 +461,5 @@
 
 [Outputs]
   csv = true
-  exodus = true
 []
 

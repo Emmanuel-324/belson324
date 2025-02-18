@@ -4,18 +4,17 @@
 
 [Mesh]
   [file]
-     type = FileMeshGenerator
-     file = Conc1_out.e-s202
-     use_for_exodus_restart = true
-   []
- []
+    type = FileMeshGenerator
+    file = Conc1_out.e-s202
+    use_for_exodus_restart = true
+  []
+[]
 
- [Variables]
+[Variables]
   [./disp_x]
   [../]
   [./disp_y]
   [../]
-    
   # order parameter 0
   [./eta0]
     initial_from_file_var = eta1
@@ -24,8 +23,8 @@
   [./eta1]
     initial_from_file_var = eta3
   [../]
-
 []
+
 [AuxVariables]
   [./vonmises]
     order = CONSTANT
@@ -47,19 +46,6 @@
     order = CONSTANT
     family = MONOMIAL
   []
-  [eth1_xx]
-    order = CONSTANT
-    family = MONOMIAL
-  []
-  [eth1_yy]
-    order = CONSTANT
-    family = MONOMIAL
-  []
-  [eth1_zz]
-    order = CONSTANT
-    family = MONOMIAL
-  []
-  
   [fth_xx]
     order = CONSTANT
     family = MONOMIAL
@@ -72,19 +58,8 @@
     order = CONSTANT
     family = MONOMIAL
   []
-  [fth1_xx]
-    order = CONSTANT
-    family = MONOMIAL
-  []
-  [fth1_yy]
-    order = CONSTANT
-    family = MONOMIAL
-  []
-  [fth1_zz]
-    order = CONSTANT
-    family = MONOMIAL
-  []
 []
+
 [Physics/SolidMechanics/QuasiStatic/all]
   strain = FINITE
   incremental = true
@@ -103,7 +78,7 @@
   [temperature]
     type = FunctionAux
     variable = temperature
-    function = '298'
+    function = '400'
     execute_on = timestep_begin
   []
   [eth_xx]
@@ -126,30 +101,6 @@
     type = RankTwoAux
     variable = eth_zz
     rank_two_tensor = phase0_thermal_eigenstrain
-    index_j = 2
-    index_i = 2
-    execute_on = timestep_end
-  []
-  [eth1_xx]
-    type = RankTwoAux
-    variable = eth1_xx
-    rank_two_tensor = phase1_thermal_eigenstrain1
-    index_j = 0
-    index_i = 0
-    execute_on = timestep_end
-  []
-  [eth1_yy]
-    type = RankTwoAux
-    variable = eth1_yy
-    rank_two_tensor = phase1_thermal_eigenstrain1
-    index_j = 1
-    index_i = 1
-    execute_on = timestep_end
-  []
-  [eth1_zz]
-    type = RankTwoAux
-    variable = eth1_zz
-    rank_two_tensor = phase1_thermal_eigenstrain1
     index_j = 2
     index_i = 2
     execute_on = timestep_end
@@ -177,32 +128,7 @@
     index_j = 2
     index_i = 2
     execute_on = timestep_end
-  []
-  [fth1_xx]
-    type = RankTwoAux
-    variable = fth1_xx
-    rank_two_tensor = phase1_thermal_deformation_gradient1
-    index_j = 0
-    index_i = 0
-    execute_on = timestep_end
-  []
-  [fth1_yy]
-    type = RankTwoAux
-    variable = fth1_yy
-    rank_two_tensor = phase1_thermal_deformation_gradient1
-    index_j = 1
-    index_i = 1
-    execute_on = timestep_end
-  []
-  [fth1_zz]
-    type = RankTwoAux
-    variable = fth1_zz
-    rank_two_tensor = phase1_thermal_deformation_gradient1
-    index_j = 2
-    index_i = 2
-    execute_on = timestep_end
-  []
-  
+  [] 
 []
 
 [BCs]
@@ -262,7 +188,7 @@
     eigenstrain_name = thermal_eigenstrain
     deformation_gradient_name = thermal_deformation_gradient
     temperature = temperature
-    thermal_expansion_coefficients = '12.8e-06 0 0'
+    thermal_expansion_coefficients = '1e-05 0 0'
     base_name = phase0
   []
   [./strain_phase0]
@@ -280,7 +206,6 @@
     [stress_phase1]
       type = ComputeMultipleCrystalPlasticityStress_abs
       crystal_plasticity_models = 'trial_xtalpl_phase1'
-      eigenstrain_names = 'thermal_eigenstrain1'
       tan_mod_type = exact
       rtol = 1e-08
       base_name = phase1
@@ -299,15 +224,7 @@
       xm = 0.017             
       gss_initial = 465.5 
       base_name = phase1
-    []
-    [thermal_eigenstrain1]
-      type = ComputeCrystalPlasticityThermalEigenstrain
-      eigenstrain_name = thermal_eigenstrain1
-      deformation_gradient_name = thermal_deformation_gradient1
-      temperature = temperature
-      thermal_expansion_coefficients = '12.8e-06 0 0'
-      base_name = phase1
-    []
+    [] 
     [./strain_phase1]
       type = ComputeFiniteStrain
       displacements = 'disp_x disp_y'
@@ -352,38 +269,38 @@
     type = ElementAverageValue
     variable = vonmises
   [../]
-    [./stress_xx]
-      type = ElementAverageValue
-      variable = stress_xx
-    [../]
-    [./stress_yy]
-        type = ElementAverageValue
-        variable = stress_yy
-    [../]
-    [./stress_zz]
-        type = ElementAverageValue
-        variable = stress_zz
-    [../]
-    [./stress_xy]
-      type = ElementAverageValue
-      variable = stress_xy
-    [../]
-    [./strain_xx]
-      type = ElementAverageValue
-      variable = strain_xx
-    [../]
-    [./strain_xy]
-      type = ElementAverageValue
-      variable = strain_xy
-    [../]
-    [./strain_yy]
-      type = ElementAverageValue
-      variable = strain_yy
-    [../]
-    [./strain_zz]
-      type = ElementAverageValue
-      variable = strain_zz
-    [../]
+  [./stress_xx]
+    type = ElementAverageValue
+    variable = stress_xx
+  [../]
+  [./stress_yy]
+    type = ElementAverageValue
+    variable = stress_yy
+  [../]
+  [./stress_zz]
+    type = ElementAverageValue
+    variable = stress_zz
+  [../]
+  [./stress_xy]
+    type = ElementAverageValue
+    variable = stress_xy
+  [../]
+  [./strain_xx]
+    type = ElementAverageValue
+    variable = strain_xx
+  [../]
+  [./strain_xy]
+    type = ElementAverageValue
+    variable = strain_xy
+  [../]
+  [./strain_yy]
+    type = ElementAverageValue
+    variable = strain_yy
+  [../]
+  [./strain_zz]
+    type = ElementAverageValue
+    variable = strain_zz
+  [../]
   [eth_xx]
     type = ElementAverageValue
     variable = eth_xx
@@ -451,4 +368,3 @@
   csv = true
   exodus = true
 []
-

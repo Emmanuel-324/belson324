@@ -1,8 +1,13 @@
 [GlobalParams]
+  order = FIRST
+  family = LAGRANGE
   displacements = 'disp_x disp_y'
+  temperature = temperature
+  out_of_plane_strain = strain_zz
 []
 
 [Mesh]
+  use_displaced_mesh = true
   [file]
      type = FileMeshGenerator
      file = Conc1_out.e-s202
@@ -14,6 +19,8 @@
   [./disp_x]
   [../]
   [./disp_y]
+  [../]
+  [./strain_zz]
   [../]
     
   # order parameter 0
@@ -35,6 +42,10 @@
     order = FIRST
     family = LAGRANGE
   []
+  [./nl_strain_zz]
+    order = CONSTANT
+    family = MONOMIAL
+  [../]
   [eth_xx]
     order = CONSTANT
     family = MONOMIAL
@@ -44,18 +55,6 @@
     family = MONOMIAL
   []
   [eth_zz]
-    order = CONSTANT
-    family = MONOMIAL
-  []
-  [eth1_xx]
-    order = CONSTANT
-    family = MONOMIAL
-  []
-  [eth1_yy]
-    order = CONSTANT
-    family = MONOMIAL
-  []
-  [eth1_zz]
     order = CONSTANT
     family = MONOMIAL
   []
@@ -72,24 +71,15 @@
     order = CONSTANT
     family = MONOMIAL
   []
-  [fth1_xx]
-    order = CONSTANT
-    family = MONOMIAL
-  []
-  [fth1_yy]
-    order = CONSTANT
-    family = MONOMIAL
-  []
-  [fth1_zz]
-    order = CONSTANT
-    family = MONOMIAL
-  []
 []
-[Physics/SolidMechanics/QuasiStatic/all]
-  strain = FINITE
-  incremental = true
-  add_variables = true
-  generate_output = 'stress_xx stress_xy stress_yy stress_zz strain_xx strain_xy strain_yy strain_zz'
+[Physics/SolidMechanics/QuasiStatic]
+  [plane_stress]
+    planar_formulation = WEAK_PLANE_STRESS
+    strain = FINITE
+    add_variables = true
+    generate_output = 'stress_xx stress_xy stress_yy stress_zz strain_xx strain_xy strain_yy'
+    eigenstrain_names = phase0_thermal_eigenstrain
+  []
 []
 
 [AuxKernels]
@@ -106,6 +96,13 @@
     function = '298'
     execute_on = timestep_begin
   []
+  [./strain_zz]
+    type = RankTwoAux
+    rank_two_tensor = total_strain
+    variable = nl_strain_zz
+    index_i = 2
+    index_j = 2
+  [../]
   [eth_xx]
     type = RankTwoAux
     variable = eth_xx
@@ -130,30 +127,6 @@
     index_i = 2
     execute_on = timestep_end
   []
-  [eth1_xx]
-    type = RankTwoAux
-    variable = eth1_xx
-    rank_two_tensor = phase1_thermal_eigenstrain1
-    index_j = 0
-    index_i = 0
-    execute_on = timestep_end
-  []
-  [eth1_yy]
-    type = RankTwoAux
-    variable = eth1_yy
-    rank_two_tensor = phase1_thermal_eigenstrain1
-    index_j = 1
-    index_i = 1
-    execute_on = timestep_end
-  []
-  [eth1_zz]
-    type = RankTwoAux
-    variable = eth1_zz
-    rank_two_tensor = phase1_thermal_eigenstrain1
-    index_j = 2
-    index_i = 2
-    execute_on = timestep_end
-  []
   [fth_xx]
     type = RankTwoAux
     variable = fth_xx
@@ -174,30 +147,6 @@
     type = RankTwoAux
     variable = fth_zz
     rank_two_tensor = phase0_thermal_deformation_gradient
-    index_j = 2
-    index_i = 2
-    execute_on = timestep_end
-  []
-  [fth1_xx]
-    type = RankTwoAux
-    variable = fth1_xx
-    rank_two_tensor = phase1_thermal_deformation_gradient1
-    index_j = 0
-    index_i = 0
-    execute_on = timestep_end
-  []
-  [fth1_yy]
-    type = RankTwoAux
-    variable = fth1_yy
-    rank_two_tensor = phase1_thermal_deformation_gradient1
-    index_j = 1
-    index_i = 1
-    execute_on = timestep_end
-  []
-  [fth1_zz]
-    type = RankTwoAux
-    variable = fth1_zz
-    rank_two_tensor = phase1_thermal_deformation_gradient1
     index_j = 2
     index_i = 2
     execute_on = timestep_end
@@ -269,7 +218,7 @@
     type = ComputeFiniteStrain
     displacements = 'disp_x disp_y'
     base_name = phase0
-   # eigenstrain_names = 'eigenstrain_phase0'
+    eigenstrain_names = thermal_eigenstrain
   [../]
     [elasticity_tensor_phase1]
       type = ComputeElasticityTensorCP
@@ -280,7 +229,6 @@
     [stress_phase1]
       type = ComputeMultipleCrystalPlasticityStress_abs
       crystal_plasticity_models = 'trial_xtalpl_phase1'
-      eigenstrain_names = 'thermal_eigenstrain1'
       tan_mod_type = exact
       rtol = 1e-08
       base_name = phase1
@@ -299,17 +247,9 @@
       xm = 0.017             
       gss_initial = 465.5 
       base_name = phase1
-    []
-    [thermal_eigenstrain1]
-      type = ComputeCrystalPlasticityThermalEigenstrain
-      eigenstrain_name = thermal_eigenstrain1
-      deformation_gradient_name = thermal_deformation_gradient1
-      temperature = temperature
-      thermal_expansion_coefficients = '12.8e-06 0 0'
-      base_name = phase1
-    []
+    [] 
     [./strain_phase1]
-      type = ComputeFiniteStrain
+      type = ComputePlaneFiniteStrain
       displacements = 'disp_x disp_y'
       base_name = phase1
     [../]
@@ -345,6 +285,25 @@
     type = TimeDerivative
     variable = eta1
   [../]
+    [./disp_x]
+      type = StressDivergenceTensors
+      variable = disp_x
+      eigenstrain_names = thermal_eigenstrain
+      component = 0
+    [../]
+    [./disp_y]
+      type = StressDivergenceTensors
+      variable = disp_y
+      eigenstrain_names = thermal_eigenstrain
+        component = 1
+    [../]
+
+      [./solid_z]
+        type = WeakPlaneStress
+        variable = strain_zz
+        eigenstrain_names = thermal_eigenstrain
+      [../]
+    
 []
 
 [Postprocessors]
@@ -380,10 +339,6 @@
       type = ElementAverageValue
       variable = strain_yy
     [../]
-    [./strain_zz]
-      type = ElementAverageValue
-      variable = strain_zz
-    [../]
   [eth_xx]
     type = ElementAverageValue
     variable = eth_xx
@@ -412,6 +367,22 @@
     type = ElementAverageValue
     variable = temperature
   []
+  [./react_z]
+    type = MaterialTensorIntegral
+    rank_two_tensor = stress
+    index_i = 2
+    index_j = 2
+  [../]
+  [./min_strain_zz]
+    type = NodalExtremeValue
+    variable = strain_zz
+    value_type = min
+  [../]
+  [./max_strain_zz]
+    type = NodalExtremeValue
+    variable = strain_zz
+    value_type = max
+  [../]
 []
 
 [Preconditioning]
@@ -452,3 +423,6 @@
   exodus = true
 []
 
+[Debug]
+  show_material_props = true
+[]

@@ -78,6 +78,7 @@
     strain = FINITE
     add_variables = true
     generate_output = 'stress_xx stress_xy stress_yy stress_zz strain_xx strain_xy strain_yy'
+    eigenstrain_names = deformation_gradient
   []
 []
 
@@ -420,4 +421,8 @@
 [Outputs]
   csv = true
   exodus = true
+[]
+
+[Debug]
+  show_material_props = true
 []
