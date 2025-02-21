@@ -1,12 +1,8 @@
 [GlobalParams]
-  order = FIRST
-  family = LAGRANGE
   displacements = 'disp_x disp_y'
-  out_of_plane_strain = strain_zz
 []
 
 [Mesh]
-  use_displaced_mesh = true
   [file]
      type = FileMeshGenerator
      file = Conc1_out.e-s202
@@ -19,8 +15,6 @@
    [../]
    [./disp_y]
    [../]
-  [./strain_zz]
-  [../] 
  
    # order parameter 0
    [./eta0]
@@ -37,20 +31,13 @@
      order = CONSTANT
      family = MONOMIAL
    [../]
-   [./nl_strain_zz]
-    order = CONSTANT
-    family = MONOMIAL
-  [../]
  []
  
- [Physics/SolidMechanics/QuasiStatic]
-  
-  [plane_stress]
-    planar_formulation = WEAK_PLANE_STRESS
-    strain = FINITE
-    add_variables = true
-    generate_output = 'stress_xx stress_xy stress_yy stress_zz strain_xx strain_xy strain_yy'
-  []
+ [Physics/SolidMechanics/QuasiStatic/all]
+  strain = FINITE
+  incremental = true
+  add_variables = true
+  generate_output = 'stress_xx stress_xy stress_yy stress_zz strain_xx strain_xy strain_yy strain_zz'
  []
 
  
@@ -62,13 +49,7 @@
      scalar_type = VonMisesStress
      execute_on = timestep_end
    [../]
-   [./strain_zz]
-    type = RankTwoAux
-    rank_two_tensor = total_strain
-    variable = nl_strain_zz
-    index_i = 2
-    index_j = 2
-  [../]  
+   
  []
  
  [BCs]
@@ -95,7 +76,7 @@
  [Materials]
    [elasticity_tensor_phase0]
      type = ComputeElasticityTensorCP
-     C_ijkl = '2.906e5 1.87e5 1.87e5 2.906e5 1.87e5 2.906e5 1.142e5 1.142e5 1.142e5'
+     C_ijkl = '2.906e5 1.87e5 1.87e5 2.906e5 1.87e5 2.906e5 1.142e5 1.142e5 1.142e5' #Ghorbanpour, S., et al., A crystal plasticity model incorporating the effects of precipitates
      fill_method = symmetric9
      base_name = phase0
    []
@@ -107,18 +88,20 @@
      base_name = phase0
    []
    [trial_xtalpl_phase0]
-     type = CrystalPlasticityKalidindiUpdate_abs
-     number_slip_systems = 12
+     type = CrystalPlasticityKalidindiUpdate_slip
      slip_sys_file_name = input_slip_sys.txt
      crystal_lattice_type = FCC
      resistance_tol = 0.01
+     number_slip_systems = 12
+     slip_system_modes = 2
+     number_slip_systems_per_mode = '6 6'
+     lattice_friction_per_mode = '465  558'
      r = 1.0             
-     h = 6000            
-     t_sat = 598.5        
+     h = 6000  # Aitor Cruzado et. al  DOI: 10.1007/978-3-030-40562-5_5     
+     t_sat = 598.5  # Aitor Cruzado et. al  DOI: 10.1007/978-3-030-40562-5_5      
      gss_a = 1.5         
      ao = 0.001           
-     xm = 0.017             
-     gss_initial = 600 
+     xm = 0.017 # Aitor Cruzado et. al  DOI: 10.1007/978-3-030-40562-5_5            
      base_name = phase0
    []
    [./strain_phase0]
@@ -130,7 +113,7 @@
  
    [elasticity_tensor_phase1]
      type = ComputeElasticityTensorCP
-     C_ijkl = '2.721e5 1.69e5 1.69e5 2.721e5 1.69e5 2.721e5 1.31e5 1.31e5 1.31e5'
+     C_ijkl = '2.721e5 1.69e5 1.69e5 2.721e5 1.69e5 2.721e5 1.31e5 1.31e5 1.31e5' #Ghorbanpour, S., et al., A crystal plasticity model incorporating the effects of precipitates
      fill_method = symmetric9
      base_name = phase1
    []
@@ -195,7 +178,6 @@
      type = TimeDerivative
      variable = eta1
    [../]
-   
  []
  
  [Postprocessors]
@@ -232,26 +214,10 @@
       variable = strain_yy
     [../]
     [./strain_zz]
-        type = ElementAverageValue
-        variable = strain_zz
-    [../]
-    [./react_z]
-      type = MaterialTensorIntegral
-      rank_two_tensor = stress
-      index_i = 2
-      index_j = 2
-    [../]
-    [./min_strain_zz]
-      type = NodalExtremeValue
+      type = ElementAverageValue
       variable = strain_zz
-      value_type = min
     [../]
-    [./max_strain_zz]
-        type = NodalExtremeValue
-        variable = strain_zz
-        value_type = max
-    [../]
-          
+    
  []
  
  

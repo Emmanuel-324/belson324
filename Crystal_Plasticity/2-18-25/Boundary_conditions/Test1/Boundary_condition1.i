@@ -1,12 +1,8 @@
 [GlobalParams]
-  order = FIRST
-  family = LAGRANGE
   displacements = 'disp_x disp_y'
-  out_of_plane_strain = strain_zz
 []
 
 [Mesh]
-  use_displaced_mesh = true
   [file]
      type = FileMeshGenerator
      file = Conc1_out.e-s202
@@ -19,8 +15,6 @@
    [../]
    [./disp_y]
    [../]
-  [./strain_zz]
-  [../] 
  
    # order parameter 0
    [./eta0]
@@ -37,20 +31,13 @@
      order = CONSTANT
      family = MONOMIAL
    [../]
-   [./nl_strain_zz]
-    order = CONSTANT
-    family = MONOMIAL
-  [../]
  []
  
- [Physics/SolidMechanics/QuasiStatic]
-  
-  [plane_stress]
-    planar_formulation = WEAK_PLANE_STRESS
-    strain = FINITE
-    add_variables = true
-    generate_output = 'stress_xx stress_xy stress_yy stress_zz strain_xx strain_xy strain_yy'
-  []
+ [Physics/SolidMechanics/QuasiStatic/all]
+  strain = FINITE
+  incremental = true
+  add_variables = true
+  generate_output = 'stress_xx stress_xy stress_yy stress_zz strain_xx strain_xy strain_yy strain_zz'
  []
 
  
@@ -62,13 +49,7 @@
      scalar_type = VonMisesStress
      execute_on = timestep_end
    [../]
-   [./strain_zz]
-    type = RankTwoAux
-    rank_two_tensor = total_strain
-    variable = nl_strain_zz
-    index_i = 2
-    index_j = 2
-  [../]  
+   
  []
  
  [BCs]
@@ -78,6 +59,12 @@
      boundary = bottom
      value = 0
    []
+   [symmy1]
+    type = DirichletBC
+    variable = disp_y
+    boundary = top
+    value = 0
+  []
    [symmx]
      type = DirichletBC
      variable = disp_x
@@ -195,7 +182,6 @@
      type = TimeDerivative
      variable = eta1
    [../]
-   
  []
  
  [Postprocessors]
@@ -232,26 +218,10 @@
       variable = strain_yy
     [../]
     [./strain_zz]
-        type = ElementAverageValue
-        variable = strain_zz
-    [../]
-    [./react_z]
-      type = MaterialTensorIntegral
-      rank_two_tensor = stress
-      index_i = 2
-      index_j = 2
-    [../]
-    [./min_strain_zz]
-      type = NodalExtremeValue
+      type = ElementAverageValue
       variable = strain_zz
-      value_type = min
     [../]
-    [./max_strain_zz]
-        type = NodalExtremeValue
-        variable = strain_zz
-        value_type = max
-    [../]
-          
+    
  []
  
  

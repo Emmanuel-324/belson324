@@ -1,0 +1,22 @@
+import numpy as np
+
+# Define the given plane normal and direction
+plane_normal = np.array([1, 1,0], dtype=float)  # (312) plane normal
+direction = np.array([0, 0, 1], dtype=float)  # [021̅] crystal direction
+
+# Normalize the given direction to get the new x-axis
+x_new = direction / np.linalg.norm(direction)
+
+# Compute the new y-axis using the cross product (to ensure orthogonality)
+y_new = np.cross(plane_normal, direction).astype(float)  
+y_new /= np.linalg.norm(y_new)  # Normalize
+
+# The new z-axis is the plane normal, normalized
+z_new = plane_normal / np.linalg.norm(plane_normal)
+
+# Construct the rotation matrix
+R = np.column_stack((x_new, y_new, z_new))
+
+# Print the rotation matrix
+print("Rotation matrix for (312)[021̅]:")
+print(R)

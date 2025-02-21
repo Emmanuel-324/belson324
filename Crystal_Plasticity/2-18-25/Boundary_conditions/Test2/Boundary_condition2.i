@@ -1,13 +1,8 @@
 [GlobalParams]
-  order = FIRST
-  family = LAGRANGE
   displacements = 'disp_x disp_y'
-  temperature = temperature
-  out_of_plane_strain = strain_zz
 []
 
 [Mesh]
-  use_displaced_mesh = true
   [file]
      type = FileMeshGenerator
      file = Conc1_out.e-s202
@@ -19,8 +14,6 @@
   [./disp_x]
   [../]
   [./disp_y]
-  [../]
-  [./strain_zz]
   [../]
     
   # order parameter 0
@@ -42,10 +35,6 @@
     order = FIRST
     family = LAGRANGE
   []
-  [./nl_strain_zz]
-    order = CONSTANT
-    family = MONOMIAL
-  [../]
   [eth_xx]
     order = CONSTANT
     family = MONOMIAL
@@ -72,14 +61,11 @@
     family = MONOMIAL
   []
 []
-[Physics/SolidMechanics/QuasiStatic]
-  [plane_stress]
-    planar_formulation = WEAK_PLANE_STRESS
-    strain = FINITE
-    add_variables = true
-    generate_output = 'stress_xx stress_xy stress_yy stress_zz strain_xx strain_xy strain_yy'
-    eigenstrain_names = deformation_gradient
-  []
+[Physics/SolidMechanics/QuasiStatic/all]
+  strain = FINITE
+  incremental = true
+  add_variables = true
+  generate_output = 'stress_xx stress_xy stress_yy stress_zz strain_xx strain_xy strain_yy strain_zz'
 []
 
 [AuxKernels]
@@ -96,13 +82,6 @@
     function = '298'
     execute_on = timestep_begin
   []
-  [./strain_zz]
-    type = RankTwoAux
-    rank_two_tensor = total_strain
-    variable = nl_strain_zz
-    index_i = 2
-    index_j = 2
-  [../]
   [eth_xx]
     type = RankTwoAux
     variable = eth_xx
@@ -161,6 +140,12 @@
     boundary = bottom
     value = 0
   []
+  [symmy1]
+    type = DirichletBC
+    variable = disp_y
+    boundary = top
+    value = 0
+  []
   [symmx]
     type = DirichletBC
     variable = disp_x
@@ -211,14 +196,14 @@
     eigenstrain_name = thermal_eigenstrain
     deformation_gradient_name = thermal_deformation_gradient
     temperature = temperature
-    thermal_expansion_coefficients = '12.8e-06 12.8e-06 12.8e-06'
+    thermal_expansion_coefficients = '12.8e-06 0 0'
     base_name = phase0
   []
   [./strain_phase0]
     type = ComputeFiniteStrain
     displacements = 'disp_x disp_y'
     base_name = phase0
-    eigenstrain_names = thermal_eigenstrain
+   # eigenstrain_names = 'eigenstrain_phase0'
   [../]
     [elasticity_tensor_phase1]
       type = ComputeElasticityTensorCP
@@ -249,7 +234,7 @@
       base_name = phase1
     [] 
     [./strain_phase1]
-      type = ComputePlaneFiniteStrain
+      type = ComputeFiniteStrain
       displacements = 'disp_x disp_y'
       base_name = phase1
     [../]
@@ -285,25 +270,6 @@
     type = TimeDerivative
     variable = eta1
   [../]
-    [./disp_x]
-      type = StressDivergenceTensors
-      variable = disp_x
-      eigenstrain_names = thermal_eigenstrain
-      component = 0
-    [../]
-    [./disp_y]
-      type = StressDivergenceTensors
-      variable = disp_y
-      eigenstrain_names = thermal_eigenstrain
-        component = 1
-    [../]
-
-      [./solid_z]
-        type = WeakPlaneStress
-        variable = strain_zz
-        eigenstrain_names = thermal_eigenstrain
-      [../]
-    
 []
 
 [Postprocessors]
@@ -339,6 +305,10 @@
       type = ElementAverageValue
       variable = strain_yy
     [../]
+    [./strain_zz]
+      type = ElementAverageValue
+      variable = strain_zz
+    [../]
   [eth_xx]
     type = ElementAverageValue
     variable = eth_xx
@@ -367,22 +337,6 @@
     type = ElementAverageValue
     variable = temperature
   []
-  [./react_z]
-    type = MaterialTensorIntegral
-    rank_two_tensor = stress
-    index_i = 2
-    index_j = 2
-  [../]
-  [./min_strain_zz]
-    type = NodalExtremeValue
-    variable = strain_zz
-    value_type = min
-  [../]
-  [./max_strain_zz]
-    type = NodalExtremeValue
-    variable = strain_zz
-    value_type = max
-  [../]
 []
 
 [Preconditioning]
@@ -422,5 +376,3 @@
   csv = true
   exodus = true
 []
-
-

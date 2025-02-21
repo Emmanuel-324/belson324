@@ -423,6 +423,3 @@
   exodus = true
 []
 
-[Debug]
-  show_material_props = true
-[]
