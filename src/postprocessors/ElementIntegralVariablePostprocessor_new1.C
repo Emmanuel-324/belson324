@@ -37,6 +37,6 @@ ElementIntegralVariablePostprocessor_new1::ElementIntegralVariablePostprocessor_
 Real
 ElementIntegralVariablePostprocessor_new1::computeQpIntegral()
 {
-  Real threshold = 0.5;  // Adjust this based on your expected \(\eta\) values for the precipitate
-  return (_u[_qp] > threshold) ? 1.0 : 0.0;  // Count areas where \(\eta\) is significant
+  Real threshold = 0.3;  // Adjust this based on your expected \(\eta\) values for the precipitate
+  return (std::abs(_u[_qp]) > threshold) ? 1.0 : 0.0; //count areas where the absolute value of eta is signifcant
 }
