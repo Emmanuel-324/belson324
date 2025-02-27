@@ -1,4 +1,3 @@
-
 [Mesh]
   type = GeneratedMesh
   dim = 2
@@ -63,7 +62,6 @@
   [../]
 []
 
-
 [Bounds]
   [./eta_upper_bound]
     type = ConstantBounds
@@ -80,14 +78,14 @@
     bound_value = -1
   [../]
   [./eta2_upper_bound]
-    type = ConstantBoundsAux
+    type = ConstantBounds
     variable = bounds_dummy
     bounded_variable = eta2
     bound_type = upper
     bound_value = 1
   [../]
   [./eta2_lower_bound]
-    type = ConstantBoundsAux
+    type = ConstantBounds
     variable = bounds_dummy
     bounded_variable = eta2
     bound_type = lower
@@ -164,13 +162,13 @@
   [../]
   [./bc_func]
     type = ParsedFunction
-     expression =  sin(alpha*pi*x)
-     symbol_names =  alpha
-     symbol_values = 16
+    expression = sin(alpha*pi*x)
+    symbol_names = alpha
+    symbol_values = 16
   [../]
   [./disp_func]
     type = ParsedFunction
-    expression =  'if(t<50,6e-3*t,0.3)'
+    expression = 'if(t<50,6e-3*t,0.3)'
   [../]
   [./press_func]
     type = ParsedFunction
@@ -181,10 +179,12 @@
 [ICs]
   [./eta1]
     variable = eta1
-    type = RandomIC
-    min = -0.6
-    max = 0.6
-    seed = 192
+    type = Switchin
+    invalue = 4
+    outvalue = 4
+    radius = 4
+    x1 = 4
+    y1 = 4
   [../]
   [./eta2]
     variable = eta2
@@ -216,20 +216,20 @@
     type = ElasticEnergyMaterial
     base_name = phase1
     property_name = fe_1
-    args = ' '
+    coupled_variables = ' '
   [../]
   # Total free energy of the phase 1
   [./Total_energy_1]
     type = DerivativeSumMaterial
     property_name = F1
     sum_materials = 'fc_1 fe_1'
-    args = 'c1'
+    coupled_variables = 'c1'
   [../]
 
   [./f2]
     type = DerivativeParsedMaterial
     property_name = fc_2
-    args = 'c2'
+    coupled_variables = 'c2'
     expression = '100.0*(c2-0.34)^2'
   [../]
   # Elastic energy of the phase 2
@@ -237,35 +237,35 @@
     type = ElasticEnergyMaterial
     base_name = phase2
     property_name = fe_2
-    args = ' '
+    coupled_variables = ' '
   [../]
   # Total free energy of the phase 2
   [./Total_energy_2]
     type = DerivativeSumMaterial
     property_name = F2
     sum_materials = 'fc_2 fe_2'
-    args = 'c2'
+    coupled_variables = 'c2'
   [../]
 
   [./f3]
     type = DerivativeParsedMaterial
     property_name = fc_3
-    args = 'c3'
-    expression = '5.0*(c3-0.1777)^2'
+    coupled_variables = 'c3'
+    expression = '5.0*(c3-0.5)^2'
   [../]
   # Elastic energy of the phase 3
   [./elastic_free_energy_3]
     type = ElasticEnergyMaterial
     base_name = phase3
     property_name = fe_3
-    args = ' '
+    coupled_variables = ' '
   [../]
   # Total free energy of the phase 3
   [./Total_energy_3]
     type = DerivativeSumMaterial
     property_name = F3
     sum_materials = 'fc_3 fe_3'
-    args = 'c3'
+    coupled_variables = 'c3'
   [../]
 
   # Switching functions for each phase
@@ -296,19 +296,19 @@
     type = DerivativeParsedMaterial
     material_property_names = 'D h1'
     expression = D*h1
-    f_name = Dh1
+    property_name = Dh1
   [../]
   [./Dh2]
     type = DerivativeParsedMaterial
     material_property_names = 'D h2'
     expression = D*h2
-    f_name = Dh2
+    property_name = Dh2
   [../]
   [./Dh3]
     type = DerivativeParsedMaterial
     material_property_names = 'D h3'
     expression = D*h3
-    f_name = Dh3
+    property_name = Dh3
   [../]
 
   # Barrier functions for each phase
@@ -461,7 +461,7 @@
     gi_name   = g1
     eta_i     = eta1
     wi        = 0.01
-    args      = 'c1 c2 c3 eta2 eta3'
+    coupled_variables      = 'c1 c2 c3 eta2 eta3'
   [../]
   [./ACBulkC1]
     type = KKSMultiACBulkC
@@ -470,7 +470,7 @@
     hj_names  = 'h1 h2 h3'
     cj_names  = 'c1 c2 c3'
     eta_i     = eta1
-    args      = 'eta2 eta3'
+    coupled_variables      = 'eta2 eta3'
   [../]
   [./ACInterface1]
     type = ACInterface
@@ -491,7 +491,7 @@
     gi_name   = g2
     eta_i     = eta2
     wi        = 0.01
-    args      = 'c1 c2 c3 eta1 eta3'
+    coupled_variables      = 'c1 c2 c3 eta1 eta3'
   [../]
   [./ACBulkC2]
     type = KKSMultiACBulkC
@@ -500,7 +500,7 @@
     hj_names  = 'h1 h2 h3'
     cj_names  = 'c1 c2 c3'
     eta_i     = eta2
-    args      = 'eta1 eta3'
+    coupled_variables    = 'eta1 eta3'
   [../]
   [./ACInterface2]
     type = ACInterface
@@ -513,7 +513,7 @@
   [./eta3reaction]
     type = MatReaction
     variable = eta3
-    mob_name = 1
+    reaction_rate = 1
   [../]
   [./eta1reaction]
     type = MatReaction_abscouple

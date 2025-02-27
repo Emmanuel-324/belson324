@@ -180,15 +180,15 @@
   [./eta1]
     variable = eta1
     type = RandomIC
-    min = -0.1625
-    max = 0.1625
+    min = -0.6
+    max = 0.6
     seed = 192
   [../]
   [./eta2]
     variable = eta2
     type = RandomIC
-    min = -0.1625
-    max = 0.1625
+    min = -0.6
+    max = 0.6
     seed = 389	
   [../]
   [./c]

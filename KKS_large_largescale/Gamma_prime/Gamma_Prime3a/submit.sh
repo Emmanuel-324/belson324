@@ -15,9 +15,10 @@
 
 
 module reset
+module load OpenMPI
 module load Miniforge3/24.1.2-0
 source activate /home/emmanuel324/mambaforge3/envs/moose 
-/home/emmanuel324/projects/belson324/belson324-opt  -i  gamma_prime3a.i
+mpirun -np 4  /home/emmanuel324/projects/belson324/belson324-opt  -i  gamma_prime3a.i
 
 
 

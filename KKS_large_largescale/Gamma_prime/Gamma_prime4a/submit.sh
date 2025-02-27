@@ -1,9 +1,9 @@
 #!/bin/bash                                                                     
-#SBATCH --job-name    lattice_friction1_eigen                                      
-#SBATCH --out  lattice_friction1_eigen.out        
+#SBATCH --job-name   gamma_prime4a.i                                            
+#SBATCH --out  gamma_prime4a.out        
 #SBATCH --nodes 1                                                              
-#SBATCH --ntasks 2
-#SBATCH --cpus-per-task 8
+#SBATCH --ntasks-per-node 20
+#SBATCH --cpus-per-task 4
 #SBATCH --account amcorrosion                                                  
 ##SBATCH --partition normal_q                                                   
 #SBATCH --time=120:00:00    
@@ -16,9 +16,8 @@
 
 module reset
 module load Miniforge3/24.1.2-0
-module load OpenMPI
 source activate /home/emmanuel324/mambaforge3/envs/moose 
-mpirun -np 2 /home/emmanuel324/projects/belson324/belson324-opt  -i  lattice_friction1_eigen.i
+/home/emmanuel324/projects/belson324/belson324-opt  -i  gamma_prime4a.i
 
 
 

@@ -158,7 +158,7 @@
 [Materials]
   [elasticity_tensor_phase0]
     type = ComputeElasticityTensorCP
-    C_ijkl = '2.596e5 1.79e5 1.79e5 2.596e5 1.79e5 2.496e5 1.096e5 1.096e5 1.096e5' # Aitor Cruzado et. al  DOI: 10.1007/978-3-030-40562-5_5 
+    C_ijkl = '2.596e5 1.79e5 1.79e5 2.596e5 1.79e5 2.496e5 1.096e5 1.096e5 1.096e5'
     fill_method = symmetric9
     base_name = phase0
   []
@@ -171,21 +171,19 @@
     base_name = phase0
   []
   [trial_xtalpl_phase0]
-    type = CrystalPlasticityKalidindiUpdate_slip
-     slip_sys_file_name = input_slip_sys.txt
-     crystal_lattice_type = FCC
-     resistance_tol = 0.01
-     number_slip_systems = 12
-     slip_system_modes = 1
-     number_slip_systems_per_mode = '12'
-     lattice_friction_per_mode = '465'
-     r = 1.0             
-     h = 6000            
-     t_sat = 598.5        
-     gss_a = 1.5         
-     ao = 0.001           
-     xm = 0.017             
-     base_name = phase0
+    type = CrystalPlasticityKalidindiUpdate_abs
+    number_slip_systems = 12
+    slip_sys_file_name = input_slip_sys.txt
+    crystal_lattice_type = FCC
+    resistance_tol = 0.01
+    r = 1.0             
+    h = 6000            
+    t_sat = 598.5        
+    gss_a = 1.5         
+    ao = 0.001           
+    xm = 0.017             
+    gss_initial = 465
+    base_name = phase0
   []
   [thermal_eigenstrain]
     type = ComputeCrystalPlasticityThermalEigenstrain
@@ -203,7 +201,7 @@
   [../]
     [elasticity_tensor_phase1]
       type = ComputeElasticityTensorCP
-      C_ijkl = '2.596e5 1.79e5 1.79e5 2.596e5 1.79e5 2.496e5 1.096e5 1.096e5 1.096e5' # Aitor Cruzado et. al  DOI: 10.1007/978-3-030-40562-5_5 
+      C_ijkl = '2.596e5 1.79e5 1.79e5 2.596e5 1.79e5 2.496e5 1.096e5 1.096e5 1.096e5'
       fill_method = symmetric9
       base_name = phase1
     []

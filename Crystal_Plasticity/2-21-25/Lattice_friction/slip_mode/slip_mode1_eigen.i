@@ -158,7 +158,7 @@
 [Materials]
   [elasticity_tensor_phase0]
     type = ComputeElasticityTensorCP
-    C_ijkl = '2.596e5 1.79e5 1.79e5 2.596e5 1.79e5 2.496e5 1.096e5 1.096e5 1.096e5' # Aitor Cruzado et. al  DOI: 10.1007/978-3-030-40562-5_5 
+    C_ijkl = '2.596e5 1.79e5 1.79e5 2.596e5 1.79e5 2.496e5 1.096e5 1.096e5 1.096e5'
     fill_method = symmetric9
     base_name = phase0
   []
@@ -203,7 +203,7 @@
   [../]
     [elasticity_tensor_phase1]
       type = ComputeElasticityTensorCP
-      C_ijkl = '2.596e5 1.79e5 1.79e5 2.596e5 1.79e5 2.496e5 1.096e5 1.096e5 1.096e5' # Aitor Cruzado et. al  DOI: 10.1007/978-3-030-40562-5_5 
+      C_ijkl = '2.596e5 1.79e5 1.79e5 2.596e5 1.79e5 2.496e5 1.096e5 1.096e5 1.096e5'
       fill_method = symmetric9
       base_name = phase1
     []
