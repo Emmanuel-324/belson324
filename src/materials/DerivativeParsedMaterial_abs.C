@@ -30,21 +30,16 @@ template <bool is_ad>
 DerivativeParsedMaterial_absTempl<is_ad>::DerivativeParsedMaterial_absTempl(
     const InputParameters & parameters)
   : DerivativeParsedMaterialHelperTempl<is_ad>(parameters,
-                                               VariableNameMappingMode::USE_MOOSE_NAMES),
+                                               Moose::VariableNameMappingMode::USE_MOOSE_NAMES),
     ParsedMaterialBase(parameters, this),
     _gamma_ratio(this->template getParam<Real>("gamma_ratio")) // Store user-defined ratio
 {
   // Adjust free energy function to include user-defined gamma_ratio
-  Real constrained_c1 = _gamma_ratio * _eta2; // eta2 represents gamma double prime fraction
-  
-  functionParse(_function,
-                _constant_names,
-                _constant_expressions,
-                constrained_c1, // Use modified argument
-                _tol_names,
-                _tol_values,
-                _functor_names,
-                _functor_symbols);
+  Real constrained_c1 = _gamma_ratio * this->coupledValue("eta2"); // Corrected eta2 reference
+
+  // Build function, take derivatives, optimize
+  this->functionParse(_function, _constant_names, _constant_expressions, constrained_c1,
+                      _tol_names, _tol_values, _functor_names, _functor_symbols);
 }
 
 // explicit instantiation

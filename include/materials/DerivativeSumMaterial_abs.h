@@ -34,6 +34,9 @@ protected:
   /// User-defined ratio for gamma prime to gamma double prime
   Real _gamma_ratio;
 
+  /// Prefactor for summation
+  std::vector<Real> _prefactor;
+
   /// Function values of the summands.
   std::vector<const GenericMaterialProperty<Real, is_ad> *> _summand_F;
 };

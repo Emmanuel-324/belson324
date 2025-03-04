@@ -7,64 +7,41 @@
 //* Licensed under LGPL 2.1, please see LICENSE for details
 //* https://www.gnu.org/licenses/lgpl-2.1.html
 
-#include "DerivativeSumMaterial_abs.h"
-#include "libmesh/quadrature.h"
+#include "DerivativeParsedMaterial_abs.h"
 
-registerMooseObject("belson324App", DerivativeSumMaterial_abs);
-registerMooseObject("belson324App", ADDerivativeSumMaterial_abs);
+registerMooseObject("belson324App", DerivativeParsedMaterial_abs);
+registerMooseObject("belson324App", ADDerivativeParsedMaterial_abs);
 
 template <bool is_ad>
 InputParameters
-DerivativeSumMaterial_absTempl<is_ad>::validParams()
+DerivativeParsedMaterial_absTempl<is_ad>::validParams()
 {
-  InputParameters params = DerivativeFunctionMaterialBaseTempl<is_ad>::validParams();
-  params.addClassDescription("Meta-material to sum up multiple derivative materials");
-  params.addParam<std::vector<std::string>>("sum_materials",
-                                            "Base name of the parsed sum material property");
-
-  // User-defined gamma ratio
+  InputParameters params = DerivativeParsedMaterialHelperTempl<is_ad>::validParams();
+  params += ParsedMaterialBase::validParams();
+  params.addClassDescription("Parsed Function Material with automatic derivatives.");
+  
+  // Adding gamma_ratio as a user-defined parameter
   params.addParam<Real>("gamma_ratio", 0.25, "Ratio of gamma prime to gamma double prime.");
-
-  params.addRequiredCoupledVar("args", "Vector of names of variables being summed");
-  params.addCoupledVar("displacement_gradients",
-                       "Vector of displacement gradient variables (see "
-                       "Modules/PhaseField/DisplacementGradients "
-                       "action)");
-
+  
   return params;
 }
 
 template <bool is_ad>
-DerivativeSumMaterial_absTempl<is_ad>::DerivativeSumMaterial_absTempl(const InputParameters & parameters)
-  : DerivativeFunctionMaterialBaseTempl<is_ad>(parameters),
-    _sum_materials(this->template getParam<std::vector<std::string>>("sum_materials")),
-    _num_materials(_sum_materials.size()),
-    _gamma_ratio(this->template getParam<Real>("gamma_ratio")),
-    _prefactor(_num_materials, 1.0)
+DerivativeParsedMaterial_absTempl<is_ad>::DerivativeParsedMaterial_absTempl(
+    const InputParameters & parameters)
+  : DerivativeParsedMaterialHelperTempl<is_ad>(parameters,
+                                               Moose::VariableNameMappingMode::USE_MOOSE_NAMES),
+    ParsedMaterialBase(parameters, this),
+    _gamma_ratio(this->template getParam<Real>("gamma_ratio")) // Store user-defined ratio
 {
-  if (_num_materials == 0)
-    mooseError("Please supply at least one material to sum in DerivativeSumMaterial_abs", name());
+  // Adjust free energy function to include user-defined gamma_ratio
+  Real constrained_c1 = _gamma_ratio * this->coupledValue("eta2"); // Corrected eta2 reference
 
-  for (unsigned int n = 0; n < _num_materials; ++n)
-  {
-    _summand_F.push_back(&this->template getGenericMaterialProperty<Real, is_ad>(_sum_materials[n]));
-  }
+  // Build function, take derivatives, optimize
+  this->functionParse(_function, _constant_names, _constant_expressions, constrained_c1,
+                      _tol_names, _tol_values, _functor_names, _functor_symbols);
 }
 
-template <bool is_ad>
-void
-DerivativeSumMaterial_absTempl<is_ad>::computeProperties()
-{
-  for (_qp = 0; _qp < _qrule->n_points(); _qp++)
-  {
-    (*_prop_F)[_qp] = (*_summand_F[0])[_qp] * _gamma_ratio; // Apply user-defined ratio
-    for (unsigned int n = 1; n < _num_materials; ++n)
-    {
-      (*_prop_F)[_qp] += (*_summand_F[n])[_qp];
-    }
-  }
-}
-
-// Explicit instantiation
-template class DerivativeSumMaterial_absTempl<false>;
-template class DerivativeSumMaterial_absTempl<true>;
+// explicit instantiation
+template class DerivativeParsedMaterial_absTempl<false>;
+template class DerivativeParsedMaterial_absTempl<true>;
