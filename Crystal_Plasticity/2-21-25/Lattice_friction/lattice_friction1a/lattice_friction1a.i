@@ -97,7 +97,7 @@
      number_slip_systems_per_mode = '6 6'
      lattice_friction_per_mode = '465  558'
      r = 1.0             
-     h = 6000  # Aitor Cruzado et. al  DOI: 10.1007/978-3-030-40562-5_5     
+     h = 6000   # Aitor Cruzado et. al  DOI: 10.1007/978-3-030-40562-5_5     
      t_sat = 598.5  # Aitor Cruzado et. al  DOI: 10.1007/978-3-030-40562-5_5      
      gss_a = 1.5         
      ao = 0.001           

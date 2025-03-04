@@ -179,12 +179,10 @@
 [ICs]
   [./eta1]
     variable = eta1
-    type = Switchin
-    invalue = 4
-    outvalue = 4
-    radius = 4
-    x1 = 4
-    y1 = 4
+    type = RandomIC
+    min = -0.6
+    max = 0.6
+    seed = 192
   [../]
   [./eta2]
     variable = eta2
@@ -251,7 +249,7 @@
     type = DerivativeParsedMaterial
     property_name = fc_3
     coupled_variables = 'c3'
-    expression = '5.0*(c3-0.5)^2'
+    expression = '5.0*(c3-0.)^2'
   [../]
   # Elastic energy of the phase 3
   [./elastic_free_energy_3]
