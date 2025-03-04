@@ -265,6 +265,16 @@
     sum_materials = 'fc_3 fe_3'
     args = 'c3'
   [../]
+  [./free_energy]
+    type = DerivativeMultiPhaseMaterial
+    property_name = F
+    # we use a constant free energy (GeneriConstantmaterial property Fx)
+    fi_names = 'F1  F2  F3'
+    hi_names = 'h1  h2  h3'
+    etas     = 'eta1 eta2 eta3'
+    coupled_variables = 'c'
+    W = 1
+  [../]
 
   # Switching functions for each phase
   # h1(eta1, eta2, eta3)
