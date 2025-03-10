@@ -1,4 +1,3 @@
-
 [Mesh]
   type = GeneratedMesh
   dim = 2
@@ -63,33 +62,30 @@
   [../]
 []
 
-
-
-
 [Bounds]
   [./eta_upper_bound]
-    type = ConstantBounds
+    type = ConstantBoundsAux
     variable = bounds_dummy
     bounded_variable = eta1
     bound_type = upper
     bound_value = 1
   [../]
   [./eta_lower_bound]
-    type = ConstantBounds
+    type = ConstantBoundsAux
     variable = bounds_dummy
     bounded_variable = eta1
     bound_type = lower
     bound_value = -1
   [../]
   [./eta2_upper_bound]
-    type = ConstantBounds
+    type = ConstantBoundsAux
     variable = bounds_dummy
     bounded_variable = eta2
     bound_type = upper
     bound_value = 1
   [../]
   [./eta2_lower_bound]
-    type = ConstantBounds
+    type = ConstantBoundsAux
     variable = bounds_dummy
     bounded_variable = eta2
     bound_type = lower
@@ -162,21 +158,21 @@
 [Functions]
   [./ic_func_c]
     type = ParsedFunction
-    expression = 0.5+0.01*(cos(1.05*x)*cos(1.1*y)+(cos(1.3*x)*cos(0.87*y))^2+cos(0.25*x-1.5*y)*cos(0.7*x-0.2*y))
+    value = 0.5+0.01*(cos(1.05*x)*cos(1.1*y)+(cos(1.3*x)*cos(0.87*y))^2+cos(0.25*x-1.5*y)*cos(0.7*x-0.2*y))
   [../]
   [./bc_func]
     type = ParsedFunction
-     expression =  sin(alpha*pi*x)
-     symbol_names =  alpha
-     symbol_values = 16
+    value = sin(alpha*pi*x)
+    vars = alpha
+    vals = 16
   [../]
   [./disp_func]
     type = ParsedFunction
-    expression =  'if(t<50,6e-3*t,0.3)'
+    value = 'if(t<50,6e-3*t,0.3)'
   [../]
   [./press_func]
     type = ParsedFunction
-    expression = '1'
+    value = '1'
   [../]
 []
 
@@ -206,67 +202,64 @@
 
 
 [Materials]
+  # simple toy free energies
   [./f1]
     type = DerivativeParsedMaterial
-    property_name = fc_1
-    coupled_variables = 'c1 c2 c3'
-    expression = '100.0*(c1-0.3333)^2 + 50.0*c1*c2 + 30.0*c1*c3'
+    f_name = fc_1
+    args = 'c1'
+    function = '100.0*(c1-0.3333)^2'
   [../]
+  # Elastic energy of the phase 1
   [./elastic_free_energy_1]
     type = ElasticEnergyMaterial
     base_name = phase1
-    property_name = fe_1
+    f_name = fe_1
     args = ' '
   [../]
   # Total free energy of the phase 1
   [./Total_energy_1]
     type = DerivativeSumMaterial
-    property_name = F1
+    f_name = F1
     sum_materials = 'fc_1 fe_1'
     args = 'c1'
   [../]
 
   [./f2]
     type = DerivativeParsedMaterial
-    property_name = fc_2
-    coupled_variables = 'c1 c2 c3'
-    expression = '100.0*(c2-0.3333)^2 + 50.0*c1*c2 + 40.0*c2*c3'
+    f_name = fc_2
+    args = 'c2'
+    function = '100.0*(c2-0.3333)^2'
   [../]
   # Elastic energy of the phase 2
   [./elastic_free_energy_2]
     type = ElasticEnergyMaterial
     base_name = phase2
-    property_name = fe_2
+    f_name = fe_2
     args = ' '
   [../]
   # Total free energy of the phase 2
   [./Total_energy_2]
     type = DerivativeSumMaterial
-    property_name = F2
+    f_name = F2
     sum_materials = 'fc_2 fe_2'
     args = 'c2'
   [../]
 
   [./f3]
     type = DerivativeParsedMaterial
-    property_name = fc_3
-    coupled_variables = 'c1 c2 c3'
-    expression = '5.0*(c3-0.3)^2 + 30.0*c1*c3 + 40.0*c2*c3'
+    f_name = fc_3
+    args = 'c3'
+    function = '5.0*(c3-0.20)^2'
   [../]
   # Elastic energy of the phase 3
   [./elastic_free_energy_3]
     type = ElasticEnergyMaterial
     base_name = phase3
-    property_name = fe_3
+    f_name = fe_3
     args = ' '
   [../]
   # Total free energy of the phase 3
-  [./Total_energy_3]
-    type = DerivativeSumMaterial
-    property_name = F3
-    sum_materials = 'fc_3 fe_3'
-    args = 'c3'
-  [../]
+  
 
   # Switching functions for each phase
   # h1(eta1, eta2, eta3)
@@ -295,19 +288,19 @@
   [./Dh1]
     type = DerivativeParsedMaterial
     material_property_names = 'D h1'
-    expression = D*h1
+    function = D*h1
     f_name = Dh1
   [../]
   [./Dh2]
     type = DerivativeParsedMaterial
     material_property_names = 'D h2'
-    expression = D*h2
+    function = D*h2
     f_name = Dh2
   [../]
   [./Dh3]
     type = DerivativeParsedMaterial
     material_property_names = 'D h3'
-    expression = D*h3
+    function = D*h3
     f_name = Dh3
   [../]
 
@@ -334,8 +327,8 @@
   # constant properties
   [./constants]
     type = GenericConstantMaterial
-    prop_names  = 'L    kappa  D  misfit  W'
-    prop_values = '0.3  0.01   1  0.005  0.01'
+    prop_names  = 'L1  L2  L3    kappa11 kappa12 kappa13 kappa21 kappa22 kappa23 kappa31 kappa32 kappa33   D  misfit  W'
+    prop_values = '1    1   1     0.01    0.01    0.01    0.01    0.01    0.01    0.01    0.01    0.01  1  0.005  0.01'
   [../]
 
   #Mechanical properties
@@ -413,13 +406,17 @@
     h          = 'h1     h2     h3'
   [../]
 
+  [./global_strain]
+    type = ComputeSmallStrain
+    displacements = 'disp_x disp_y'
+  [../]
 []
 
 [Kernels]
   [./TensorMechanics]
     displacements = 'disp_x disp_y'
   [../]
-    
+
   #Kernels for diffusion equation
   [./diff_time]
     type = TimeDerivative
@@ -449,59 +446,40 @@
     type = TimeDerivative
     variable = eta1
   [../]
-  [./ACBulkF1]
-    type = KKSMultiACBulkF
-    variable  = eta1
-    Fj_names  = 'F1 F2 F3'
-    hj_names  = 'h1 h2 h3'
-    gi_name   = g1
-    eta_i     = eta1
-    wi        = 0.01
-    args      = 'c1 c2 c3 eta2 eta3'
-  [../]
-  [./ACBulkC1]
-    type = KKSMultiACBulkC
-    variable  = eta1
-    Fj_names  = 'F1 F2 F3'
-    hj_names  = 'h1 h2 h3'
-    cj_names  = 'c1 c2 c3'
-    eta_i     = eta1
-    args      = 'eta2 eta3'
+  
+  [./ACBulk1]
+    type = AllenCahn
+    variable = eta1
+    coupled_variables = 'eta2 eta3 c'
+    mob_name = L1
+    f_name = F
   [../]
   [./ACInterface1]
-    type = ACInterface
+    type = ACMultiInterface
     variable = eta1
-    kappa_name = kappa
-  [../]
+    etas = 'eta1 eta2 eta3'
+    mob_name = L1
+    kappa_names = 'kappa11 kappa12 kappa13'
+  []
 
   # Kernels for Allen-Cahn equation for eta2
   [./deta2dt]
     type = TimeDerivative
     variable = eta2
   [../]
-  [./ACBulkF2]
-    type = KKSMultiACBulkF
-    variable  = eta2
-    Fj_names  = 'F1 F2 F3'
-    hj_names  = 'h1 h2 h3'
-    gi_name   = g2
-    eta_i     = eta2
-    wi        = 0.01
-    args      = 'c1 c2 c3 eta1 eta3'
-  [../]
-  [./ACBulkC2]
-    type = KKSMultiACBulkC
-    variable  = eta2
-    Fj_names  = 'F1 F2 F3'
-    hj_names  = 'h1 h2 h3'
-    cj_names  = 'c1 c2 c3'
-    eta_i     = eta2
-    args      = 'eta1 eta3'
+  [./ACBulk2]
+    type = AllenCahn
+    variable = eta2
+    coupled_variables = 'eta1 eta3 c'
+    mob_name = L2
+    f_name = F
   [../]
   [./ACInterface2]
-    type = ACInterface
+    type = ACMultiInterface
     variable = eta2
-    kappa_name = kappa
+    etas = 'eta1 eta2 eta3'
+    mob_name = L2
+    kappa_names = 'kappa21 kappa22 kappa23'
   [../]
 
   # Kernels for constraint equation eta1 + eta2 + eta3 = 1
@@ -558,13 +536,13 @@
 [AuxKernels]
   [./Energy_total]
     type = KKSMultiFreeEnergy
-    Fj_names = 'F1 F2 F3'
-    hj_names = 'h1 h2 h3'
-    gj_names = 'g1 g2 g3'
+    Fj_names = 'F1 F2'
+    hj_names = 'h1 h2'
+    gj_names = 'g1 g2'
     variable = Energy
     w = 1
     interfacial_vars =  'eta1  eta2  eta3'
-    kappa_names =       'kappa kappa kappa'
+    kappa_names =       'kappa11 kappa12 kappa13'
   [../]
   [./stress_xx]
     type = RankTwoAux

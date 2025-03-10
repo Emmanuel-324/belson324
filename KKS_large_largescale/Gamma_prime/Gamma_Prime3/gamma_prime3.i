@@ -1,3 +1,4 @@
+
 [Mesh]
   type = GeneratedMesh
   dim = 2
@@ -62,30 +63,33 @@
   [../]
 []
 
+
+
+
 [Bounds]
   [./eta_upper_bound]
-    type = ConstantBoundsAux
+    type = ConstantBounds
     variable = bounds_dummy
     bounded_variable = eta1
     bound_type = upper
     bound_value = 1
   [../]
   [./eta_lower_bound]
-    type = ConstantBoundsAux
+    type = ConstantBounds
     variable = bounds_dummy
     bounded_variable = eta1
     bound_type = lower
     bound_value = -1
   [../]
   [./eta2_upper_bound]
-    type = ConstantBoundsAux
+    type = ConstantBounds
     variable = bounds_dummy
     bounded_variable = eta2
     bound_type = upper
     bound_value = 1
   [../]
   [./eta2_lower_bound]
-    type = ConstantBoundsAux
+    type = ConstantBounds
     variable = bounds_dummy
     bounded_variable = eta2
     bound_type = lower
@@ -158,21 +162,21 @@
 [Functions]
   [./ic_func_c]
     type = ParsedFunction
-    value = 0.5+0.01*(cos(1.05*x)*cos(1.1*y)+(cos(1.3*x)*cos(0.87*y))^2+cos(0.25*x-1.5*y)*cos(0.7*x-0.2*y))
+    expression = 0.5+0.01*(cos(1.05*x)*cos(1.1*y)+(cos(1.3*x)*cos(0.87*y))^2+cos(0.25*x-1.5*y)*cos(0.7*x-0.2*y))
   [../]
   [./bc_func]
     type = ParsedFunction
-    value = sin(alpha*pi*x)
-    vars = alpha
-    vals = 16
+     expression =  sin(alpha*pi*x)
+     symbol_names =  alpha
+     symbol_values = 16
   [../]
   [./disp_func]
     type = ParsedFunction
-    value = 'if(t<50,6e-3*t,0.3)'
+    expression =  'if(t<50,6e-3*t,0.3)'
   [../]
   [./press_func]
     type = ParsedFunction
-    value = '1'
+    expression = '1'
   [../]
 []
 
@@ -205,75 +209,65 @@
   # simple toy free energies
   [./f1]
     type = DerivativeParsedMaterial
-    f_name = fc_1
-    args = 'c1'
-    function = '100.0*(c1-0.3111)^2'
+    property_name = fc_1
+    coupled_variables = 'c1'
+    expression = '100.0*(c1-0.3111)^2'
   [../]
   # Elastic energy of the phase 1
   [./elastic_free_energy_1]
     type = ElasticEnergyMaterial
     base_name = phase1
-    f_name = fe_1
+    property_name = fe_1
     args = ' '
   [../]
   # Total free energy of the phase 1
   [./Total_energy_1]
     type = DerivativeSumMaterial
-    f_name = F1
+    property_name = F1
     sum_materials = 'fc_1 fe_1'
     args = 'c1'
   [../]
 
   [./f2]
     type = DerivativeParsedMaterial
-    f_name = fc_2
+    property_name = fc_2
     args = 'c2'
-    function = '100.0*(c2-0.34)^2'
+    expression = '100.0*(c2-0.34)^2'
   [../]
   # Elastic energy of the phase 2
   [./elastic_free_energy_2]
     type = ElasticEnergyMaterial
     base_name = phase2
-    f_name = fe_2
+    property_name = fe_2
     args = ' '
   [../]
   # Total free energy of the phase 2
   [./Total_energy_2]
     type = DerivativeSumMaterial
-    f_name = F2
+    property_name = F2
     sum_materials = 'fc_2 fe_2'
     args = 'c2'
   [../]
 
   [./f3]
     type = DerivativeParsedMaterial
-    f_name = fc_3
+    property_name = fc_3
     args = 'c3'
-    function = '5.0*(c3-0.1777)^2'
+    expression = '5.0*(c3-0.2)^2'
   [../]
   # Elastic energy of the phase 3
   [./elastic_free_energy_3]
     type = ElasticEnergyMaterial
     base_name = phase3
-    f_name = fe_3
+    property_name = fe_3
     args = ' '
   [../]
   # Total free energy of the phase 3
   [./Total_energy_3]
     type = DerivativeSumMaterial
-    f_name = F3
+    property_name = F3
     sum_materials = 'fc_3 fe_3'
     args = 'c3'
-  [../]
-  [./free_energy]
-    type = DerivativeMultiPhaseMaterial
-    property_name = F
-    # we use a constant free energy (GeneriConstantmaterial property Fx)
-    fi_names = 'F1  F2  F3'
-    hi_names = 'h1  h2  h3'
-    etas     = 'eta1 eta2 eta3'
-    coupled_variables = 'c'
-    W = 1
   [../]
 
   # Switching functions for each phase
@@ -303,19 +297,19 @@
   [./Dh1]
     type = DerivativeParsedMaterial
     material_property_names = 'D h1'
-    function = D*h1
+    expression = D*h1
     f_name = Dh1
   [../]
   [./Dh2]
     type = DerivativeParsedMaterial
     material_property_names = 'D h2'
-    function = D*h2
+    expression = D*h2
     f_name = Dh2
   [../]
   [./Dh3]
     type = DerivativeParsedMaterial
     material_property_names = 'D h3'
-    function = D*h3
+    expression = D*h3
     f_name = Dh3
   [../]
 
@@ -421,17 +415,13 @@
     h          = 'h1     h2     h3'
   [../]
 
-  [./global_strain]
-    type = ComputeSmallStrain
-    displacements = 'disp_x disp_y'
-  [../]
 []
 
 [Kernels]
   [./TensorMechanics]
     displacements = 'disp_x disp_y'
   [../]
-
+    
   #Kernels for diffusion equation
   [./diff_time]
     type = TimeDerivative

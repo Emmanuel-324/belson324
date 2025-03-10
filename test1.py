@@ -3,7 +3,7 @@
 import pandas as pd
 
 # Load the CSV file
-input_file = "/home/emmanuel324/projects/belson324/Crystal_Plasticity/2-14-25/Increase_eigen/Test1/Data_eigen_increase/eigen_increase_out.csv"
+input_file = "/home/emmanuel324/projects/belson324/Crystal_Plasticity/2-28-25/Eigen/parameters1_eigen_new/Data/parameters1_eigen_new_out.csv"
 data = pd.read_csv(input_file)
 df = pd.read_csv(input_file)
 # Ensure 'time' column 

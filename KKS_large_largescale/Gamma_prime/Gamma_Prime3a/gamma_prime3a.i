@@ -64,6 +64,8 @@
 []
 
 
+
+
 [Bounds]
   [./eta_upper_bound]
     type = ConstantBounds
@@ -80,14 +82,14 @@
     bound_value = -1
   [../]
   [./eta2_upper_bound]
-    type = ConstantBoundsAux
+    type = ConstantBounds
     variable = bounds_dummy
     bounded_variable = eta2
     bound_type = upper
     bound_value = 1
   [../]
   [./eta2_lower_bound]
-    type = ConstantBoundsAux
+    type = ConstantBounds
     variable = bounds_dummy
     bounded_variable = eta2
     bound_type = lower
@@ -204,14 +206,12 @@
 
 
 [Materials]
-  # simple toy free energies
   [./f1]
     type = DerivativeParsedMaterial
     property_name = fc_1
-    coupled_variables = 'c1'
-    expression = '100.0*(c1-0.3111)^2'
+    coupled_variables = 'c1 c2 c3'
+    expression = '100.0*(c1-0.3333)^2 + 50.0*c1*c2 + 30.0*c1*c3'
   [../]
-  # Elastic energy of the phase 1
   [./elastic_free_energy_1]
     type = ElasticEnergyMaterial
     base_name = phase1
@@ -223,14 +223,14 @@
     type = DerivativeSumMaterial
     property_name = F1
     sum_materials = 'fc_1 fe_1'
-    args = 'c1'
+    args = 'c1 c2 c3'
   [../]
 
   [./f2]
     type = DerivativeParsedMaterial
     property_name = fc_2
-    args = 'c2'
-    expression = '100.0*(c2-0.34)^2'
+    coupled_variables = 'c1 c2 c3'
+    expression = '100.0*(c2-0.3333)^2 + 50.0*c1*c2 + 40.0*c2*c3'
   [../]
   # Elastic energy of the phase 2
   [./elastic_free_energy_2]
@@ -244,14 +244,14 @@
     type = DerivativeSumMaterial
     property_name = F2
     sum_materials = 'fc_2 fe_2'
-    args = 'c2'
+    args = 'c1 c2 c3'
   [../]
 
   [./f3]
     type = DerivativeParsedMaterial
     property_name = fc_3
-    args = 'c3'
-    expression = '5.0*(c3-0.1777)^2'
+    coupled_variables = 'c1 c2 c3'
+    expression = '5.0*(c3-0.3)^2 + 30.0*c1*c3 + 40.0*c2*c3'
   [../]
   # Elastic energy of the phase 3
   [./elastic_free_energy_3]
@@ -265,7 +265,7 @@
     type = DerivativeSumMaterial
     property_name = F3
     sum_materials = 'fc_3 fe_3'
-    args = 'c3'
+    args = 'c1 c2 c3'
   [../]
 
   # Switching functions for each phase
@@ -413,17 +413,13 @@
     h          = 'h1     h2     h3'
   [../]
 
-  [./global_strain]
-    type = ComputeSmallStrain
-    displacements = 'disp_x disp_y'
-  [../]
 []
 
 [Kernels]
   [./TensorMechanics]
     displacements = 'disp_x disp_y'
   [../]
-
+    
   #Kernels for diffusion equation
   [./diff_time]
     type = TimeDerivative

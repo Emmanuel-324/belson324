@@ -30,6 +30,41 @@
     order = CONSTANT
     family = MONOMIAL
   [../]
+  [./bounds_dummy]
+    order = FIRST
+    family = LAGRANGE
+  [../]
+[]
+
+[Bounds]
+  [./eta_upper_bound]
+    type = ConstantBoundsAux
+    variable = bounds_dummy
+    bounded_variable = eta1
+    bound_type = upper
+    bound_value = 1
+  [../]
+  [./eta_lower_bound]
+    type = ConstantBoundsAux
+    variable = bounds_dummy
+    bounded_variable = eta1
+    bound_type = lower
+    bound_value = -1
+  [../]
+  [./eta2_upper_bound]
+    type = ConstantBoundsAux
+    variable = bounds_dummy
+    bounded_variable = eta2
+    bound_type = upper
+    bound_value = 1
+  [../]
+  [./eta2_lower_bound]
+    type = ConstantBoundsAux
+    variable = bounds_dummy
+    bounded_variable = eta2
+    bound_type = lower
+    bound_value = -1
+  [../]
 []
 
 [Variables]
@@ -298,7 +333,7 @@
     kappa_name = kappa
   [../]
   [./multipler2]
-    type = MatReaction
+    type = MatReaction_abscouple
     variable = eta2
     v = lambda
     reaction_rate = L
@@ -483,6 +518,26 @@
     type = FDP
     full = true
   [../]
+[]
+[Postprocessors]
+  [./dofs]
+    type = NumDOFs
+  [../]
+   [./gr1area]
+     type = ElementIntegralVariablePostprocessor_new2
+     variable = eta1
+     execute_on = 'initial timestep_end'
+ [../]
+   [./gr2area]
+     type = ElementIntegralVariablePostprocessor_new2
+     variable = eta2
+     execute_on = 'initial timestep_end'
+ [../]
+   [./gr3area]
+     type = ElementIntegralVariablePostprocessor_new2
+     variable = eta3
+     execute_on = 'initial timestep_end'
+ [../]
 []
 
 [Outputs]

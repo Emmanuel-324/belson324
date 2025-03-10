@@ -63,33 +63,30 @@
   [../]
 []
 
-
-
-
 [Bounds]
   [./eta_upper_bound]
-    type = ConstantBounds
+    type = ConstantBoundsAux
     variable = bounds_dummy
     bounded_variable = eta1
     bound_type = upper
     bound_value = 1
   [../]
   [./eta_lower_bound]
-    type = ConstantBounds
+    type = ConstantBoundsAux
     variable = bounds_dummy
     bounded_variable = eta1
     bound_type = lower
     bound_value = -1
   [../]
   [./eta2_upper_bound]
-    type = ConstantBounds
+    type = ConstantBoundsAux
     variable = bounds_dummy
     bounded_variable = eta2
     bound_type = upper
     bound_value = 1
   [../]
   [./eta2_lower_bound]
-    type = ConstantBounds
+    type = ConstantBoundsAux
     variable = bounds_dummy
     bounded_variable = eta2
     bound_type = lower
@@ -110,7 +107,17 @@
     order = FIRST
     family = LAGRANGE
   [../]
+ # chemical potential solute 1
+ [./w1]
+  order = FIRST
+  family = LAGRANGE
+[../]
 
+ # chemical potential solute 2
+ [./w2]
+  order = FIRST
+  family = LAGRANGE
+ [../]
   # order parameter 2
   [./eta2]
     order = FIRST
@@ -124,14 +131,14 @@
 #    initial_condition = 0.0
   [../]
 
-  # phase concentration 1
+  # Ni phase concentration 1
   [./c1]
     order = FIRST
     family = LAGRANGE
 #    initial_condition = 0.3333
   [../]
 
-  # phase concentration 2
+  # Fe phase concentration 2
   [./c2]
     order = FIRST
     family = LAGRANGE
@@ -143,6 +150,32 @@
     order = FIRST
     family = LAGRANGE
 #    initial_condition = 0.2000
+  [../]
+  # Ni Liquid phase solute 1 concentration
+  [./c1l]
+    order = FIRST
+    family = LAGRANGE
+    initial_condition = 0.1
+  [../]
+  # Fe Liquid phase solute 2 concentration
+  [./c2l]
+    order = FIRST
+    family = LAGRANGE
+    initial_condition = 0.05
+  [../]
+
+  # Ni Solid phase solute 1 concentration
+  [./c1s]
+    order = FIRST
+    family = LAGRANGE
+    initial_condition = 0.8
+  [../]
+
+  # Fe Solid phase solute 2 concentration
+  [./c2s]
+    order = FIRST
+    family = LAGRANGE
+    initial_condition = 0.1
   [../]
 
   [./disp_x]
@@ -162,21 +195,21 @@
 [Functions]
   [./ic_func_c]
     type = ParsedFunction
-    expression = 0.5+0.01*(cos(1.05*x)*cos(1.1*y)+(cos(1.3*x)*cos(0.87*y))^2+cos(0.25*x-1.5*y)*cos(0.7*x-0.2*y))
+    value = 0.5+0.01*(cos(1.05*x)*cos(1.1*y)+(cos(1.3*x)*cos(0.87*y))^2+cos(0.25*x-1.5*y)*cos(0.7*x-0.2*y))
   [../]
   [./bc_func]
     type = ParsedFunction
-     expression =  sin(alpha*pi*x)
-     symbol_names =  alpha
-     symbol_values = 16
+    value = sin(alpha*pi*x)
+    vars = alpha
+    vals = 16
   [../]
   [./disp_func]
     type = ParsedFunction
-    expression =  'if(t<50,6e-3*t,0.3)'
+    value = 'if(t<50,6e-3*t,0.3)'
   [../]
   [./press_func]
     type = ParsedFunction
-    expression = '1'
+    value = '1'
   [../]
 []
 
@@ -206,64 +239,80 @@
 
 
 [Materials]
+  [./fl]
+    type = DerivativeParsedMaterial
+    property_name = fl
+    coupled_variables = 'c1l c2l'
+    expression = '(0.1-c1l)^2+(0.05-c2l)^2'
+  [../]
+
+  # Free energy of the solid
+  [./fs]
+    type = DerivativeParsedMaterial
+    property_name = fs
+    coupled_variables = 'c1s c2s'
+    expression = '(0.8-c1s)^2+(0.1-c2s)^2'
+  [../]
+  # simple toy free energies
   [./f1]
     type = DerivativeParsedMaterial
-    property_name = fc_1
-    coupled_variables = 'c1 c2 c3'
-    expression = '100.0*(c1-0.3333)^2 + 50.0*c1*c2 + 30.0*c1*c3'
+    f_name = fc_1
+    args = 'c1'
+    function = '100.0*(c1-0.3333)^2'
   [../]
+  # Elastic energy of the phase 1
   [./elastic_free_energy_1]
     type = ElasticEnergyMaterial
     base_name = phase1
-    property_name = fe_1
+    f_name = fe_1
     args = ' '
   [../]
   # Total free energy of the phase 1
   [./Total_energy_1]
     type = DerivativeSumMaterial
-    property_name = F1
+    f_name = F1
     sum_materials = 'fc_1 fe_1'
     args = 'c1'
   [../]
 
   [./f2]
     type = DerivativeParsedMaterial
-    property_name = fc_2
-    coupled_variables = 'c1 c2 c3'
-    expression = '100.0*(c2-0.3333)^2 + 50.0*c1*c2 + 40.0*c2*c3'
+    f_name = fc_2
+    args = 'c2'
+    function = '100.0*(c2-0.3333)^2'
   [../]
   # Elastic energy of the phase 2
   [./elastic_free_energy_2]
     type = ElasticEnergyMaterial
     base_name = phase2
-    property_name = fe_2
+    f_name = fe_2
     args = ' '
   [../]
   # Total free energy of the phase 2
   [./Total_energy_2]
     type = DerivativeSumMaterial
-    property_name = F2
+    f_name = F2
     sum_materials = 'fc_2 fe_2'
     args = 'c2'
   [../]
 
   [./f3]
     type = DerivativeParsedMaterial
-    property_name = fc_3
-    coupled_variables = 'c1 c2 c3'
-    expression = '5.0*(c3-0.3)^2 + 30.0*c1*c3 + 40.0*c2*c3'
+    f_name = fc_3
+    args = 'c3'
+    function = '5.0*(c3-0.20)^2'
   [../]
   # Elastic energy of the phase 3
   [./elastic_free_energy_3]
     type = ElasticEnergyMaterial
     base_name = phase3
-    property_name = fe_3
+    f_name = fe_3
     args = ' '
   [../]
   # Total free energy of the phase 3
   [./Total_energy_3]
     type = DerivativeSumMaterial
-    property_name = F3
+    f_name = F3
     sum_materials = 'fc_3 fe_3'
     args = 'c3'
   [../]
@@ -295,19 +344,19 @@
   [./Dh1]
     type = DerivativeParsedMaterial
     material_property_names = 'D h1'
-    expression = D*h1
+    function = D*h1
     f_name = Dh1
   [../]
   [./Dh2]
     type = DerivativeParsedMaterial
     material_property_names = 'D h2'
-    expression = D*h2
+    function = D*h2
     f_name = Dh2
   [../]
   [./Dh3]
     type = DerivativeParsedMaterial
     material_property_names = 'D h3'
-    expression = D*h3
+    function = D*h3
     f_name = Dh3
   [../]
 
@@ -413,13 +462,36 @@
     h          = 'h1     h2     h3'
   [../]
 
+  [./global_strain]
+    type = ComputeSmallStrain
+    displacements = 'disp_x disp_y'
+  [../]
 []
 
 [Kernels]
   [./TensorMechanics]
     displacements = 'disp_x disp_y'
   [../]
-    
+ #
+  # Cahn-Hilliard Equations
+  #
+  [./CHBulk1]
+    type = KKSSplitCHCRes
+    variable = c1
+    ca       = c1l
+    fa_name  = fl
+    w        = w1
+    args_a   = 'c2l'
+  [../]
+  [./CHBulk2]
+    type = KKSSplitCHCRes
+    variable = c2
+    ca       = c2l
+    fa_name  = fl
+    w        = w2
+    args_a   = 'c1l'
+  [../]
+
   #Kernels for diffusion equation
   [./diff_time]
     type = TimeDerivative
@@ -459,15 +531,7 @@
     wi        = 0.01
     args      = 'c1 c2 c3 eta2 eta3'
   [../]
-  [./ACBulkC1]
-    type = KKSMultiACBulkC
-    variable  = eta1
-    Fj_names  = 'F1 F2 F3'
-    hj_names  = 'h1 h2 h3'
-    cj_names  = 'c1 c2 c3'
-    eta_i     = eta1
-    args      = 'eta2 eta3'
-  [../]
+  
   [./ACInterface1]
     type = ACInterface
     variable = eta1
@@ -489,21 +553,41 @@
     wi        = 0.01
     args      = 'c1 c2 c3 eta1 eta3'
   [../]
-  [./ACBulkC2]
-    type = KKSMultiACBulkC
-    variable  = eta2
-    Fj_names  = 'F1 F2 F3'
-    hj_names  = 'h1 h2 h3'
-    cj_names  = 'c1 c2 c3'
-    eta_i     = eta2
-    args      = 'eta1 eta3'
-  [../]
+
   [./ACInterface2]
     type = ACInterface
     variable = eta2
     kappa_name = kappa
   [../]
-
+    [./ACBulkF]
+      type = KKSACBulkF
+      variable = 'eta1 eta2'
+      fa_name  = fl
+      fb_name  = fs
+      w        = 1.0
+      coupled_variables = 'c1l c1s c2l c2s'
+    [../]
+    [./ACBulkC1]
+      type = KKSACBulkC
+      variable = eta1
+      ca       = c1l
+      cb       = c1s
+      fa_name  = fl
+      coupled_variables     = 'c2l'
+    [../]
+    [./ACBulkC2]
+      type = KKSACBulkC
+      variable = eta2
+      ca       = c2l
+      cb       = c2s
+      fa_name  = fl
+      coupled_variables     = 'c1l'
+    [../]
+    [./ACInterface]
+      type = ACInterface
+      variable = eta
+      kappa_name = eps_sq
+    [../]
   # Kernels for constraint equation eta1 + eta2 + eta3 = 1
   # eta3 is the nonlinear variable for the constraint equation
   [./eta3reaction]
@@ -529,7 +613,42 @@
     value = -1.0
   [../]
 
+     # enforce c1 = (1-h(eta))*c1l + h(eta)*c1s
+  [./PhaseConc1]
+    type = KKSPhaseConcentration
+    ca       = c1l
+    variable = c1s
+    c        = c1
+    eta      = eta1
+  [../]
 
+  # enforce c2 = (1-h(eta))*c2l + h(eta)*c2s
+  [./PhaseConc2]
+    type = KKSPhaseConcentration
+    ca       = c2l
+    variable = c2s
+    c        = c2
+    eta      = eta2
+  [../]
+ # enforce pointwise equality of chemical potentials
+ [./ChemPotSolute1]
+  type = KKSPhaseChemicalPotential
+  variable = c1l
+  cb       = c1s
+  fa_name  = fl
+  fb_name  = fs
+  args_a   = 'c2l'
+  args_b   = 'c2s'
+[../]
+[./ChemPotSolute2]
+  type = KKSPhaseChemicalPotential
+  variable = c2l
+  cb       = c2s
+  fa_name  = fl
+  fb_name  = fs
+  args_a   = 'c1l'
+  args_b   = 'c1s'
+[../]
   # Phase concentration constraints
   [./chempot12]
     type = KKSPhaseChemicalPotential
