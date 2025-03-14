@@ -14,13 +14,6 @@
 []
 
 [BCs]
-  [./u_right_pull]
-    type = Pressure
-    displacements = 'disp_x disp_y'
-    variable = disp_x
-    boundary = right
-    factor = 0
-  [../]
   [./all]
     type =  NeumannBC
     variable = 'c'
@@ -39,8 +32,35 @@
     boundary = left
     value = 0
   [../]
+  [./load]
+    #Applies the pressure
+    type = Pressure
+    boundary = right
+    factor = -1.25 # Pa
+    displacements= 'disp_x disp_y'
+    variable = disp_x
+  [../]
+  [./stressfree_boundary]
+    #Applies the pressure
+    type = Pressure
+    boundary = top
+    factor = 0.0 # Pa
+    variable = disp_y
+    displacements= 'disp_x disp_y'
+  [../]
+#  [./right_x]
+#    type = PresetBC
+#    variable = disp_x
+#    boundary = right
+#    value = 0.028
+#  [../]
+#  [./top_y]
+#    type = PresetBC
+#    variable = disp_y
+#    boundary = top
+#    value = -0.0084
+#  [../]
 []
-
 
 [AuxVariables]
   [./Energy]
@@ -64,28 +84,28 @@
 
 [Bounds]
   [./eta_upper_bound]
-    type = ConstantBounds
+    type = ConstantBoundsAux
     variable = bounds_dummy
     bounded_variable = eta1
     bound_type = upper
     bound_value = 1
   [../]
   [./eta_lower_bound]
-    type = ConstantBounds
+    type = ConstantBoundsAux
     variable = bounds_dummy
     bounded_variable = eta1
     bound_type = lower
     bound_value = -1
   [../]
   [./eta2_upper_bound]
-    type = ConstantBounds
+    type = ConstantBoundsAux
     variable = bounds_dummy
     bounded_variable = eta2
     bound_type = upper
     bound_value = 1
   [../]
   [./eta2_lower_bound]
-    type = ConstantBounds
+    type = ConstantBoundsAux
     variable = bounds_dummy
     bounded_variable = eta2
     bound_type = lower
@@ -158,21 +178,13 @@
 [Functions]
   [./ic_func_c]
     type = ParsedFunction
-    expression = 0.5+0.01*(cos(1.05*x)*cos(1.1*y)+(cos(1.3*x)*cos(0.87*y))^2+cos(0.25*x-1.5*y)*cos(0.7*x-0.2*y))
+    value = 0.5+0.01*(cos(1.05*x)*cos(1.1*y)+(cos(1.3*x)*cos(0.87*y))^2+cos(0.25*x-1.5*y)*cos(0.7*x-0.2*y))
   [../]
   [./bc_func]
     type = ParsedFunction
-    expression = sin(alpha*pi*x)
-    symbol_names = alpha
-    symbol_values = 16
-  [../]
-  [./disp_func]
-    type = ParsedFunction
-    expression = 'if(t<50,6e-3*t,0.3)'
-  [../]
-  [./press_func]
-    type = ParsedFunction
-    expression = '1'
+    value = sin(alpha*pi*x)
+    vars = alpha
+    vals = 16
   [../]
 []
 
@@ -180,16 +192,33 @@
   [./eta1]
     variable = eta1
     type = RandomIC
-    min = -0.6
-    max = 0.6
+    min = -0.1625
+    max = 0.1625
     seed = 192
+#    type = SpecifiedSmoothCircleIC
+#    radius = 8.0
+#    invalue = 0.9
+#    outvalue = 0.1
+#    int_width = 0.5
+#    x_positions = '10'
+#    y_positions = '10'
+#    z_positions = '0'
+#    radii = '3.0'
   [../]
   [./eta2]
     variable = eta2
     type = RandomIC
-    min = -0.6
-    max = 0.6
+    min = -0.1625
+    max = 0.1625
     seed = 389	
+#    variable = eta2
+#    type = SmoothCircleIC
+#    x1 = 30.0
+#    y1 = 30.0
+#    radius = 3.0
+#    invalue = 0.9
+#    outvalue = 0.1
+#    int_width = 0.5
   [../]
   [./c]
     variable = c
@@ -197,6 +226,17 @@
     min = 0.24375	
     max = 0.25625
     seed = 89	
+#    type = SpecifiedSmoothCircleIC
+#    radius = 8.0
+#    invalue = 0.3333
+#    outvalue = 0.2500
+#    int_width = 0.5
+#    x_positions = '10 30'
+#    y_positions = '10 30'
+#    z_positions = '0  0'
+#    radii = '3.0 3.0'
+#    type = functionIC
+#    function = ic_func_c
   [../]
 []
 
@@ -205,63 +245,63 @@
   # simple toy free energies
   [./f1]
     type = DerivativeParsedMaterial
-    property_name = fc_1
-    coupled_variables = 'c1'
-    expression = '1e5 * (4e5 * (c1 - 0.187)^2 + 9.5e5 * (c1- 0.0157)^2)'
+    f_name = fc_1
+    coupled_variables = 'c1 c2'
+    expression = '1e5 * (4e5 * (c1 - 0.187)^2 + 9.5e5 * (c2- 0.0157)^2)'
   [../]
   # Elastic energy of the phase 1
   [./elastic_free_energy_1]
     type = ElasticEnergyMaterial
     base_name = phase1
-    property_name = fe_1
+    f_name = fe_1
     coupled_variables = ' '
   [../]
   # Total free energy of the phase 1
   [./Total_energy_1]
     type = DerivativeSumMaterial
-    property_name = F1
+    f_name = F1
     sum_materials = 'fc_1 fe_1'
-    coupled_variables = 'c1'
+    coupled_variables = 'c1 c2'
   [../]
 
   [./f2]
     type = DerivativeParsedMaterial
-    property_name = fc_2
-    coupled_variables = 'c2'
-    expression =  '1e5 * (4e5 * (c2 - 0.000727)^2 + 9.5e5 * (c2 - 0.196)^2) + 1.5485e8'
+    f_name = fc_2
+    coupled_variables = 'c1 c2'
+    expression = '1e5 * (4e5 * (c1 - 0.000727)^2 + 9.5e5 * (c2 - 0.196)^2) + 1.5485e8'
   [../]
   # Elastic energy of the phase 2
   [./elastic_free_energy_2]
     type = ElasticEnergyMaterial
     base_name = phase2
-    property_name = fe_2
+    f_name = fe_2
     coupled_variables = ' '
   [../]
   # Total free energy of the phase 2
   [./Total_energy_2]
     type = DerivativeSumMaterial
-    property_name = F2
+    f_name = F2
     sum_materials = 'fc_2 fe_2'
-    coupled_variables = 'c2'
+    coupled_variables = 'c1 c2'
   [../]
 
   [./f3]
     type = DerivativeParsedMaterial
-    property_name = fc_3
-    coupled_variables = 'c3'
-    expression = '1e5 * (4e5 * (c3 - 0.0161)^2 + 9.5e5 * (c3 - 0.00723)^2)'
+    f_name = fc_3
+    coupled_variables = 'c1 c2'
+    expression = '1e5 * (4e5 * (c1 - 0.0161)^2 + 9.5e5 * (c2 - 0.00723)^2)'
   [../]
   # Elastic energy of the phase 3
   [./elastic_free_energy_3]
     type = ElasticEnergyMaterial
     base_name = phase3
-    property_name = fe_3
+    f_name = fe_3
     coupled_variables = ' '
   [../]
   # Total free energy of the phase 3
   [./Total_energy_3]
     type = DerivativeSumMaterial
-    property_name = F3
+    f_name = F3
     sum_materials = 'fc_3 fe_3'
     coupled_variables = 'c3'
   [../]
@@ -294,19 +334,19 @@
     type = DerivativeParsedMaterial
     material_property_names = 'D h1'
     expression = D*h1
-    property_name = Dh1
+    f_name = Dh1
   [../]
   [./Dh2]
     type = DerivativeParsedMaterial
     material_property_names = 'D h2'
     expression = D*h2
-    property_name = Dh2
+    f_name = Dh2
   [../]
   [./Dh3]
     type = DerivativeParsedMaterial
     material_property_names = 'D h3'
     expression = D*h3
-    property_name = Dh3
+    f_name = Dh3
   [../]
 
   # Barrier functions for each phase
@@ -445,7 +485,7 @@
     diffusivity = Dh3
     v = c3
   [../]
- 
+
   # Kernels for Allen-Cahn equation for eta1
   [./deta1dt]
     type = TimeDerivative
@@ -498,7 +538,7 @@
     hj_names  = 'h1 h2 h3'
     cj_names  = 'c1 c2 c3'
     eta_i     = eta2
-    coupled_variables    = 'eta1 eta3'
+    coupled_variables      = 'eta1 eta3'
   [../]
   [./ACInterface2]
     type = ACInterface
@@ -511,7 +551,7 @@
   [./eta3reaction]
     type = MatReaction
     variable = eta3
-    reaction_rate = 1
+    mob_name = 1
   [../]
   [./eta1reaction]
     type = MatReaction_abscouple
@@ -540,6 +580,13 @@
     fa_name  = F1
     fb_name  = F2
   [../]
+  [./chempot13]
+      type = KKSPhaseChemicalPotential
+      variable = c1
+      cb       = c3
+      fa_name  = F1
+      fb_name  = F3
+  [../]
   [./chempot23]
     type = KKSPhaseChemicalPotential
     variable = c2
@@ -549,10 +596,10 @@
   [../]
   [./phaseconcentration]
     type = KKSMultiPhaseConcentration
-    variable = c3
-    cj = 'c1 c2 c3'
-    hj_names = 'h1 h2 h3'
-    etas = 'eta1 eta2 eta3'
+    variable = c1
+    cj = 'c1 c2'
+    hj_names = 'h1 h2'
+    etas = 'eta1 eta2'
     c = c
   [../]
 []
@@ -592,8 +639,11 @@
 [Executioner]
   type = Transient
   solve_type = 'PJFNK'
+#  petsc_options_iname = '-pc_type -sub_pc_type   -sub_pc_factor_shift_type'
+#  petsc_options_value = 'asm       ilu            nonzero'
   petsc_options_iname = '-pc_type -pc_factor_mat_solver_package -snes_type'
   petsc_options_value = 'lu            mumps            vinewtonrsls'
+#  petsc_options_value = 'lu            superlu_dist            vinewtonrsls'
 
   l_max_its = 50
   nl_max_its = 25
@@ -601,11 +651,11 @@
   nl_rel_tol = 1.0e-6
   nl_abs_tol = 1.0e-8
 
-  end_time = 8000
+  end_time = 14400
 
   [./TimeStepper]
     type = IterationAdaptiveDT
-    dt = 5e-8
+    dt = 5e-4
     cutback_factor = 0.75
     growth_factor = 1.2
     optimal_iterations = 20
@@ -642,17 +692,17 @@
      function = bc_func
    [../]
     [./gr1area]
-      type = ElementIntegralVariablePostprocessor_new2
+      type = ElementIntegralVariablePostprocessor
       variable = eta1
       execute_on = 'initial timestep_end'
   [../]
     [./gr2area]
-      type = ElementIntegralVariablePostprocessor_new2
+      type = ElementIntegralVariablePostprocessor
       variable = eta2
       execute_on = 'initial timestep_end'
   [../]
     [./gr3area]
-      type = ElementIntegralVariablePostprocessor_new2
+      type = ElementIntegralVariablePostprocessor
       variable = eta3
       execute_on = 'initial timestep_end'
   [../]

@@ -20,5 +20,5 @@ def process_stress_strain(csv_file):
     print(f"Processed tensile stress-strain data saved to: {csv_file}")
 
 # Example usage:
-csv_file_path = "/home/emmanuel324/projects/belson324/Crystal_Plasticity/2-14-25/Slip_Modes/slip_mode2/Data_slip_system_mode2/eigen_increase_out.csv"  # Replace this with the actual file path
+csv_file_path = "/home/emmanuel324/projects/belson324/Crystal_Plasticity/3-7-25/Eigen_work/Parameters_eigenwork1/Data/Parameters_eigenwork1_out.csv"  # Replace this with the actual file path
 process_stress_strain(csv_file_path)

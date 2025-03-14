@@ -207,7 +207,7 @@
     type = DerivativeParsedMaterial
     property_name = fc_1
     coupled_variables = 'c1'
-    expression = '100.0*(c1-0.3111)^2'
+    expression = '1e5 * (4e5 * (c1 - 0.187)^2 + 9.5e5 * (c1- 0.0157)^2)'
   [../]
   # Elastic energy of the phase 1
   [./elastic_free_energy_1]
@@ -228,7 +228,7 @@
     type = DerivativeParsedMaterial
     property_name = fc_2
     coupled_variables = 'c2'
-    expression = '100.0*(c2-0.34)^2'
+    expression =  '1e5 * (4e5 * (c2 - 0.000727)^2 + 9.5e5 * (c2 - 0.196)^2) + 1.5485e8'
   [../]
   # Elastic energy of the phase 2
   [./elastic_free_energy_2]
@@ -249,7 +249,7 @@
     type = DerivativeParsedMaterial
     property_name = fc_3
     coupled_variables = 'c3'
-    expression = '5.0*(c3-0.)^2'
+    expression = '1e5 * (4e5 * (c3 - 0.0161)^2 + 9.5e5 * (c3 - 0.00723)^2)'
   [../]
   # Elastic energy of the phase 3
   [./elastic_free_energy_3]
@@ -445,7 +445,7 @@
     diffusivity = Dh3
     v = c3
   [../]
-
+ 
   # Kernels for Allen-Cahn equation for eta1
   [./deta1dt]
     type = TimeDerivative
@@ -601,7 +601,7 @@
   nl_rel_tol = 1.0e-6
   nl_abs_tol = 1.0e-8
 
-  end_time = 14400
+  end_time = 8000
 
   [./TimeStepper]
     type = IterationAdaptiveDT

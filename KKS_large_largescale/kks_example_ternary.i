@@ -44,7 +44,6 @@
     family = LAGRANGE
   [../]
 
-
   # chemical potential solute 1
   [./w1]
     order = FIRST
@@ -56,7 +55,6 @@
     order = FIRST
     family = LAGRANGE
   [../]
-
 
   # Liquid phase solute 1 concentration
   [./c1l]
@@ -103,7 +101,6 @@
   [../]
 
 []
-
 
 [ICs]
   [./eta]
@@ -244,7 +241,6 @@
     mob_name = M
     variable = w2
   [../]
-
 
   #
   # Allen-Cahn Equation

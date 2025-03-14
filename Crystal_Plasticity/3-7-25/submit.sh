@@ -1,6 +1,6 @@
 #!/bin/bash                                                                     
-#SBATCH --job-name   gamma_prime5.i                                            
-#SBATCH --out  gamma_prime5.out        
+#SBATCH --job-name   help.i                                            
+#SBATCH --out  help.out        
 #SBATCH --nodes 1                                                              
 #SBATCH --ntasks 8
 #SBATCH --cpus-per-task 4
@@ -17,11 +17,4 @@
 module reset
 module load Miniforge3/24.1.2-0
 source activate /home/emmanuel324/mambaforge3/envs/moose 
-/home/emmanuel324/projects/belson324/belson324-opt  -i  gamma_prime5.i
-
-
-
-
-
-
-
+/home/emmanuel324/projects/belson324/belson324-opt  -i  help.i

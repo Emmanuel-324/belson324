@@ -275,14 +275,14 @@
   [./h1]
     type = SwitchingFunctionMultiPhaseMaterial
     phase_etas = eta1
-    all_etas = 'eta1 eta2 eta3'
+    all_etas = 'eta1 eta2'
     h_name = h1
   [../]
   # h2(eta1, eta2, eta3)
   [./h2]
     type = SwitchingFunctionMultiPhaseMaterial
     phase_etas = eta2
-    all_etas = 'eta1 eta2 eta3'
+    all_etas = 'eta1 eta2'
     h_name = h2
   [../]
   # h3(eta1, eta2, eta3)
@@ -493,7 +493,7 @@
     gi_name   = g2
     eta_i     = eta2
     wi        = 0.01
-    args      = 'c1 c2 c3 eta1 eta3'
+    args      = 'c1l c1s c2l c2s'
   [../]
   [./ACBulkC2]
     type = KKSMultiACBulkC

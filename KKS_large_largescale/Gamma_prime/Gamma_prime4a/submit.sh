@@ -2,7 +2,7 @@
 #SBATCH --job-name   gamma_prime4a.i                                            
 #SBATCH --out  gamma_prime4a.out        
 #SBATCH --nodes 1                                                              
-#SBATCH --ntasks-per-node 20
+#SBATCH --ntasks-per-node 8
 #SBATCH --cpus-per-task 4
 #SBATCH --account amcorrosion                                                  
 ##SBATCH --partition normal_q                                                   
