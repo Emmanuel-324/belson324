@@ -64,28 +64,28 @@
 
 [Bounds]
   [./eta_upper_bound]
-    type = ConstantBounds
+    type = ConstantBoundsAux
     variable = bounds_dummy
     bounded_variable = eta1
     bound_type = upper
     bound_value = 1
   [../]
   [./eta_lower_bound]
-    type = ConstantBounds
+    type = ConstantBoundsAux
     variable = bounds_dummy
     bounded_variable = eta1
     bound_type = lower
     bound_value = -1
   [../]
   [./eta2_upper_bound]
-    type = ConstantBounds
+    type = ConstantBoundsAux
     variable = bounds_dummy
     bounded_variable = eta2
     bound_type = upper
     bound_value = 1
   [../]
   [./eta2_lower_bound]
-    type = ConstantBounds
+    type = ConstantBoundsAux
     variable = bounds_dummy
     bounded_variable = eta2
     bound_type = lower
@@ -158,21 +158,21 @@
 [Functions]
   [./ic_func_c]
     type = ParsedFunction
-    expression = 0.5+0.01*(cos(1.05*x)*cos(1.1*y)+(cos(1.3*x)*cos(0.87*y))^2+cos(0.25*x-1.5*y)*cos(0.7*x-0.2*y))
+    value = 0.5+0.01*(cos(1.05*x)*cos(1.1*y)+(cos(1.3*x)*cos(0.87*y))^2+cos(0.25*x-1.5*y)*cos(0.7*x-0.2*y))
   [../]
   [./bc_func]
     type = ParsedFunction
-    expression = sin(alpha*pi*x)
-    symbol_names = alpha
-    symbol_values = 16
+    value = sin(alpha*pi*x)
+    vars = alpha
+    vals = 16
   [../]
   [./disp_func]
     type = ParsedFunction
-    expression = 'if(t<50,6e-3*t,0.3)'
+    value = 'if(t<50,6e-3*t,0.3)'
   [../]
   [./press_func]
     type = ParsedFunction
-    expression = '1'
+    value = '1'
   [../]
 []
 
@@ -180,15 +180,15 @@
   [./eta1]
     variable = eta1
     type = RandomIC
-    min = -0.6
-    max = 0.6
+    min = -0.1625
+    max = 0.1625
     seed = 192
   [../]
   [./eta2]
     variable = eta2
     type = RandomIC
-    min = -0.6
-    max = 0.6
+    min = -0.1625
+    max = 0.1625
     seed = 389	
   [../]
   [./c]
@@ -205,65 +205,65 @@
   # simple toy free energies
   [./f1]
     type = DerivativeParsedMaterial
-    property_name = fc_1
-    coupled_variables = 'c1'
-    expression = '1e5 * (4e5 * (c1 - 0.187)^2 + 9.5e5 * (c1- 0.0157)^2)'
+    f_name = fc_1
+    args = 'c1'
+    function = '100.0*(c1-0.3333)^2'
   [../]
   # Elastic energy of the phase 1
   [./elastic_free_energy_1]
     type = ElasticEnergyMaterial
     base_name = phase1
-    property_name = fe_1
-    coupled_variables = ' '
+    f_name = fe_1
+    args = ' '
   [../]
   # Total free energy of the phase 1
   [./Total_energy_1]
     type = DerivativeSumMaterial
-    property_name = F1
+    f_name = F1
     sum_materials = 'fc_1 fe_1'
-    coupled_variables = 'c1'
+    args = 'c1'
   [../]
 
   [./f2]
     type = DerivativeParsedMaterial
-    property_name = fc_2
-    coupled_variables = 'c2'
-    expression =  '1e5 * (4e5 * (c2 - 0.000727)^2 + 9.5e5 * (c2 - 0.196)^2) + 1.5485e8'
+    f_name = fc_2
+    args = 'c2'
+    function = '100.0*(c2-0.3333)^2'
   [../]
   # Elastic energy of the phase 2
   [./elastic_free_energy_2]
     type = ElasticEnergyMaterial
     base_name = phase2
-    property_name = fe_2
-    coupled_variables = ' '
+    f_name = fe_2
+    args = ' '
   [../]
   # Total free energy of the phase 2
   [./Total_energy_2]
     type = DerivativeSumMaterial
-    property_name = F2
+    f_name = F2
     sum_materials = 'fc_2 fe_2'
-    coupled_variables = 'c2'
+    args = 'c2'
   [../]
 
   [./f3]
     type = DerivativeParsedMaterial
-    property_name = fc_3
-    coupled_variables = 'c3'
-    expression = '1e5 * (4e5 * (c3 - 0.0161)^2 + 9.5e5 * (c3 - 0.00723)^2)'
+    f_name = fc_3
+    args = 'c3'
+    function = '5.0*(c3-0.20)^2'
   [../]
   # Elastic energy of the phase 3
   [./elastic_free_energy_3]
     type = ElasticEnergyMaterial
     base_name = phase3
-    property_name = fe_3
-    coupled_variables = ' '
+    f_name = fe_3
+    args = ' '
   [../]
   # Total free energy of the phase 3
   [./Total_energy_3]
     type = DerivativeSumMaterial
-    property_name = F3
+    f_name = F3
     sum_materials = 'fc_3 fe_3'
-    coupled_variables = 'c3'
+    args = 'c3'
   [../]
 
   # Switching functions for each phase
@@ -293,20 +293,20 @@
   [./Dh1]
     type = DerivativeParsedMaterial
     material_property_names = 'D h1'
-    expression = D*h1
-    property_name = Dh1
+    function = D*h1
+    f_name = Dh1
   [../]
   [./Dh2]
     type = DerivativeParsedMaterial
     material_property_names = 'D h2'
-    expression = D*h2
-    property_name = Dh2
+    function = D*h2
+    f_name = Dh2
   [../]
   [./Dh3]
     type = DerivativeParsedMaterial
     material_property_names = 'D h3'
-    expression = D*h3
-    property_name = Dh3
+    function = D*h3
+    f_name = Dh3
   [../]
 
   # Barrier functions for each phase
@@ -445,7 +445,7 @@
     diffusivity = Dh3
     v = c3
   [../]
- 
+
   # Kernels for Allen-Cahn equation for eta1
   [./deta1dt]
     type = TimeDerivative
@@ -459,7 +459,7 @@
     gi_name   = g1
     eta_i     = eta1
     wi        = 0.01
-    coupled_variables      = 'c1 c2 c3 eta2 eta3'
+    args      = 'c1 c2 c3 eta2 eta3'
   [../]
   [./ACBulkC1]
     type = KKSMultiACBulkC
@@ -468,7 +468,7 @@
     hj_names  = 'h1 h2 h3'
     cj_names  = 'c1 c2 c3'
     eta_i     = eta1
-    coupled_variables      = 'eta2 eta3'
+    args      = 'eta2 eta3'
   [../]
   [./ACInterface1]
     type = ACInterface
@@ -489,7 +489,7 @@
     gi_name   = g2
     eta_i     = eta2
     wi        = 0.01
-    coupled_variables      = 'c1 c2 c3 eta1 eta3'
+    args      = 'c1 c2 c3 eta1 eta3'
   [../]
   [./ACBulkC2]
     type = KKSMultiACBulkC
@@ -498,14 +498,14 @@
     hj_names  = 'h1 h2 h3'
     cj_names  = 'c1 c2 c3'
     eta_i     = eta2
-    coupled_variables    = 'eta1 eta3'
+    args      = 'eta1 eta3'
   [../]
   [./ACInterface2]
     type = ACInterface
     variable = eta2
     kappa_name = kappa
   [../]
-  
+
   # Kernels for constraint equation eta1 + eta2 + eta3 = 1
   # eta3 is the nonlinear variable for the constraint equation
   [./eta3reaction]
@@ -517,13 +517,13 @@
     type = MatReaction_abscouple
     variable = eta3
     v = eta1
-    mob_name = 1
+    reaction_rate = 1
   [../]
   [./eta2reaction]
     type = MatReaction_abscouple
     variable = eta3
     v = eta2
-    mob_name = 1
+    reaction_rate = 1
   [../]
   [./one]
     type = BodyForce
@@ -601,7 +601,7 @@
   nl_rel_tol = 1.0e-6
   nl_abs_tol = 1.0e-8
 
-  end_time = 8000
+  end_time = 14400
 
   [./TimeStepper]
     type = IterationAdaptiveDT
@@ -642,17 +642,17 @@
      function = bc_func
    [../]
     [./gr1area]
-      type = ElementIntegralVariablePostprocessor_new2
+      type = ElementIntegralVariablePostprocessor
       variable = eta1
       execute_on = 'initial timestep_end'
   [../]
     [./gr2area]
-      type = ElementIntegralVariablePostprocessor_new2
+      type = ElementIntegralVariablePostprocessor
       variable = eta2
       execute_on = 'initial timestep_end'
   [../]
     [./gr3area]
-      type = ElementIntegralVariablePostprocessor_new2
+      type = ElementIntegralVariablePostprocessor
       variable = eta3
       execute_on = 'initial timestep_end'
   [../]

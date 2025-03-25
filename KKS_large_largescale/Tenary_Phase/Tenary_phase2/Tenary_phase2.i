@@ -21,9 +21,15 @@
     boundary = right
     factor = 0
   [../]
-  [./all]
+  [./c_Al]
     type =  NeumannBC
-    variable = 'c'
+    variable = 'c_Al'
+    boundary = 'left right top bottom'
+    value = 0
+  [../]	
+  [./c_Nb]
+    type =  NeumannBC
+    variable = 'c_Nb'
     boundary = 'left right top bottom'
     value = 0
   [../]	
@@ -40,6 +46,7 @@
     value = 0
   [../]
 []
+
 
 [AuxVariables]
   [./Energy]
@@ -94,12 +101,24 @@
 
 
 [Variables]
-  # concentration
-  [./c]
+  # Aluminum (Al) solute concentration  
+  [./c_Al]
     order = FIRST
     family = LAGRANGE
   [../]
 
+ # Niobium (Nb) solute concentration
+  [./c_Nb]
+    order = FIRST
+    family = LAGRANGE
+  [../]
+
+# Niobium (Ni) solute concentration
+#[./c_Ni]
+ # order = FIRST
+#  family = LAGRANGE
+#[../]
+  
   # order parameter 1
   [./eta1]
     order = FIRST
@@ -119,25 +138,32 @@
 #    initial_condition = 0.0
   [../]
 
-  # phase concentration 1
-  [./c1]
+  # Gamma (γ) phase solute concentrations
+  [./c_Al_gamma]
     order = FIRST
     family = LAGRANGE
-#    initial_condition = 0.3333
+   initial_condition = 0.1
   [../]
 
-  # phase concentration 2
-  [./c2]
+ 
+  [./c_Nb_gamma]
     order = FIRST
     family = LAGRANGE
-#    initial_condition = 0.3333
+    initial_condition = 0.05
   [../]
 
-  # phase concentration 3
-  [./c3]
+  # Gamma Prime (γ') phase solute concentrations
+  [./c_Al_gammaP]
     order = FIRST
     family = LAGRANGE
-#    initial_condition = 0.2000
+    initial_condition = 0.8
+  [../]
+
+  # Solid phase solute 2 concentration
+  [./c_Nb_gammaP]
+    order = FIRST
+    family = LAGRANGE
+    initial_condition = 0.1
   [../]
 
   [./disp_x]
@@ -159,12 +185,19 @@
     type = ParsedFunction
     value = 0.5+0.01*(cos(1.05*x)*cos(1.1*y)+(cos(1.3*x)*cos(0.87*y))^2+cos(0.25*x-1.5*y)*cos(0.7*x-0.2*y))
   [../]
-  
   [./bc_func]
     type = ParsedFunction
     value = sin(alpha*pi*x)
     vars = alpha
     vals = 16
+  [../]
+  [./disp_func]
+    type = ParsedFunction
+    value = 'if(t<50,6e-3*t,0.3)'
+  [../]
+  [./press_func]
+    type = ParsedFunction
+    value = '1'
   [../]
 []
 
@@ -172,19 +205,26 @@
   [./eta1]
     variable = eta1
     type = RandomIC
-    min = -0.6
-    max = 0.6
+    min = -0.1625
+    max = 0.1625
     seed = 192
   [../]
   [./eta2]
     variable = eta2
     type = RandomIC
-    min = -0.6
-    max = 0.6
+    min = -0.1625
+    max = 0.1625
     seed = 389	
   [../]
-  [./c]
-    variable = c
+  [./c_Al]
+    variable = c_Al
+    type = RandomIC
+    min = 0.24375	
+    max = 0.25625
+    seed = 89	
+  [../]
+  [./c_Nb]
+    variable = c_Nb
     type = RandomIC
     min = 0.24375	
     max = 0.25625
@@ -198,65 +238,46 @@
   [./f1]
     type = DerivativeParsedMaterial
     f_name = fc_1
-    coupled_variables = 'c1 c2'
-    expression = '1e5 * (4e5 * (c1 - 0.187)^2 + 9.5e5 * (c2- 0.0157)^2)'
+    args = 'c_Al_gamma c_Nb_gamma'
+    function = '1e5 * (4e5 * (c_Al_gamma - 0.187)^2 + 9.5e5 * (c_Nb_gamma- 0.0157)^2)'
   [../]
   # Elastic energy of the phase 1
   [./elastic_free_energy_1]
     type = ElasticEnergyMaterial
     base_name = phase1
     f_name = fe_1
-    coupled_variables = ' '
+    args = ' '
   [../]
   # Total free energy of the phase 1
   [./Total_energy_1]
     type = DerivativeSumMaterial
     f_name = F1
     sum_materials = 'fc_1 fe_1'
-    coupled_variables = 'c1 c2'
+    args = 'c_Al_gamma c_Nb_gamma'
   [../]
 
   [./f2]
     type = DerivativeParsedMaterial
     f_name = fc_2
-    coupled_variables = 'c1 c2'
-    expression = '1e5 * (4e5 * (c1 - 0.000727)^2 + 9.5e5 * (c2 - 0.196)^2) + 1.5485e8'
+    args = 'c_Al_gammaP c_Nb_gammaP'
+    function = '1e5 * (4e5 * (c_Al_gammaP - 0.000727)^2 + 9.5e5 * (c_Nb_gammaP - 0.196)^2) + 1.5485e8'
   [../]
   # Elastic energy of the phase 2
   [./elastic_free_energy_2]
     type = ElasticEnergyMaterial
     base_name = phase2
     f_name = fe_2
-    coupled_variables = ' '
+    args = ' '
   [../]
   # Total free energy of the phase 2
   [./Total_energy_2]
     type = DerivativeSumMaterial
     f_name = F2
     sum_materials = 'fc_2 fe_2'
-    coupled_variables = 'c1 c2'
+    args ='c_Al_gammaP c_Nb_gammaP'
   [../]
 
-  [./f3]
-    type = DerivativeParsedMaterial
-    f_name = fc_3
-    coupled_variables = 'c1 c2'
-    expression = '1e5 * (4e5 * (c1 - 0.0161)^2 + 9.5e5 * (c2 - 0.00723)^2)'
-  [../]
-  # Elastic energy of the phase 3
-  [./elastic_free_energy_3]
-    type = ElasticEnergyMaterial
-    base_name = phase3
-    f_name = fe_3
-    coupled_variables = ' '
-  [../]
-  # Total free energy of the phase 3
-  [./Total_energy_3]
-    type = DerivativeSumMaterial
-    f_name = F3
-    sum_materials = 'fc_3 fe_3'
-    coupled_variables = 'c1 c2'
-  [../]
+  
 
   # Switching functions for each phase
   # h1(eta1, eta2, eta3)
@@ -285,19 +306,19 @@
   [./Dh1]
     type = DerivativeParsedMaterial
     material_property_names = 'D h1'
-    expression = D*h1
+    function = D*h1
     f_name = Dh1
   [../]
   [./Dh2]
     type = DerivativeParsedMaterial
     material_property_names = 'D h2'
-    expression = D*h2
+    function = D*h2
     f_name = Dh2
   [../]
   [./Dh3]
     type = DerivativeParsedMaterial
     material_property_names = 'D h3'
-    expression = D*h3
+    function = D*h3
     f_name = Dh3
   [../]
 
@@ -417,50 +438,68 @@
   #Kernels for diffusion equation
   [./diff_time]
     type = TimeDerivative
-    variable = c
+    variable = c_Al
   [../]
-  [./diff_c1]
+  [./diff_time1]
+    type = TimeDerivative
+    variable = c_Nb
+  [../]
+  [./diff_c_Al]
     type = MatDiffusion
-    variable = c
+    variable = c_Al
     diffusivity = Dh1
-    v = c1
+    v = c_Al
   [../]
-  [./diff_c2]
+  [./diff_c_Nb]
     type = MatDiffusion
-    variable = c
+    variable = c_Nb
     diffusivity = Dh2
-    v = c2
+    v = c_Nb
   [../]
-  [./diff_c3]
-    type = MatDiffusion
-    variable = c
-    diffusivity = Dh3
-    v = c3
-  [../]
+  
 
   # Kernels for Allen-Cahn equation for eta1
   [./deta1dt]
     type = TimeDerivative
     variable = eta1
   [../]
-  [./ACBulkF1]
+  [./ACBulkF1_gamma]
     type = KKSMultiACBulkF
     variable  = eta1
-    Fj_names  = 'F1 F2 F3'
-    hj_names  = 'h1 h2 h3'
+    Fj_names  = 'F1 F2'
+    hj_names  = 'h1 h2'
     gi_name   = g1
     eta_i     = eta1
     wi        = 0.01
-    coupled_variables      = 'c1 c2 c3 eta2 eta3'
+    args      = 'c_Al_gamma c_Al_gammaP c_Nb_gammaP c_Nb_gamma eta2 eta3'
   [../]
-  [./ACBulkC1]
+  [./ACBulkF1_gammaP]
+    type = KKSMultiACBulkF
+    variable  = eta1
+    Fj_names  = 'F1 F2'
+    hj_names  = 'h1 h2'
+    gi_name   = g1
+    eta_i     = eta1
+    wi        = 0.01
+    args      = 'c_Al_gammaP c_Nb_gammaP eta2 eta3'
+  [../]
+  [./ACBulkC1_gamma]
     type = KKSMultiACBulkC
     variable  = eta1
-    Fj_names  = 'F1 F2 F3'
-    hj_names  = 'h1 h2 h3'
-    cj_names  = 'c1 c2 c3'
+    Fj_names  = 'F1 F2'
+    hj_names  = 'h1 h2'
+    cj_names  = 'c_Al_gamma c_Nb_gamma'
     eta_i     = eta1
-    coupled_variables      = 'eta2 eta3'
+    args      = 'eta2 eta3'
+  [../]
+  [./ACBulkC1_gammaP]
+    type = KKSMultiACBulkC
+    variable  = eta1
+    Fj_names  = 'F1 F2'
+    hj_names  = 'h1 h2'
+    cj_names  = 'c_Al_gammaP c_Nb_gammaP'
+    eta_i     = eta1
+    args      = 'eta2 eta3'
   [../]
   [./ACInterface1]
     type = ACInterface
@@ -473,24 +512,43 @@
     type = TimeDerivative
     variable = eta2
   [../]
-  [./ACBulkF2]
+  [./ACBulkF2_gamma]
     type = KKSMultiACBulkF
     variable  = eta2
-    Fj_names  = 'F1 F2 F3'
-    hj_names  = 'h1 h2 h3'
+    Fj_names  = 'F1 F2'
+    hj_names  = 'h1 h2'
     gi_name   = g2
     eta_i     = eta2
     wi        = 0.01
-    coupled_variables      = 'c1 c2 c3 eta1 eta3'
+     args      = 'c_Al_gamma c_Nb_gamma eta1 eta3'
   [../]
-  [./ACBulkC2]
+  [./ACBulkF2_gammaP]
+    type = KKSMultiACBulkF
+    variable  = eta2
+    Fj_names  = 'F1 F2'
+    hj_names  = 'h1 h2'
+    gi_name   = g2
+    eta_i     = eta2
+    wi        = 0.01
+    args      = 'c_Al_gammaP c_Nb_gammaP eta1 eta3'
+  [../]
+  [./ACBulkC2_gamma]
     type = KKSMultiACBulkC
     variable  = eta2
-    Fj_names  = 'F1 F2 F3'
-    hj_names  = 'h1 h2 h3'
-    cj_names  = 'c1 c2 c3'
+    Fj_names  = 'F1 F2'
+    hj_names  = 'h1 h2'
+    cj_names  = 'c_Al_gamma c_Nb_gamma'
     eta_i     = eta2
-    coupled_variables      = 'eta1 eta3'
+    args      = 'eta1 eta3'
+  [../]
+  [./ACBulkC2_gammaP]
+    type = KKSMultiACBulkC
+    variable  = eta2
+    Fj_names  = 'F1 F2'
+    hj_names  = 'h1 h2'
+    cj_names  = 'c_Al_gammaP c_Nb_gammaP'
+    eta_i     = eta2
+    args      = 'eta1 eta3'
   [../]
   [./ACInterface2]
     type = ACInterface
@@ -525,45 +583,61 @@
 
 
   # Phase concentration constraints
-  [./chempot12]
+  [./chempot1]
     type = KKSPhaseChemicalPotential
-    variable = c1
-    cb       = c2
+    variable = c_Al_gamma
+    cb       = c_Nb_gamma
     fa_name  = F1
     fb_name  = F2
   [../]
-  [./chempot13]
-      type = KKSPhaseChemicalPotential
-      variable = c1
-      cb       = c3
-      fa_name  = F1
-      fb_name  = F3
-      args_a = c2
-  [../]
-  [./chempot23]
+  [./chempot2]
     type = KKSPhaseChemicalPotential
-    variable = c2
-    cb       = c3
+    variable = c_Al_gammaP
+    cb       = c_Nb_gammaP
     fa_name  = F2
-    fb_name  = F3
-    args_a = c1
+    fb_name  = F1
   [../]
-  [./phaseconcentration]
+ 
+  [./phaseconcentration1]
     type = KKSMultiPhaseConcentration
-    variable = c3
-    cj = 'c1 c2 c3'
-    hj_names = 'h1 h2 h3'
-    etas = 'eta1 eta2 eta3'
-    c = c
+    variable = c_Al_gamma
+    cj = 'c_Al_gamma c_Nb_gamma '
+    hj_names = 'h1 h2'
+    etas = 'eta1 eta2'
+    c = 'c_Al c_Nb'
+  [../]
+  [./phaseconcentration2]
+    type = KKSMultiPhaseConcentration
+    variable = c_Nb_gamma
+    cj = 'c_Al_gamma c_Nb_gamma '
+    hj_names = 'h1 h2'
+    etas = 'eta1 eta2'
+    c = 'c_Al c_Nb'
+  [../]
+  [./phaseconcentration3]
+    type = KKSMultiPhaseConcentration
+    variable = c_Al_gammaP
+    cj = 'c_Al_gammaP c_Nb_gammaP '
+    hj_names = 'h1 h2'
+    etas = 'eta1 eta2'
+    c = 'c_Al c_Nb'
+  [../]
+  [./phaseconcentration4]
+    type = KKSMultiPhaseConcentration
+    variable = c_Nb_gammaP
+    cj = 'c_Al_gammaP c_Nb_gammaP '
+    hj_names = 'h1 h2'
+    etas = 'eta1 eta2'
+    c = 'c_Al c_Nb'
   [../]
 []
 
 [AuxKernels]
   [./Energy_total]
     type = KKSMultiFreeEnergy
-    Fj_names = 'F1 F2 F3'
-    hj_names = 'h1 h2 h3'
-    gj_names = 'g1 g2 g3'
+    Fj_names = 'F1 F2'
+    hj_names = 'h1 h2'
+    gj_names = 'g1 g2'
     variable = Energy
     w = 1
     interfacial_vars =  'eta1  eta2  eta3'
@@ -593,11 +667,8 @@
 [Executioner]
   type = Transient
   solve_type = 'PJFNK'
-#  petsc_options_iname = '-pc_type -sub_pc_type   -sub_pc_factor_shift_type'
-#  petsc_options_value = 'asm       ilu            nonzero'
   petsc_options_iname = '-pc_type -pc_factor_mat_solver_package -snes_type'
   petsc_options_value = 'lu            mumps            vinewtonrsls'
-#  petsc_options_value = 'lu            superlu_dist            vinewtonrsls'
 
   l_max_its = 50
   nl_max_its = 25

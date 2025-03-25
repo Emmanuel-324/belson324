@@ -40,28 +40,28 @@
 
 [Bounds]
   [./eta_upper_bound]
-    type = ConstantBoundsAux
+    type = ConstantBounds
     variable = bounds_dummy
     bounded_variable = eta1
     bound_type = upper
     bound_value = 1
   [../]
   [./eta_lower_bound]
-    type = ConstantBoundsAux
+    type = ConstantBounds
     variable = bounds_dummy
     bounded_variable = eta1
     bound_type = lower
     bound_value = -1
   [../]
   [./eta2_upper_bound]
-    type = ConstantBoundsAux
+    type = ConstantBounds
     variable = bounds_dummy
     bounded_variable = eta2
     bound_type = upper
     bound_value = 1
   [../]
   [./eta2_lower_bound]
-    type = ConstantBoundsAux
+    type = ConstantBounds
     variable = bounds_dummy
     bounded_variable = eta2
     bound_type = lower
@@ -77,7 +77,18 @@
     boundary = right
     factor = 0
   [../]
- 
+  [./c_Al]
+    type =  NeumannBC
+    variable = 'c_Al'
+    boundary = 'left right top bottom'
+    value = 0
+  [../]	
+  [./c_Nb]
+    type =  NeumannBC
+    variable = 'c_Nb'
+    boundary = 'left right top bottom'
+    value = 0
+  [../]	
   [./bottom_y]
     type = DirichletBC
     variable = disp_y
@@ -109,12 +120,14 @@
   [./c_Al]
     order = FIRST
     family = LAGRANGE
+    
   [../]
 
  # Niobium (Nb) solute concentration
   [./c_Nb]
     order = FIRST
     family = LAGRANGE
+    
   [../]
 
   # chemical potential solute 1
@@ -133,28 +146,28 @@
   [./c_Al_gamma]
     order = FIRST
     family = LAGRANGE
-   # initial_condition = 0.1
+    initial_condition = 0.0161
   [../]
 
  
   [./c_Nb_gamma]
     order = FIRST
     family = LAGRANGE
-    initial_condition = 0.05
+    initial_condition = 0.00723
   [../]
 
   # Gamma Prime (γ') phase solute concentrations
   [./c_Al_gammaP]
     order = FIRST
     family = LAGRANGE
-    initial_condition = 0.8
+    initial_condition = 0.187
   [../]
 
   # Solid phase solute 2 concentration
   [./c_Nb_gammaP]
     order = FIRST
     family = LAGRANGE
-    initial_condition = 0.1
+    initial_condition = 0.0157
   [../]
   [./disp_x]
     order = FIRST
@@ -185,7 +198,7 @@
   [../]
   [./bc_func]
     type = ParsedFunction
-    value = sin(alpha*pi*x)
+    expression = sin(alpha*pi*x)
     vars = alpha
     vals = 16
   [../]
@@ -209,18 +222,17 @@
   [./c_Al]
     variable = c_Al
     type = RandomIC
-    min = 0.24375	
+    min = 0.24375
     max = 0.25625
-    seed = 89	
+    seed = 389	
   [../]
   [./c_Nb]
     variable = c_Nb
     type = RandomIC
-    min = 0.24375	
+    min = 0.24375
     max = 0.25625
-    seed = 89	
+    seed = 389	
   [../]
-
 []
 
 [Materials]
@@ -229,42 +241,42 @@
     type = DerivativeParsedMaterial
     property_name = f_gamma
     coupled_variables = 'c_Al_gamma c_Nb_gamma'
-    expression = '(0.1-c_Al_gamma)^2+(0.05-c_Nb_gamma)^2'
+    expression = '(0.0161-c_Al_gamma)^2+(0.00723-c_Nb_gamma)^2'
   [../]
    # Elastic energy of the gamma
    [./elastic_free_energy_1]
     type = ElasticEnergyMaterial
     base_name = phase1
     f_name = fe_gamma
-    args = ' '
+    coupled_variables = ' '
   [../]
   # Total free energy of the gamma
   [./Total_energy_1]
     type = DerivativeSumMaterial
     f_name = F1
     sum_materials = 'f_gamma fe_gamma'
-    args = 'c_Al c_Nb'
+    coupled_variables = 'c_Al_gamma c_Nb_gamma'
   [../]
   # Free energy of the gammaP
   [./f_gammaP]
     type = DerivativeParsedMaterial
     property_name = f_gammaP
     coupled_variables = 'c_Al_gammaP c_Nb_gammaP'
-    expression = '(0.8-c_Al_gammaP)^2+(0.1-c_Nb_gammaP)^2'
+    expression =  '(0.187-c_Al_gammaP)^2+(0.0157-c_Nb_gammaP)^2'
   [../]
    # Elastic energy of the phase 2
    [./elastic_free_energy_2]
     type = ElasticEnergyMaterial
     base_name = phase2
     f_name = fe_gammaP
-    args = ' '
+    coupled_variables = ' '
   [../]
    # Total free energy of the gammaP
   [./Total_energy_2]
     type = DerivativeSumMaterial
     f_name = F2
     sum_materials = 'f_gammaP fe_gammaP'
-    args = 'c_Al c_Nb'
+    coupled_variables = 'c_Al_gammaP c_Nb_gammaP'
   [../]
   # h(eta1)
   [./h1]
@@ -294,7 +306,7 @@
 [../]
   # g(eta1)
   [./g_eta1]
-    type = BarrierFunctionMaterial
+    type = BarrierFunctionMaterial_abs
     g_order = SIMPLE
     eta = eta1
     function_name = g1
@@ -310,19 +322,19 @@
   # constant properties
   [./constants]
     type = GenericConstantMaterial
-    prop_names  = 'M       L     kappa  eps_sq    misfit D'
-    prop_values = '0.7   0.3     0.01     1.0     0.005  1'
+    prop_names  = 'M_Al         M_Nb       L     kappa  eps_sq    misfit   D'
+    prop_values = '4.6e-17   2.42e-18      0.3     5e-9     1.0     0.005  1'
   [../]
    #Mechanical properties
    [./Stiffness_phase1]
     type = ComputeElasticityTensor
-    C_ijkl = '1982 534 496 1606 605 1788 985 1056 388'    
+    C_ijkl = '2.721e5 1.69e5 1.69e5 2.721e5 1.69e5 2.721e5 1.31e5 1.31e5 1.31e5'    
     base_name = phase1
     fill_method = symmetric9
   [../]
   [./Stiffness_phase2]
     type = ComputeElasticityTensor
-    C_ijkl = '1606 534 605 1982 496 1788 1056 985 388'
+    C_ijkl = '2.721e5 1.69e5 1.69e5 2.721e5 1.69e5 2.721e5 1.31e5 1.31e5 1.31e5'
     base_name = phase2
     fill_method = symmetric9
   [../]
@@ -383,18 +395,40 @@
   [./TensorMechanics]
     displacements = 'disp_x disp_y'
   [../]
-  [./diff_c_Al]
+  [./diff_time_Al]
+    type = TimeDerivative
+    variable = c_Al
+  [../]
+  [./diff_time_Nb]
+    type = TimeDerivative
+    variable = c_Nb
+  [../]
+  [./diff_c_Al_gamma]
     type = MatDiffusion
     variable = c_Al
     diffusivity = Dh1
-    v = c_Al
+    v = c_Al_gamma
   [../]
-  [./diff_c_Nb]
+  [./diff_c_Nb_gamma]
+    type = MatDiffusion
+    variable = c_Nb
+    diffusivity = Dh1
+    v = c_Nb_gamma
+  [../]
+  [./diff_c_Al_gammaP]
+    type = MatDiffusion
+    variable = c_Al
+    diffusivity = Dh2
+    v = c_Al_gammaP
+  [../]
+
+  [./diff_c_Nb_gammaP]
     type = MatDiffusion
     variable = c_Nb
     diffusivity = Dh2
-    v = c_Nb
+    v = c_Nb_gammaP
   [../]
+
   # enforce c_Al = (1-h(eta1))*c_Al_gamma + h(eta1)*c_Al_gammaP
   [./PhaseConc_c_Al_phase1]
     type = KKSPhaseConcentration
@@ -489,12 +523,12 @@
 
   [./w_Alkernel]
     type = SplitCHWRes
-    mob_name = M
+    mob_name = M_Al
     variable = w_Al
   [../]
   [./w_Nbkernel]
     type = SplitCHWRes
-    mob_name = M
+    mob_name = M_Nb
     variable = w_Nb
   [../]
 
@@ -508,7 +542,7 @@
     fb_name  = f_gammaP
     h_name = h1
     g_name = g1
-    w        = 1.0
+    w        = 1e5
     coupled_variables = 'c_Al_gamma c_Al_gammaP c_Nb_gamma c_Nb_gammaP'
   [../]
   [./ACBulkF2]
@@ -518,7 +552,7 @@
     fb_name  = f_gammaP
     h_name = h2
     g_name = g2
-    w        = 1.0
+    w        = 1e5
     coupled_variables = 'c_Al_gamma c_Al_gammaP c_Nb_gamma c_Nb_gammaP'
   [../]
   [./ACBulkC1_eta1]
@@ -560,12 +594,12 @@
   [./ACInterface1]
     type = ACInterface
     variable = eta1
-    kappa_name = eps_sq
+    kappa_name = kappa
   [../]
   [./ACInterface2]
     type = ACInterface
     variable = eta2
-    kappa_name = eps_sq
+    kappa_name = kappa
   [../]
   [./deta1dt]
     type = TimeDerivative
@@ -610,23 +644,42 @@
 [Executioner]
   type = Transient
   solve_type = 'PJFNK'
+  petsc_options_iname = '-pc_type -pc_factor_mat_solver_package -snes_type'
+  petsc_options_value = 'lu            mumps            vinewtonrsls'
+  line_search = none
+  l_max_its = 50
+  nl_max_its = 25
+  l_tol = 1.0e-3
+  nl_rel_tol = 1.0e-6
+  nl_abs_tol = 1.0e-8
 
-  petsc_options_iname = '-pc_type -sub_pc_type -sub_pc_factor_shift_type'
-  petsc_options_value = 'asm      ilu          nonzero'
+  end_time = 100
 
-  l_max_its = 100
-  nl_max_its = 100
+  [./TimeStepper]
+    type = IterationAdaptiveDT
+    dt = 5e-6
+    cutback_factor = 0.75
+    growth_factor = 1.2
+    optimal_iterations = 20
+  [../]
 
-  num_steps = 50
-  dt = 0.1
+  [./Adaptivity]
+    initial_adaptivity = 0
+    refine_fraction = 0.7
+    coarsen_fraction = 0.1
+    max_h_level = 1
+  [../]
+
 []
 
-#
-# Precondition using handcoded off-diagonal terms
-#
 [Preconditioning]
+  active = 'full'
   [./full]
     type = SMP
+    full = true
+  [../]
+  [./mydebug]
+    type = FDP
     full = true
   [../]
 []

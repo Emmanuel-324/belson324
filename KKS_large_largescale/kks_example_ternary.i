@@ -168,6 +168,7 @@
     variable = c1s
     c        = c1
     eta      = eta
+    h_name = h
   [../]
 
   # enforce c2 = (1-h(eta))*c2l + h(eta)*c2s

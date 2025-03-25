@@ -465,7 +465,7 @@
   nl_rel_tol = 1.0e-6
   nl_abs_tol = 1.0e-8
 
-  end_time = 14400
+  end_time = 1
 
   [./TimeStepper]
     type = IterationAdaptiveDT
@@ -529,4 +529,7 @@
      num_files = 10
      interval = 10
   [../]
+[]
+[Debug]
+  show_material_props = true
 []
