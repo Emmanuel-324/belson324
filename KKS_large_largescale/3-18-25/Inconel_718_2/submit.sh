@@ -2,8 +2,8 @@
 #SBATCH --job-name   Inconel_718_2.i                                            
 #SBATCH --out  Inconel_718_2.out        
 #SBATCH --nodes 1                                                              
-#SBATCH --ntasks 8
-#SBATCH --cpus-per-task 4
+#SBATCH --ntasks 2
+#SBATCH --cpus-per-task 8
 #SBATCH --account amcorrosion                                                  
 ##SBATCH --partition normal_q                                                   
 #SBATCH --time=120:00:00    

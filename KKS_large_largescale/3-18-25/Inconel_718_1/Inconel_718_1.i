@@ -1,8 +1,5 @@
 #
 # KKS ternary (3 chemical component) system example in the split form
-# We track c1 and c2 only, since c1 + c2 + c3 = 1
-#
-
 [Mesh]
   type = GeneratedMesh
   dim = 2
@@ -370,8 +367,8 @@
   # constant properties
   [./constants]
     type = GenericConstantMaterial
-    prop_names  = 'M       L     kappa  eps_sq    misfit D'
-    prop_values = '1e-3   0.3     0.01     1.0     0.005  1'
+    prop_names  = 'M       L     kappa     misfit D'
+    prop_values = '1e-3   0.3     0.01     0.005  1'
   [../]
    #Mechanical properties
    [./Stiffness_phase0]
@@ -459,116 +456,57 @@
   [./TensorMechanics]
     displacements = 'disp_x disp_y'
   [../]
-  [./diff_time_Al]
+
+  #
+  # Allen-Cahn Equation for eta0
+  #
+  [./deta0dt]
     type = TimeDerivative
-    variable = c_Al
-  [../]
-  [./diff_time_Nb]
-    type = TimeDerivative
-    variable = c_Nb
-  [../]
-  [./diff_Al_gamma]
-    type = MatDiffusion
-    variable = c_Al
-    diffusivity = Dh1
-    v = c_Al_gamma
-  [../]
-  [./diff_Nb_gamma]
-    type = MatDiffusion
-    variable = c_Nb
-    diffusivity = Dh2
-    v = c_Nb_gamma
-  [../]
-  [./diff_Al_gammaP]
-    type = MatDiffusion
-    variable = c_Al
-    diffusivity = Dh1
-    v = c_Al_gammaP
-  [../]
-  [./diff_Nb_gammaP]
-    type = MatDiffusion
-    variable = c_Nb
-    diffusivity = Dh2
-    v = c_Nb_gammaP
-  [../]
-  [./diff_Al_gammaDP]
-    type = MatDiffusion
-    variable = c_Al
-    diffusivity = Dh1
-    v = c_Al_gammaDP
-  [../]
-  [./diff_Nb_gammaDP]
-    type = MatDiffusion
-    variable = c_Nb
-    diffusivity = Dh2
-    v = c_Nb_gammaDP
+    variable = eta0
   [../]
 
-  
- 
- # enforce gammaP_Al = (1-h(eta1))*c_Al_gamma + h(eta1)*c_Al_gammaP
- [./Al_gamma_phase]
-  type = KKSMultiPhaseConcentration
-  variable = c_Al_gammaDP
-  cj = 'c_Al_gamma c_Al_gammaP c_Al_gammaDP'
-  hj_names = 'h0 h1 h2'
-  etas = 'eta0 eta1 eta2'
-  c = c_Al
-[../]
-
-[./Nb_gamma_phase]
-  type = KKSMultiPhaseConcentration
-  variable = c_Nb_gammaDP
-  cj = 'c_Nb_gamma c_Nb_gammaP c_Nb_gammaDP'
-  hj_names = 'h0 h1 h2'
-  etas = 'eta0 eta1 eta2'
-  c = c_Nb
-[../]
-
- 
-
-  # enforce pointwise equality of chemical potentials
-  [./ChemPotAl_1]
-    type = KKSPhaseChemicalPotential
-    variable = c_Al_gamma
-    cb       = c_Al_gammaP
-    fa_name  = F0
-    fb_name  = F1
-    args_a = c_Nb_gamma
-    args_b = c_Nb_gammaP
-  [../]
-  [./ChemPotAl_2]
-    type = KKSPhaseChemicalPotential
-    variable = c_Al_gammaP
-    cb       = c_Al_gammaDP
-    fa_name  = F1
-    fb_name  = F2
-    args_a = c_Nb_gammaP
-    args_b = c_Nb_gammaDP
-  [../]
-  [./ChemPotNb_1]
-    type = KKSPhaseChemicalPotential
-    variable = c_Nb_gamma
-    cb       = c_Nb_gammaP
-    fa_name  = F0
-    fb_name  = F1
-    args_a = c_Al_gamma
-    args_b = c_Al_gammaP
-  [../]
-  [./ChemPotNb_2]
-    type = KKSPhaseChemicalPotential
-    variable = c_Nb_gammaP
-    cb       = c_Nb_gammaDP
-    fa_name  = F1
-    fb_name  = F2
-    args_a = c_Al_gammaP
-    args_b = c_Al_gammaDP
+  [./ACBulkF0]
+    type = KKSMultiACBulkF
+    variable  = eta0
+    Fj_names  = 'F0 F1 F2'
+    hj_names  = 'h0 h1 h2'
+    gi_name   = g0
+    eta_i     = eta0
+    wi        = 0.01
+    args      = 'c_Al_gamma c_Nb_gamma c_Al_gammaP  c_Nb_gammaP c_Al_gammaDP c_Nb_gammaDP eta0  eta2'
   [../]
   
- 
-  #
-  # Allen-Cahn Equation
-  #
+  [./ACBulkC0_Al]
+    type = KKSMultiACBulkC
+    variable  = eta0
+    Fj_names  = 'F0 F1 F2'
+    hj_names  = 'h0 h1 h2'
+    cj_names  = 'c_Al_gamma c_Al_gammaP c_Al_gammaDP'
+    eta_i     = eta0
+    args      = 'c_Nb_gamma c_Nb_gammaP c_Nb_gammaDP eta0 eta2'
+  [../]
+  [./ACBulkC0_Nb]
+    type = KKSMultiACBulkC
+    variable  = eta0
+    Fj_names  = 'F0 F1 F2'
+    hj_names  = 'h0 h1 h2'
+    cj_names  = 'c_Nb_gamma c_Nb_gammaP c_Nb_gammaDP'
+    eta_i     = eta0
+    args      = 'c_Al_gamma c_Al_gammaP c_Al_gammaDP eta0 eta2'
+  [../]
+  [./ACInterface0]
+    type = ACInterface
+    variable = eta0
+    kappa_name = kappa
+  [../]
+
+
+ # Allen-Cahn Equation for eta1
+  [./deta1dt]
+    type = TimeDerivative
+    variable = eta1
+  [../]
+
   [./ACBulkF1]
     type = KKSMultiACBulkF
     variable  = eta1
@@ -598,6 +536,17 @@
     eta_i     = eta1
     args      = 'c_Al_gamma c_Al_gammaP c_Al_gammaDP eta0 eta2'
   [../]
+  [./ACInterface1]
+    type = ACInterface
+    variable = eta1
+    kappa_name = kappa
+  [../]
+
+# Allen-Cahn Equation for eta2
+  [./deta2dt]
+    type = TimeDerivative
+    variable = eta2
+  [../]   
   [./ACBulkF2]
     type = KKSMultiACBulkF
     variable  = eta2
@@ -627,52 +576,143 @@
     args      = 'c_Al_gamma c_Al_gammaP c_Al_gammaDP eta0 eta1'
   [../]
       
-  
-  
-  [./ACInterface1]
-    type = ACInterface
-    variable = eta1
-    kappa_name = kappa
-  [../]
   [./ACInterface2]
     type = ACInterface
     variable = eta2
     kappa_name = kappa
-  [../]
+  [../]  
   
 
-  [./deta1dt]
-    type = TimeDerivative
-    variable = eta1
-  [../]
-  [./deta2dt]
-    type = TimeDerivative
-    variable = eta2
-  [../]
 # Kernels for constraint equation eta0 + eta1 + eta2 = 1
   # eta0 is the nonlinear variable for the constraint equation
-  [./eta0reaction]
-    type = MatReaction
-    variable = eta0
-    mob_name = 1
-  [../]
-  [./eta1reaction]
-    type = MatReaction_abscouple
-    variable = eta0
-    v = eta1
-    mob_name = 1
-  [../]
-  [./eta2reaction]
-    type = MatReaction_abscouple
-    variable = eta0
-    v = eta2
-    mob_name = 1
-  [../]
-  [./one]
-    type = BodyForce
-    variable = eta0
-    value = -1.0
-  [../]
+  #[./eta0reaction]
+  #  type = MatReaction
+  #  variable = eta0
+  #  reaction_rate = 1
+  #[../]
+  #[./eta1reaction]
+  #  type = MatReaction_abscouple
+  #  variable = eta0
+  #  v = eta1
+  #  reaction_rate = 1
+  #[../]
+  #[./eta2reaction]
+  # type = MatReaction_abscouple
+  #  variable = eta0
+  #  v = eta2
+  #  reaction_rate = 1
+  #[../]
+  #[./one]
+  # type = BodyForce
+  #  variable = eta0
+  #  value = -1.0
+  #[../]
+
+
+#kernels for diffusion equation of Al
+[./diff_time_Al]
+  type = TimeDerivative
+  variable = c_Al 
+[../]
+[./diff_Al_gamma]
+  type = MatDiffusion
+  variable = c_Al 
+  diffusivity = Dh1
+  v = c_Al_gamma 
+[../]
+[./diff_Al_gammaP]
+  type = MatDiffusion
+  variable = c_Al
+  diffusivity = Dh1
+  v = c_Al_gammaP
+[../]
+[./diff_Al_gammaDP]
+  type = MatDiffusion
+  variable = c_Al
+  diffusivity = Dh1
+  v = c_Al_gammaDP
+[../]
+
+#kernels for diffusion equation of Nb   
+[./diff_time_Nb]
+  type = TimeDerivative
+  variable = c_Nb 
+[../]
+[./diff_Nb_gamma]
+  type = MatDiffusion
+  variable = c_Nb 
+  diffusivity = Dh2
+  v = c_Nb_gamma 
+[../]
+[./diff_Nb_gammaP]
+  type = MatDiffusion
+  variable = c_Nb
+  diffusivity = Dh2
+  v = c_Nb_gammaP
+[../]
+[./diff_Nb_gammaDP]
+  type = MatDiffusion
+  variable = c_Nb
+  diffusivity = Dh2
+  v = c_Nb_gammaDP
+[../]
+
+# enforce pointwise equality of chemical potentials
+[./ChemPotAl_1]
+  type = KKSPhaseChemicalPotential
+  variable = c_Al_gamma
+  cb       = c_Al_gammaP
+  fa_name  = F0
+  fb_name  = F1
+  args_a = c_Nb_gamma
+  args_b = c_Nb_gammaP
+[../]
+[./ChemPotAl_2]
+  type = KKSPhaseChemicalPotential
+  variable = c_Al_gammaP
+  cb       = c_Al_gammaDP
+  fa_name  = F1
+  fb_name  = F2
+  args_a = c_Nb_gammaP
+  args_b = c_Nb_gammaDP
+[../]
+[./ChemPotNb_1]
+  type = KKSPhaseChemicalPotential
+  variable = c_Nb_gamma
+  cb       = c_Nb_gammaP
+  fa_name  = F0
+  fb_name  = F1
+  args_a = c_Al_gamma
+  args_b = c_Al_gammaP
+[../]
+[./ChemPotNb_2]
+  type = KKSPhaseChemicalPotential
+  variable = c_Nb_gammaP
+  cb       = c_Nb_gammaDP
+  fa_name  = F1
+  fb_name  = F2
+  args_a = c_Al_gammaP
+  args_b = c_Al_gammaDP
+[../]
+
+ # 
+ [./Al_phase]
+  type = KKSMultiPhaseConcentration
+  variable = c_Al_gammaDP
+  cj = 'c_Al_gamma c_Al_gammaP c_Al_gammaDP'
+  hj_names = 'h0 h1 h2'
+  etas = 'eta0 eta1 eta2'
+  c = c_Al
+[../]
+
+[./Nb_phase]
+  type = KKSMultiPhaseConcentration
+  variable = c_Nb_gammaDP
+  cj = 'c_Nb_gamma c_Nb_gammaP c_Nb_gammaDP'
+  hj_names = 'h0 h1 h2'
+  etas = 'eta0 eta1 eta2'
+  c = c_Nb
+[../]
 []
 
 [AuxKernels]

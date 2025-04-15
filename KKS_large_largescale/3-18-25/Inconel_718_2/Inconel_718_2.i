@@ -243,7 +243,7 @@
     type = DerivativeParsedMaterial
     property_name = f_gamma
     coupled_variables = 'c_Al_gamma c_Nb_gamma'
-    expression = '(0.0161-c_Al_gamma)^2+(0.00723-c_Nb_gamma)^2'
+    expression = '1e5 * (4e5 * (0.0161-c_Al_gamma)^2 + 9.5e5 * (0.00723-c_Nb_gamma)^2)'
   [../]
    # Elastic energy of the gamma
    [./elastic_free_energy_0]
@@ -265,7 +265,7 @@
     type = DerivativeParsedMaterial
     property_name = f_gammaP
     coupled_variables = 'c_Al_gammaP c_Nb_gammaP'
-    expression =  '(0.187-c_Al_gammaP)^2+(0.0157-c_Nb_gammaP)^2'
+    expression =  '1e5 * (4e5 * (0.187-c_Al_gammaP)^2 + 9.5e5 * (0.0157-c_Nb_gammaP)^2)'
   [../]
    # Elastic energy of the phase 2
    [./elastic_free_energy_1]
@@ -287,7 +287,7 @@
   type = DerivativeParsedMaterial
   property_name = f_gammaDP
   coupled_variables = 'c_Al_gammaDP c_Nb_gammaDP'
-  expression =  '(0.187-c_Al_gammaDP)^2+(0.0157-c_Nb_gammaDP)^2'
+  expression =  '1e5 * (4e5 * (0.000727-c_Al_gammaDP)^2 + 9.5e5 * (0.196-c_Nb_gammaDP)^2) + 1.5485e5'
 [../]
  # Elastic energy of the phase 2
  [./elastic_free_energy_2]
@@ -370,25 +370,25 @@
   # constant properties
   [./constants]
     type = GenericConstantMaterial
-    prop_names  = 'M       L     kappa  eps_sq    misfit D'
-    prop_values = '1e-3   0.3     0.01     1.0     0.005  1'
+    prop_names  = 'M       L          kappa   eps_sq   misfit    D'
+   prop_values = '1e-3   2.904e-11     0.01     1.0     0.005  4.6e-17'
   [../]
    #Mechanical properties
    [./Stiffness_phase0]
     type = ComputeElasticityTensor
-    C_ijkl = '2008.5 448.9 918.5 2008.5 918.5 1538.7 779.8 779.8 309.9'  
+    C_ijkl = '2.6334e5 1.6408e5  1.6408e5 2.6334e5 1.6408e5 2.6334e5 1.5527e5 1.5527e5 1.5527e5'  
     base_name = phase0
     fill_method = symmetric9
   [../]
   [./Stiffness_phase1]
     type = ComputeElasticityTensor
-    C_ijkl = '1982 534 496 1606 605 1788 985 1056 388'
+    C_ijkl = '2.0303e5  1.4987e5 1.4987e5 2.0303e5 1.4987e5 2.0303e5 1.3489e5 1.3489e5 1.3489e5'
     base_name = phase1
     fill_method = symmetric9
   [../]
   [./Stiffness_phase2]
     type = ComputeElasticityTensor
-    C_ijkl = '1606 534 605 1982 496 1788 1056 985 388'
+    C_ijkl = '2.0303e5  1.4987e5 1.4987e5 2.0303e5 1.4987e5 2.0303e5 1.3489e5 1.3489e5 1.3489e5'
     base_name = phase2
     fill_method = symmetric9
   [../]
@@ -660,13 +660,13 @@
     type = MatReaction_abscouple
     variable = eta0
     v = eta1
-    mob_name = 1
+    reaction_rate = 1
   [../]
   [./eta2reaction]
     type = MatReaction_abscouple
     variable = eta0
     v = eta2
-    mob_name = 1
+    reaction_rate = 1
   [../]
   [./one]
     type = BodyForce
