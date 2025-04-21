@@ -198,7 +198,12 @@
     family = LAGRANGE
     block = 0
   [../]
-
+# Lagrange multiplier
+[lambda]
+  order = FIRST
+  family = LAGRANGE
+  initial_condition = 0.0
+[]
 []
 
 [Functions]
@@ -488,45 +493,7 @@
   #
   # Allen-Cahn Equation for eta0
   #
-  [./deta0dt]
-    type = TimeDerivative
-    variable = eta0
-  [../]
-
-  [./ACBulkF0]
-    type = KKSMultiACBulkF
-    variable  = eta0
-    Fj_names  = 'F0 F1 F2'
-    hj_names  = 'h0 h1 h2'
-    gi_name   = g0
-    eta_i     = eta0
-    wi        = 0.01
-    coupled_variables  = 'c_Al_gamma c_Nb_gamma c_Al_gammaP  c_Nb_gammaP c_Al_gammaDP c_Nb_gammaDP eta1  eta2'
-  [../]
-  
-  [./ACBulkC0_Al]
-    type = KKSMultiACBulkC
-    variable  = eta0
-    Fj_names  = 'F0 F1 F2'
-    hj_names  = 'h0 h1 h2'
-    cj_names  = 'c_Al_gamma c_Al_gammaP c_Al_gammaDP'
-    eta_i     = eta0
-    coupled_variables  = 'c_Nb_gamma c_Nb_gammaP c_Nb_gammaDP eta1 eta2'
-  [../]
-  [./ACBulkC0_Nb]
-    type = KKSMultiACBulkC
-    variable  = eta0
-    Fj_names  = 'F0 F1 F2'
-    hj_names  = 'h0 h1 h2'
-    cj_names  = 'c_Nb_gamma c_Nb_gammaP c_Nb_gammaDP'
-    eta_i     = eta0
-    coupled_variables  = 'c_Al_gamma c_Al_gammaP c_Al_gammaDP eta1 eta2'
-  [../]
-  [./ACInterface0]
-    type = ACInterface
-    variable = eta0
-    kappa_name = kappa
-  [../]
+ 
 
 
  # Allen-Cahn Equation for eta1
@@ -569,7 +536,12 @@
     variable = eta1
     kappa_name = kappa
   [../]
-
+  [multipler1]
+    type = MatReaction
+    variable = eta1
+    v = lambda
+    reaction_rate = L
+  []
 # Allen-Cahn Equation for eta2
   [./deta2dt]
     type = TimeDerivative
@@ -609,32 +581,150 @@
     variable = eta2
     kappa_name = kappa
   [../]  
-  
+  [multipler2]
+    type = MatReaction
+    variable = eta2
+    v = lambda
+    reaction_rate = L
+  []
+# Kernels for the Lagrange multiplier equation
+  [mult_lambda]
+    type = MatReaction
+    variable = lambda
+    reaction_rate = 2
+  []
+# lambda is the nonlinear variable for the constraint equation
+[./ACBulkF1_lambda]
+  type = KKSMultiACBulkF
+  variable  = lambda
+  Fj_names  = 'F0 F1 F2'
+  hj_names  = 'h0 h1 h2'
+  gi_name   = g1
+  eta_i     = eta1
+  wi        = 0.01
+  coupled_variables = 'c_Al_gamma c_Nb_gamma c_Al_gammaP  c_Nb_gammaP c_Al_gammaDP c_Nb_gammaDP eta0  eta2'
+[../]
 
+[./ACBulkC1_Al_lambda]
+  type = KKSMultiACBulkC
+  variable  = lambda
+  Fj_names  = 'F0 F1 F2'
+  hj_names  = 'h0 h1 h2'
+  cj_names  = 'c_Al_gamma c_Al_gammaP c_Al_gammaDP'
+  eta_i     = eta1
+  coupled_variables = 'c_Nb_gamma c_Nb_gammaP c_Nb_gammaDP eta0 eta2'
+[../]
+[./ACBulkC1_Nb_lambda]
+  type = KKSMultiACBulkC
+  variable  = lambda
+  Fj_names  = 'F0 F1 F2'
+  hj_names  = 'h0 h1 h2'
+  cj_names  = 'c_Nb_gamma c_Nb_gammaP c_Nb_gammaDP'
+  eta_i     = eta1
+  coupled_variables = 'c_Al_gamma c_Al_gammaP c_Al_gammaDP eta0 eta2'
+[../] 
+[mult_CoupledACint_eta1]
+  type = SimpleCoupledACInterface
+  variable = lambda
+  v = eta1
+  kappa_name = kappa
+  mob_name = 1
+[]
+[./ACBulkF2_lambda]
+  type = KKSMultiACBulkF
+  variable  = lambda
+  Fj_names  = 'F0 F1 F2'
+  hj_names  = 'h0 h1 h2'
+  gi_name   = g2
+  eta_i     = eta2
+  wi        = 0.01
+  coupled_variables  = 'c_Al_gamma c_Nb_gamma c_Al_gammaP  c_Nb_gammaP c_Al_gammaDP c_Nb_gammaDP eta0  eta1'
+[../]
+[./ACBulkC2_Al_lambda]
+  type = KKSMultiACBulkC
+  variable  = lambda
+  Fj_names  = 'F0 F1 F2'
+  hj_names  = 'h0 h1 h2'
+  cj_names  = 'c_Al_gamma c_Al_gammaP c_Al_gammaDP'
+  eta_i     = eta2
+  coupled_variables = 'c_Nb_gamma c_Nb_gammaP c_Nb_gammaDP eta0 eta1'
+[../]
+[./ACBulkC2_Nb_lambda]
+  type = KKSMultiACBulkC
+  variable  = lambda
+  Fj_names  = 'F0 F1 F2'
+  hj_names  = 'h0 h1 h2'
+  cj_names  = 'c_Nb_gamma c_Nb_gammaP c_Nb_gammaDP'
+  eta_i     = eta2
+  coupled_variables = 'c_Al_gamma c_Al_gammaP c_Al_gammaDP eta0 eta1'
+[../]
+[mult_CoupledACint_eta2]
+  type = SimpleCoupledACInterface
+  variable = lambda
+  v = eta2
+  kappa_name = kappa
+  mob_name = 1
+[]
+[./ACBulkF0_lambda]
+  type = KKSMultiACBulkF
+  variable  = lambda
+  Fj_names  = 'F0 F1 F2'
+  hj_names  = 'h0 h1 h2'
+  gi_name   = g0
+  eta_i     = eta0
+  wi        = 0.01
+  coupled_variables  = 'c_Al_gamma c_Nb_gamma c_Al_gammaP  c_Nb_gammaP c_Al_gammaDP c_Nb_gammaDP eta1  eta2'
+[../]
+
+[./ACBulkC0_Al_lambda]
+  type = KKSMultiACBulkC
+  variable  = lambda
+  Fj_names  = 'F0 F1 F2'
+  hj_names  = 'h0 h1 h2'
+  cj_names  = 'c_Al_gamma c_Al_gammaP c_Al_gammaDP'
+  eta_i     = eta0
+  coupled_variables  = 'c_Nb_gamma c_Nb_gammaP c_Nb_gammaDP eta1 eta2'
+[../]
+[./ACBulkC0_Nb_lambda]
+  type = KKSMultiACBulkC
+  variable  = lambda
+  Fj_names  = 'F0 F1 F2'
+  hj_names  = 'h0 h1 h2'
+  cj_names  = 'c_Nb_gamma c_Nb_gammaP c_Nb_gammaDP'
+  eta_i     = eta0
+  coupled_variables  = 'c_Al_gamma c_Al_gammaP c_Al_gammaDP eta1 eta2'
+[../]
+[mult_CoupledACint_eta0]
+  type = SimpleCoupledACInterface
+  variable = lambda
+  v = eta0
+  kappa_name = kappa
+  mob_name = 1
+[]
 # Kernels for constraint equation eta0 + eta1 + eta2 = 1
   # eta0 is the nonlinear variable for the constraint equation
-  #[./eta0reaction]
-  #  type = MatReaction
-  #  variable = eta0
-  #  reaction_rate = 1
-  #[../]
-  #[./eta1reaction]
-  #  type = MatReaction_abscouple
-  #  variable = eta0
-  #  v = eta1
-  #  reaction_rate = 1
-  #[../]
-  #[./eta2reaction]
-  # type = MatReaction_abscouple
-  #  variable = eta0
-  #  v = eta2
-  #  reaction_rate = 1
-  #[../]
-  #[./one]
-  # type = BodyForce
-  #  variable = eta0
-  #  value = -1.0
-  #[../]
+  [./eta0reaction]
+    type = MatReaction
+   variable = eta0
+    reaction_rate = 1
+  [../]
+  [./eta1reaction]
+    type = MatReaction_abscouple
+    variable = eta0
+    v = eta1
+    reaction_rate = 1
+  [../]
+  [./eta2reaction]
+   type = MatReaction_abscouple
+    variable = eta0
+    v = eta2
+    reaction_rate = 1
+  [../]
+  [./one]
+   type = BodyForce
+    variable = eta0
+    value = -1.0
+  [../]
 
 
 #kernels for diffusion equation of Al

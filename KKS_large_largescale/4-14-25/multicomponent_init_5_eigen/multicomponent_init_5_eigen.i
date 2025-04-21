@@ -220,6 +220,13 @@
     symbol_names = alpha
     symbol_values = 16
   [../]
+ # [./penalty_func]
+ #   type = ParsedFunction
+  #  f_name = penalty
+  #  expression = 'alpha*(eta0^2*eta1^2 + eta0^2*eta2^2 + eta1^2*eta2^2)'
+  #  symbol_names = alpha
+   # symbol_values = '1000'
+  #[../]
 []
 
 [ICs]
@@ -261,6 +268,16 @@
 []
 
 [Materials]
+  [./penalty_energy1]
+    type = ParsedMaterial
+    f_name = penalty
+    args = 'eta0 eta1 eta2'   
+    function = 'beta*(eta0^2*eta1^2 + eta0^2*eta2^2 + eta1^2*eta2^2)'
+    constant_names = 'beta'
+    constant_expressions = '1000'
+  [../]
+  
+  
    # Free energy of the gamma(matrix)
    [./f_gamma]
     type = DerivativeParsedMaterial
@@ -310,7 +327,7 @@
   type = DerivativeParsedMaterial
   property_name = f_gammaDP
   coupled_variables = 'c_Al_gammaDP c_Nb_gammaDP'
-  expression =  '50*((c_Al_gammaDP-0.187)^2+(c_Nb_gammaDP-0.000727)^2)'
+  expression = '50*((c_Al_gammaDP-0.187)^2+(c_Nb_gammaDP-0.000727)^2)'
 [../]
  # Elastic energy of the phase 2
  [./elastic_free_energy_2]
@@ -327,6 +344,14 @@
   coupled_variables = 'c_Al_gammaDP c_Nb_gammaDP'
 [../]
 
+  #Sum of all free energies
+  [./Total_energy]
+    type = DerivativeSumMaterial
+    property_name = F_total
+    sum_materials = 'F0 F1 F2 penalty'
+    coupled_variables = 'c_Al_gamma c_Nb_gamma c_Al_gammaP c_Nb_gammaP c_Al_gammaDP c_Nb_gammaDP eta0 eta1 eta2'
+  [../]
+  
  # Switching functions for each phase
   # h1(eta0, eta1, eta2)
   [./h0]
@@ -485,9 +510,9 @@
     displacements = 'disp_x disp_y'
   [../]
 
-  #
+  
   # Allen-Cahn Equation for eta0
-  #
+  
   [./deta0dt]
     type = TimeDerivative
     variable = eta0
@@ -496,7 +521,7 @@
   [./ACBulkF0]
     type = KKSMultiACBulkF
     variable  = eta0
-    Fj_names  = 'F0 F1 F2'
+    Fj_names  = 'F_total F_total F_total'
     hj_names  = 'h0 h1 h2'
     gi_name   = g0
     eta_i     = eta0
@@ -507,7 +532,7 @@
   [./ACBulkC0_Al]
     type = KKSMultiACBulkC
     variable  = eta0
-    Fj_names  = 'F0 F1 F2'
+    Fj_names  = 'F_total F_total F_total'
     hj_names  = 'h0 h1 h2'
     cj_names  = 'c_Al_gamma c_Al_gammaP c_Al_gammaDP'
     eta_i     = eta0
@@ -516,7 +541,7 @@
   [./ACBulkC0_Nb]
     type = KKSMultiACBulkC
     variable  = eta0
-    Fj_names  = 'F0 F1 F2'
+    Fj_names  = 'F_total F_total F_total'
     hj_names  = 'h0 h1 h2'
     cj_names  = 'c_Nb_gamma c_Nb_gammaP c_Nb_gammaDP'
     eta_i     = eta0
@@ -538,7 +563,7 @@
   [./ACBulkF1]
     type = KKSMultiACBulkF
     variable  = eta1
-    Fj_names  = 'F0 F1 F2'
+    Fj_names  = 'F_total F_total F_total'
     hj_names  = 'h0 h1 h2'
     gi_name   = g1
     eta_i     = eta1
@@ -549,7 +574,7 @@
   [./ACBulkC1_Al]
     type = KKSMultiACBulkC
     variable  = eta1
-    Fj_names  = 'F0 F1 F2'
+    Fj_names  = 'F_total F_total F_total'
     hj_names  = 'h0 h1 h2'
     cj_names  = 'c_Al_gamma c_Al_gammaP c_Al_gammaDP'
     eta_i     = eta1
@@ -558,7 +583,7 @@
   [./ACBulkC1_Nb]
     type = KKSMultiACBulkC
     variable  = eta1
-    Fj_names  = 'F0 F1 F2'
+    Fj_names  = 'F_total F_total F_total'
     hj_names  = 'h0 h1 h2'
     cj_names  = 'c_Nb_gamma c_Nb_gammaP c_Nb_gammaDP'
     eta_i     = eta1
@@ -578,7 +603,7 @@
   [./ACBulkF2]
     type = KKSMultiACBulkF
     variable  = eta2
-    Fj_names  = 'F0 F1 F2'
+    Fj_names  = 'F_total F_total F_total'
     hj_names  = 'h0 h1 h2'
     gi_name   = g2
     eta_i     = eta2
@@ -588,7 +613,7 @@
   [./ACBulkC2_Al]
     type = KKSMultiACBulkC
     variable  = eta2
-    Fj_names  = 'F0 F1 F2'
+    Fj_names  = 'F_total F_total F_total'
     hj_names  = 'h0 h1 h2'
     cj_names  = 'c_Al_gamma c_Al_gammaP c_Al_gammaDP'
     eta_i     = eta2
@@ -597,7 +622,7 @@
   [./ACBulkC2_Nb]
     type = KKSMultiACBulkC
     variable  = eta2
-    Fj_names  = 'F0 F1 F2'
+    Fj_names  = 'F_total F_total F_total'
     hj_names  = 'h0 h1 h2'
     cj_names  = 'c_Nb_gamma c_Nb_gammaP c_Nb_gammaDP'
     eta_i     = eta2
@@ -611,30 +636,30 @@
   [../]  
   
 
-# Kernels for constraint equation eta0 + eta1 + eta2 = 1
-  # eta0 is the nonlinear variable for the constraint equation
-  #[./eta0reaction]
-  #  type = MatReaction
-  #  variable = eta0
-  #  reaction_rate = 1
-  #[../]
-  #[./eta1reaction]
-  #  type = MatReaction_abscouple
-  #  variable = eta0
-  #  v = eta1
-  #  reaction_rate = 1
-  #[../]
-  #[./eta2reaction]
-  # type = MatReaction_abscouple
-  #  variable = eta0
-  #  v = eta2
-  #  reaction_rate = 1
-  #[../]
-  #[./one]
-  # type = BodyForce
-  #  variable = eta0
-  #  value = -1.0
-  #[../]
+ #Kernels for constraint equation eta0 + eta1 + eta2 = 1
+ #eta0 is the nonlinear variable for the constraint equation
+[./eta0reaction]
+  type = MatReaction
+  variable = eta0
+  reaction_rate = 1
+[../]
+[./eta1reaction]
+  type = MatReaction_abscouple
+  variable = eta0
+  v = eta1
+  reaction_rate = 1
+  [../]
+[./eta2reaction]
+  type = MatReaction_abscouple
+  variable = eta0
+  v = eta2
+  reaction_rate = 1
+[../]
+[./one]
+  type = BodyForce
+  variable = eta0
+  value = -1.0
+[../]
 
 
 #kernels for diffusion equation of Al
