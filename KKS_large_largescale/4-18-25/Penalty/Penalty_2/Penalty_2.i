@@ -243,6 +243,14 @@
 
 
 [Materials]
+  [./penalty_energy1]
+    type = ParsedMaterial
+    f_name = penalty
+    args = 'eta_m eta_pv1 eta_pv2'   
+    function = 'beta*(eta_m^2*eta_pv1^2 + eta_m^2*eta_pv2^2 + eta_pv1^2*eta_pv2^2)'
+    constant_names = 'beta'
+    constant_expressions = '1e9'
+  [../]
   [./fm]
     type = DerivativeParsedMaterial
     f_name = fc_m
@@ -285,11 +293,11 @@
     args = 'c1pv1 c2pv1'
   [../]
 
-  [./fc_pv2]
+  [./f2]
     type = DerivativeParsedMaterial
     f_name = fc_pv2
     args = 'c1pv2 c2pv2'
-    function = '50.0*((c1pv2-0.187)^2+2*(c2pv2-0.000727)^2)'
+    function = '50.0*((c1pv2-0.00727)^2+2*(c2pv2-0.196)^2)-2.0'
   [../]
   # Elastic energy of the phase 2
   [./elastic_free_energy_pv2]
@@ -305,7 +313,13 @@
     sum_materials = 'fc_pv2 fe_pv2'
     args = 'c1pv2 c2pv2'
   [../]
-
+#Sum of all free energies
+[./Total_energy]
+  type = DerivativeSumMaterial
+  property_name = F_total
+  sum_materials = 'Fm Fpv1 Fpv2 penalty'
+  coupled_variables = 'c1m c2m c1pv1 c2pv1  eta_m eta_pv1 eta_pv2'
+[../]
   # Switching functions for each phase
   # hm(eta_pv1, eta_pv2, eta_m)
   [./hm]
@@ -451,7 +465,7 @@
   [./ACBulkFpv1]
     type = KKSMultiACBulkF
     variable  = eta_pv1
-    Fj_names  = 'Fpv1 Fpv2 Fm'
+    Fj_names  = 'F_total F_total F_total'
     hj_names  = 'hpv1 hpv2 hm'
     gi_name   = gpv1
     eta_i     = eta_pv1
@@ -461,7 +475,7 @@
   [./ACBulkCpv1_c1]
     type = KKSMultiACBulkC
     variable  = eta_pv1
-    Fj_names  = 'Fpv1 Fpv2 Fm'
+    Fj_names  = 'F_total F_total F_total'
     hj_names  = 'hpv1 hpv2 hm'
     cj_names  = 'c1pv1 c1pv2 c1m'
     eta_i     = eta_pv1
@@ -470,7 +484,7 @@
   [./ACBulkCpv1_c2]
     type = KKSMultiACBulkC
     variable  = eta_pv1
-    Fj_names  = 'Fpv1 Fpv2 Fm'
+    Fj_names  = 'F_total F_total F_total'
     hj_names  = 'hpv1 hpv2 hm'
     cj_names  = 'c2pv1 c2pv2 c2m'
     eta_i     = eta_pv1
@@ -490,7 +504,7 @@
   [./ACBulkFpv2]
     type = KKSMultiACBulkF
     variable  = eta_pv2
-    Fj_names  = 'Fpv1 Fpv2 Fm'
+    Fj_names  = 'F_total F_total F_total'
     hj_names  = 'hpv1 hpv2 hm'
     gi_name   = gpv2
     eta_i     = eta_pv2
@@ -500,7 +514,7 @@
   [./ACBulkCpv2_c1]
     type = KKSMultiACBulkC
     variable  = eta_pv2
-    Fj_names  = 'Fpv1 Fpv2 Fm'
+    Fj_names  = 'F_total F_total F_total'
     hj_names  = 'hpv1 hpv2 hm'
     cj_names  = 'c1pv1 c1pv2 c1m'
     eta_i     = eta_pv2
@@ -509,7 +523,7 @@
   [./ACBulkCpv2_c2]
     type = KKSMultiACBulkC
     variable  = eta_pv2
-    Fj_names  = 'Fpv1 Fpv2 Fm'
+    Fj_names  = 'F_total F_total F_total'
     hj_names  = 'hpv1 hpv2 hm'
     cj_names  = 'c2pv1 c2pv2 c2m'
     eta_i     = eta_pv2
@@ -695,7 +709,7 @@
   nl_rel_tol = 1.0e-6
   nl_abs_tol = 1.0e-8
 
-  end_time = 50000
+  end_time = 100000
 
   [./TimeStepper]
     type = IterationAdaptiveDT

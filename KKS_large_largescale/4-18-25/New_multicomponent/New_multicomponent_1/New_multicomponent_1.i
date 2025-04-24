@@ -154,7 +154,7 @@
     order = FIRST
     family = LAGRANGE
   [../]
-  # phase concentration c2 in pv2
+  # phase concentration c1 in pv2
   [./c1pv2]
     order = FIRST
     family = LAGRANGE

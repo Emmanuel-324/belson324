@@ -115,6 +115,21 @@
     bound_type = lower
     bound_value = -1
   [../]
+  [./c1_lower_bound]
+    type = ConstantBoundsAux
+    variable = bounds_dummy
+    bounded_variable = c1
+    bound_type = lower
+    bound_value = 0
+  [../]
+  [./c2_lower_bound]
+    type = ConstantBoundsAux
+    variable = bounds_dummy
+    bounded_variable = c2
+    bound_type = lower
+    bound_value = 0
+  [../]
+
 []
 
 
@@ -139,7 +154,7 @@
     order = FIRST
     family = LAGRANGE
   [../]
-  # phase concentration c2 in pv2
+  # phase concentration c1 in pv2
   [./c1pv2]
     order = FIRST
     family = LAGRANGE
@@ -187,16 +202,11 @@
     family = LAGRANGE
     block = 0
   [../]
-# chemical potential solute 1
-[./w1]
+# Lagrange multiplier
+[./lambda]
   order = FIRST
   family = LAGRANGE
-[../]
-
-# chemical potential solute 2
-[./w2]
-  order = FIRST
-  family = LAGRANGE
+  initial_condition = 0.0
 [../]
 []
 
@@ -210,6 +220,13 @@
 []
 
 [ICs]
+  [./eta_m]
+    variable = eta_m
+    type = RandomIC
+    min = 0.1625
+    max = 0.9999
+    seed = 192
+  [../]
   [./eta_pv1]
     variable = eta_pv1
     type = RandomIC
@@ -285,7 +302,7 @@
     args = 'c1pv1 c2pv1'
   [../]
 
-  [./fc_pv2]
+  [./f2]
     type = DerivativeParsedMaterial
     f_name = fc_pv2
     args = 'c1pv2 c2pv2'
@@ -329,6 +346,25 @@
     h_name = hpv2
   [../]
 
+  # Coefficients for diffusion equation
+  [./Dhm]
+    type = DerivativeParsedMaterial
+    material_property_names = 'D hm'
+    function = D*hm
+    f_name = Dhm
+  [../]
+  [./Dhpv1]
+    type = DerivativeParsedMaterial
+    material_property_names = 'D hpv1'
+    function = D*hpv1
+    f_name = Dhpv1
+  [../]
+  [./Dhpv2]
+    type = DerivativeParsedMaterial
+    material_property_names = 'D hpv2'
+    function = D*hpv2
+    f_name = Dhpv2
+  [../]
 
 # Barrier functions for each phase
   [./gm]
@@ -353,8 +389,8 @@
   # constant properties
   [./constants]
     type = GenericConstantMaterial
-    prop_names  = 'L    kappa  D  misfit  W    M'
-    prop_values = '0.3  0.01   1  0.000  0.01   1'
+    prop_names  = 'L    kappa  D  misfit  W'
+    prop_values = '0.3  0.01   1  0.000  0.01'
   [../]
 
   #Mechanical properties
@@ -465,7 +501,7 @@
     hj_names  = 'hpv1 hpv2 hm'
     cj_names  = 'c1pv1 c1pv2 c1m'
     eta_i     = eta_pv1
-    args      = 'c2m c2pv1 c2pv2 eta_pv2 eta_m'
+    args      = 'eta_pv2 eta_m'
   [../]
   [./ACBulkCpv1_c2]
     type = KKSMultiACBulkC
@@ -474,7 +510,13 @@
     hj_names  = 'hpv1 hpv2 hm'
     cj_names  = 'c2pv1 c2pv2 c2m'
     eta_i     = eta_pv1
-    args      = 'c1m c1pv2 c1pv1 eta_pv2 eta_m'
+    args      = 'eta_pv2 eta_m'
+  [../]
+  [./multipler1]
+    type = MatReaction
+    variable = eta_pv1
+    v = lambda
+    reaction_rate = L
   [../]
   [./ACInterfacepv1]
     type = ACInterface
@@ -495,7 +537,7 @@
     gi_name   = gpv2
     eta_i     = eta_pv2
     wi        = 0.01
-    args      = 'c1m c2m c1pv1 c2pv1 c1pv2 c2pv2 eta_pv1 eta_m'
+    args      = 'c1pv2 c2pv2 eta_pv1 eta_m'
   [../]
   [./ACBulkCpv2_c1]
     type = KKSMultiACBulkC
@@ -504,7 +546,7 @@
     hj_names  = 'hpv1 hpv2 hm'
     cj_names  = 'c1pv1 c1pv2 c1m'
     eta_i     = eta_pv2
-    args      = 'c2m c2pv2 c2pv1 eta_pv1 eta_m'
+    args      = 'eta_pv1 eta_m'
   [../]
   [./ACBulkCpv2_c2]
     type = KKSMultiACBulkC
@@ -513,13 +555,140 @@
     hj_names  = 'hpv1 hpv2 hm'
     cj_names  = 'c2pv1 c2pv2 c2m'
     eta_i     = eta_pv2
-    args      = 'c1m c1pv2 c1pv1 eta_pv1 eta_m'
+    args      = 'eta_pv1 eta_m'
+  [../]
+  [./multipler2]
+    type = MatReaction
+    variable = eta_pv2
+    v = lambda
+    reaction_rate = L
   [../]
   [./ACInterfacepv2]
     type = ACInterface
     variable = eta_pv2
     kappa_name = kappa
   [../]
+# Kernels for the Lagrange multiplier equation
+[./mult_lambda]
+  type = MatReaction
+  variable = lambda
+  reaction_rate = 3
+[../]
+[./ACBulkFm_lambda]
+  type = KKSMultiACBulkF
+  variable  = lambda
+  Fj_names  = 'Fpv1 Fpv2 Fm'
+  hj_names  = 'hpv1 hpv2 hm'
+  gi_name   = gm
+  eta_i     = eta_m
+  wi        = 0.01
+  mob_name  = 1
+  coupled_variables      = 'c1pv1 c1pv2 c1m c2pv1 c2pv2 c2m eta_pv2 eta_pv1'
+[../]
+[./ACBulkCm_c1]
+  type = KKSMultiACBulkC
+  variable  = lambda
+  Fj_names  = 'Fpv1 Fpv2 Fm'
+  hj_names  = 'hpv1 hpv2 hm'
+  cj_names  = 'c1pv1 c1pv2 c1m'
+  eta_i     = eta_m
+  coupled_variables      = 'eta_pv2 eta_pv1'
+  mob_name  = 1
+[../]
+[./ACBulkCm_c2]
+  type = KKSMultiACBulkC
+  variable  = lambda
+  Fj_names  = 'Fpv1 Fpv2 Fm'
+  hj_names  = 'hpv1 hpv2 hm'
+  cj_names  = 'c2pv1 c2pv2 c2m'
+  eta_i     = eta_m
+  coupled_variables  = 'eta_pv2 eta_pv1'
+  mob_name  = 1
+[../]
+[./mult_CoupledACint_m]
+  type = SimpleCoupledACInterface
+  variable = lambda
+  v = eta_m
+  kappa_name = kappa
+  mob_name = 1
+[../]
+[./ACBulkFpv1_lambda]
+  type = KKSMultiACBulkF
+  variable  = lambda
+  Fj_names  = 'Fpv1 Fpv2 Fm'
+  hj_names  = 'hpv1 hpv2 hm'
+  gi_name   = gpv1
+  eta_i     = eta_pv1
+  wi        = 0.01
+  mob_name  = 1
+  coupled_variables = 'c1pv1 c1pv2 c1m c2pv1 c2pv2 c2m eta_pv2 eta_m'
+[../]
+[./ACBulkCpv1_c1_lambda]
+  type = KKSMultiACBulkC
+  variable  = lambda
+  Fj_names  = 'Fpv1 Fpv2 Fm'
+  hj_names  = 'hpv1 hpv2 hm'
+  cj_names  = 'c1pv1 c1pv2 c1m'
+  eta_i     = eta_pv1
+  coupled_variables = 'eta_pv2 eta_m'
+  mob_name  = 1
+[../]
+[./ACBulkCpv1_c2_lambda]
+  type = KKSMultiACBulkC
+  variable  = lambda
+  Fj_names  = 'Fpv1 Fpv2 Fm'
+  hj_names  = 'hpv1 hpv2 hm'
+  cj_names  = 'c2pv1 c2pv2 c2m'
+  eta_i     = eta_pv1
+  mob_name  = 1
+  coupled_variables  = 'eta_pv2 eta_m'
+[../]
+[mult_CoupledACint_pv1]
+  type = SimpleCoupledACInterface
+  variable = lambda
+  v = eta_pv1
+  kappa_name = kappa
+  mob_name = 1
+[]
+[./ACBulkFpv2_lambda]
+  type = KKSMultiACBulkF
+  variable  = lambda
+  Fj_names  = 'Fpv1 Fpv2 Fm'
+  hj_names  = 'hpv1 hpv2 hm'
+  gi_name   = gpv2
+  eta_i     = eta_pv2
+  wi        = 0.01
+  mob_name = 1
+  coupled_variables  = 'c1pv2 c2pv2 eta_pv1 eta_m'
+[../]
+[./ACBulkCpv2_c1_lambda]
+  type = KKSMultiACBulkC
+  variable  = lambda
+  Fj_names  = 'Fpv1 Fpv2 Fm'
+  hj_names  = 'hpv1 hpv2 hm'
+  cj_names  = 'c1pv1 c1pv2 c1m'
+  eta_i     = eta_pv2
+  coupled_variables = 'eta_pv1 eta_m'
+  mob_name  = 1
+[../]
+[./ACBulkCpv2_c2_lambda]
+  type = KKSMultiACBulkC
+  variable  = lambda
+  Fj_names  = 'Fpv1 Fpv2 Fm'
+  hj_names  = 'hpv1 hpv2 hm'
+  cj_names  = 'c2pv1 c2pv2 c2m'
+  eta_i     = eta_pv2
+  coupled_variables = 'eta_pv1 eta_m'
+  mob_name = 1
+[../]
+
+[./mult_CoupledACint_pv2]
+  type = SimpleCoupledACInterface
+  variable = lambda
+  v = eta_pv2
+  kappa_name = kappa
+  mob_name = 1
+[../]
 
 # Kernels for constraint equation |eta_pv1| + |eta_pv2| + eta_m = 1
   # eta3 is the nonlinear variable for the constraint equation
@@ -546,62 +715,54 @@
     value = -1.0
   [../]
 
- # Cahn-Hilliard Equations
-  #
-  [./CHBulk1_pv1]
-    type = KKSSplitCHCRes
+  #Kernels for diffusion equation of c1
+  [./diff_time_c1]
+    type = TimeDerivative
     variable = c1
-    ca       = c1pv1
-    fa_name  = fc_pv1
-    w        = w1
-    args_a   = 'c2pv1'
   [../]
-  [./CHBulk2_pv1]
-    type = KKSSplitCHCRes
-    variable = c2
-    ca       = c2pv1
-    fa_name  = fc_pv1
-    w        = w2
-    args_a   = 'c1pv1'
-  [../] 
-  [./CHBulk1_pv2]
-    type = KKSSplitCHCRes
-    variable = c2
-    ca       = c1pv2
-    fa_name  = fc_pv2
-    w        = w1
-    args_a   = 'c2pv2'
-  [../] 
-  [./CHBulk2_pv2]
-    type = KKSSplitCHCRes
-    variable = c2
-    ca       = c2pv2
-    fa_name  = fc_pv2
-    w        = w2
-    args_a   = 'c1pv2'
-  [../]  
-  [./dc1dt]
-    type = CoupledTimeDerivative
-    variable = w1
-    v = c1
+  [./diff_c1m]
+    type = MatDiffusion
+    variable = c1
+    diffusivity = Dhm
+    v = c1m
   [../]
-  [./dc2dt]
-    type = CoupledTimeDerivative
-    variable = w2
-    v = c2
+  [./diff_c1pv1]
+    type = MatDiffusion
+    variable = c1
+    diffusivity = Dhpv1
+    v = c1pv1
+  [../]
+  [./diff_c1pv2]
+    type = MatDiffusion
+    variable = c1
+    diffusivity = Dhpv2
+    v = c1pv2
   [../]
 
-  [./w1kernel]
-    type = SplitCHWRes
-    mob_name = M
-    variable = w1
+  #Kernels for diffusion equation of c2
+  [./diff_time_c2]
+    type = TimeDerivative
+    variable = c2
   [../]
-  [./w2kernel]
-    type = SplitCHWRes
-    mob_name = M
-    variable = w2
+  [./diff_c2m]
+    type = MatDiffusion
+    variable = c2
+    diffusivity = Dhm
+    v = c2m
   [../]
-
+  [./diff_c2pv1]
+    type = MatDiffusion
+    variable = c2
+    diffusivity = Dhpv1
+    v = c2pv1
+  [../]
+  [./diff_c2pv2]
+    type = MatDiffusion
+    variable = c2
+    diffusivity = Dhpv2
+    v = c2pv2
+  [../]
+    
   # Phase concentration constraints
   [./chempot1m_pv1]
     type = KKSPhaseChemicalPotential
@@ -695,7 +856,7 @@
   nl_rel_tol = 1.0e-6
   nl_abs_tol = 1.0e-8
 
-  end_time = 50000
+  end_time = 14400
 
   [./TimeStepper]
     type = IterationAdaptiveDT

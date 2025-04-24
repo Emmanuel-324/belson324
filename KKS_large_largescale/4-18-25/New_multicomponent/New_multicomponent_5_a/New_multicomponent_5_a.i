@@ -285,11 +285,11 @@
     args = 'c1pv1 c2pv1'
   [../]
 
-  [./fc_pv2]
+  [./f2]
     type = DerivativeParsedMaterial
     f_name = fc_pv2
     args = 'c1pv2 c2pv2'
-    function = '50.0*((c1pv2-0.187)^2+2*(c2pv2-0.000727)^2)'
+    function = '50.0*((c1pv2-0.00727)^2+2*(c2pv2-0.196)^2)-2.0'
   [../]
   # Elastic energy of the phase 2
   [./elastic_free_energy_pv2]
@@ -695,7 +695,7 @@
   nl_rel_tol = 1.0e-6
   nl_abs_tol = 1.0e-8
 
-  end_time = 50000
+  end_time = 100000
 
   [./TimeStepper]
     type = IterationAdaptiveDT
