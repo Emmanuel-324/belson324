@@ -65,14 +65,20 @@
      boundary = left
      value = 0
    []
-   [tdisp]
-     type = FunctionDirichletBC
-     variable = disp_x
-     boundary = right
-     function = '0.1*t'
-   []
+   [right_pressure]
+    type = Pressure
+    variable = disp_x
+    boundary = right
+    function = cyclic_load
+  []
  []
- 
+
+ [Functions]
+  [cyclic_load]
+    type = ParsedFunction
+    expression = -100*sin(2*pi*t/60) 
+  []
+[]
  [Materials]
    [elasticity_tensor_phase0]
      type = ComputeElasticityTensorCP
