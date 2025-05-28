@@ -15,14 +15,11 @@
 // Forward Declarations
 
 /**
- * SwitchingFunctionMultiPhaseMaterial_abs is a switching function for a multi-phase,
- * multi-order parameter system with an added gamma_ratio parameter for controlling
- * phase proportions.
- *
- * Defined by Moelans, Acta Mat., v 59, p.1077-1086 (2011).
+ * SwitchingFunctionMultiPhaseMaterial is a switching function for a multi-phase,
+ * multi-order parameter system. Defined by Moelans, Acta Mat., v 59, p.1077-1086 (2011).
  * For phase alpha, the switching function is
  * \f$ h_\alpha = (sum_i \eta_{\alpha i}^2) / (sum_\rho sum_i \eta_{\rho i}^2) \f$
- * for phase alpha, where \f$ i \f$  indexes grains of a phase and \f$ rho \f$  indexes phases.
+ * for phase alpha, where \f$ i \f$  indexes grains of a phase and \f$ rho \f$  indexes phases
  */
 template <bool is_ad>
 class SwitchingFunctionMultiPhaseMaterial_absTempl : public DerivativeMaterialInterface<Material>
@@ -48,9 +45,6 @@ protected:
   const std::vector<const GenericVariableValue<is_ad> *> _eta;
   const std::vector<VariableName> _eta_names;
 
-  /// Gamma ratio for controlling phase fraction
-  const Real _gamma_ratio; // Added gamma_ratio parameter
-
   /// List of which order parameters in the full list of all etas belong to phase p
   std::vector<bool> _is_p;
 
@@ -61,4 +55,4 @@ protected:
 };
 
 typedef SwitchingFunctionMultiPhaseMaterial_absTempl<false> SwitchingFunctionMultiPhaseMaterial_abs;
-typedef SwitchingFunctionMultiPhaseMaterial_absTempl<true> ADSwitchingFunctionMultiPhaseMaterial_abs;
+typedef SwitchingFunctionMultiPhaseMaterial_absTempl<true> ADSwitchingFunctionMultiPhaseMaterial;
