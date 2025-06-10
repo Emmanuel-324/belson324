@@ -1,0 +1,46 @@
+Resetting modules to system default. Reseting $MODULEPATH back to system default. All extra directories will be removed from $MODULEPATH.
+Lmod has detected the following error: The following module(s) are unknown:
+"Miniforge3/24.1.2-0"
+
+Please check the spelling or version number. Also try "module spider ..."
+It is also possible your cache file is out-of-date; it may help to try:
+  $ module --ignore_cache load "Miniforge3/24.1.2-0"
+
+Also make sure that all modulefiles written in TCL start with the string
+#%Module
+
+
+
+
+[31m
+*** ERROR ***
+/home/emmanuel324/projects/belson324/KKS_large_largescale/6-9-25/My_script_1/My_script_1.i:118.1:
+The following error occurred in the Problem 'MOOSE Problem' of type FEProblem.
+
+The solver system number was requested for system 'nl0' but this system does not exist in the Problem. Systems can be added to the problem using the 'nl_sys_names' parameter.
+Systems in the Problem: u_sys, v_sys[39m
+
+Stack frames: 22
+0: libMesh::print_trace(std::ostream&)
+1: moose::internal::mooseErrorRaw(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >)
+2: MooseBase::callMooseError(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, bool) const
+3: /home/emmanuel324/projects/moose/framework/libmoose-dbg.so.0(+0x19d14b7) [0x1555525c34b7]
+4: FEProblemBase::solverSysNum(SolverSystemName const&) const
+5: FEProblemBase::addVariable(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, InputParameters&)
+6: /home/emmanuel324/projects/moose/framework/libmoose-dbg.so.0(+0x257e55c) [0x15555317055c]
+7: /home/emmanuel324/projects/moose/framework/libmoose-dbg.so.0(+0x2570a7e) [0x155553162a7e]
+8: /home/emmanuel324/projects/moose/framework/libmoose-dbg.so.0(+0x2562c68) [0x155553154c68]
+9: /home/emmanuel324/projects/moose/framework/libmoose-dbg.so.0(+0x2544a53) [0x155553136a53]
+10: AddVariableAction::addVariable(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)
+11: AddVariableAction::act()
+12: Action::timedAct()
+13: ActionWarehouse::executeActionsWithAction(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)
+14: ActionWarehouse::executeAllActions()
+15: MooseApp::runInputFile()
+16: MooseApp::run()
+17: /home/emmanuel324/projects/belson324/belson324-dbg(+0x7d8c) [0x55555555bd8c]
+18: main
+19: /lib64/libc.so.6(+0x295d0) [0x1555386295d0]
+20: __libc_start_main
+21: /home/emmanuel324/projects/belson324/belson324-dbg(+0x6079) [0x55555555a079]
+Abort(1) on node 0 (rank 0 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 0
