@@ -1,0 +1,21 @@
+Resetting modules to system default. Reseting $MODULEPATH back to system default. All extra directories will be removed from $MODULEPATH.
+Lmod has detected the following error: The following module(s) are unknown:
+"Miniforge3/24.1.2-0"
+
+Please check the spelling or version number. Also try "module spider ..."
+It is also possible your cache file is out-of-date; it may help to try:
+  $ module --ignore_cache load "Miniforge3/24.1.2-0"
+
+Also make sure that all modulefiles written in TCL start with the string
+#%Module
+
+
+
+srun: error: tc079: tasks 1,4: Bus error (core dumped)
+srun: error: tc079: tasks 10-11,14: Bus error (core dumped)
+srun: error: tc079: task 12: Bus error (core dumped)
+srun: error: tc079: task 6: Bus error (core dumped)
+srun: error: tc079: tasks 5,7: Bus error (core dumped)
+srun: error: tc079: tasks 2-3,8: Bus error (core dumped)
+srun: error: tc079: task 0: Bus error (core dumped)
+srun: error: tc079: tasks 9,13,15: Bus error (core dumped)

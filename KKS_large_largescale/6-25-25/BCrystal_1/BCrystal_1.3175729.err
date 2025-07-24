@@ -1,0 +1,138 @@
+Resetting modules to system default. Reseting $MODULEPATH back to system default. All extra directories will be removed from $MODULEPATH.
+
+[31m
+*** ERROR ***
+/home/emmanuel324/projects/belson324/KKS_large_largescale/6-25-25/BCrystal_1/BCrystal_1.i:1701.3:
+The following error occurred in the TimeStepper 'IterationAdaptiveDT' of type IterationAdaptiveDT.
+
+Solve failed and timestep already at dtmin, cannot continue![39m
+
+Abort(1) on node 2 (rank 2 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 2
+
+[31m
+*** ERROR ***
+/home/emmanuel324/projects/belson324/KKS_large_largescale/6-25-25/BCrystal_1/BCrystal_1.i:1701.3:
+The following error occurred in the TimeStepper 'IterationAdaptiveDT' of type IterationAdaptiveDT.
+
+Solve failed and timestep already at dtmin, cannot continue![39m
+
+Abort(1) on node 4 (rank 4 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 4
+
+[31m
+*** ERROR ***
+/home/emmanuel324/projects/belson324/KKS_large_largescale/6-25-25/BCrystal_1/BCrystal_1.i:1701.3:
+The following error occurred in the TimeStepper 'IterationAdaptiveDT' of type IterationAdaptiveDT.
+
+Solve failed and timestep already at dtmin, cannot continue![39m
+
+Abort(1) on node 10 (rank 10 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 10
+
+[31m
+*** ERROR ***
+/home/emmanuel324/projects/belson324/KKS_large_largescale/6-25-25/BCrystal_1/BCrystal_1.i:1701.3:
+The following error occurred in the TimeStepper 'IterationAdaptiveDT' of type IterationAdaptiveDT.
+
+Solve failed and timestep already at dtmin, cannot continue![39m
+
+Abort(1) on node 12 (rank 12 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 12
+
+[31m
+*** ERROR ***
+/home/emmanuel324/projects/belson324/KKS_large_largescale/6-25-25/BCrystal_1/BCrystal_1.i:1701.3:
+The following error occurred in the TimeStepper 'IterationAdaptiveDT' of type IterationAdaptiveDT.
+
+Solve failed and timestep already at dtmin, cannot continue![39m
+
+Abort(1) on node 13 (rank 13 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 13
+
+[31m
+*** ERROR ***
+/home/emmanuel324/projects/belson324/KKS_large_largescale/6-25-25/BCrystal_1/BCrystal_1.i:1701.3:
+The following error occurred in the TimeStepper 'IterationAdaptiveDT' of type IterationAdaptiveDT.
+
+Solve failed and timestep already at dtmin, cannot continue![39m
+
+Abort(1) on node 1 (rank 1 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 1
+
+[31m
+*** ERROR ***
+/home/emmanuel324/projects/belson324/KKS_large_largescale/6-25-25/BCrystal_1/BCrystal_1.i:1701.3:
+The following error occurred in the TimeStepper 'IterationAdaptiveDT' of type IterationAdaptiveDT.
+
+Solve failed and timestep already at dtmin, cannot continue![39m
+
+Abort(1) on node 3 (rank 3 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 3
+
+[31m
+*** ERROR ***
+/home/emmanuel324/projects/belson324/KKS_large_largescale/6-25-25/BCrystal_1/BCrystal_1.i:1701.3:
+The following error occurred in the TimeStepper 'IterationAdaptiveDT' of type IterationAdaptiveDT.
+
+Solve failed and timestep already at dtmin, cannot continue![39m
+
+Abort(1) on node 5 (rank 5 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 5
+
+[31m
+*** ERROR ***
+/home/emmanuel324/projects/belson324/KKS_large_largescale/6-25-25/BCrystal_1/BCrystal_1.i:1701.3:
+The following error occurred in the TimeStepper 'IterationAdaptiveDT' of type IterationAdaptiveDT.
+
+Solve failed and timestep already at dtmin, cannot continue![39m
+
+Abort(1) on node 6 (rank 6 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 6
+
+[31m
+*** ERROR ***
+/home/emmanuel324/projects/belson324/KKS_large_largescale/6-25-25/BCrystal_1/BCrystal_1.i:1701.3:
+The following error occurred in the TimeStepper 'IterationAdaptiveDT' of type IterationAdaptiveDT.
+
+Solve failed and timestep already at dtmin, cannot continue![39m
+
+Abort(1) on node 7 (rank 7 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 7
+
+[31m
+*** ERROR ***
+/home/emmanuel324/projects/belson324/KKS_large_largescale/6-25-25/BCrystal_1/BCrystal_1.i:1701.3:
+The following error occurred in the TimeStepper 'IterationAdaptiveDT' of type IterationAdaptiveDT.
+
+Solve failed and timestep already at dtmin, cannot continue![39m
+
+Abort(1) on node 8 (rank 8 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 8
+
+[31m
+*** ERROR ***
+/home/emmanuel324/projects/belson324/KKS_large_largescale/6-25-25/BCrystal_1/BCrystal_1.i:1701.3:
+The following error occurred in the TimeStepper 'IterationAdaptiveDT' of type IterationAdaptiveDT.
+
+Solve failed and timestep already at dtmin, cannot continue![39m
+
+Abort(1) on node 9 (rank 9 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 9
+
+[31m
+*** ERROR ***
+/home/emmanuel324/projects/belson324/KKS_large_largescale/6-25-25/BCrystal_1/BCrystal_1.i:1701.3:
+The following error occurred in the TimeStepper 'IterationAdaptiveDT' of type IterationAdaptiveDT.
+
+Solve failed and timestep already at dtmin, cannot continue![39m
+
+Abort(1) on node 11 (rank 11 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 11
+
+[31m
+*** ERROR ***
+/home/emmanuel324/projects/belson324/KKS_large_largescale/6-25-25/BCrystal_1/BCrystal_1.i:1701.3:
+The following error occurred in the TimeStepper 'IterationAdaptiveDT' of type IterationAdaptiveDT.
+
+Solve failed and timestep already at dtmin, cannot continue![39m
+
+Abort(1) on node 0 (rank 0 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 0
+slurmstepd: error: *** STEP 3175729.0 ON tc-hm004 CANCELLED AT 2025-07-02T14:29:20 ***
+srun: Job step aborted: Waiting up to 62 seconds for job step to finish.
+srun: error: tc-hm004: task 7: Aborted (core dumped)
+srun: error: tc-hm004: task 13: Aborted (core dumped)
+srun: error: tc-hm004: tasks 3,12: Aborted (core dumped)
+srun: error: tc-hm004: tasks 5,8: Aborted (core dumped)
+srun: error: tc-hm004: task 4: Aborted (core dumped)
+srun: error: tc-hm004: tasks 6,10: Aborted (core dumped)
+srun: error: tc-hm004: task 0: Aborted (core dumped)
+srun: error: tc-hm004: task 2: Aborted (core dumped)
+srun: error: tc-hm004: tasks 1,9,11: Aborted (core dumped)

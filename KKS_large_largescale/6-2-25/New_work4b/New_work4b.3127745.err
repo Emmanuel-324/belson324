@@ -11,3 +11,4 @@ Also make sure that all modulefiles written in TCL start with the string
 
 
 
+slurmstepd: error: *** JOB 3127745 ON tc-hm006 CANCELLED AT 2025-06-11T19:03:28 ***

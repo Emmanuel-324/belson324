@@ -1,0 +1,208 @@
+Resetting modules to system default. Reseting $MODULEPATH back to system default. All extra directories will be removed from $MODULEPATH.
+WARNING: At least one element took more than 10 iterations to converge in inverse_map()...
+Rerun in devel/dbg mode for more details.
+WARNING: At least one element took more than 10 iterations to converge in inverse_map()...
+Rerun in devel/dbg mode for more details.
+WARNING: At least one element took more than 10 iterations to converge in inverse_map()...
+Rerun in devel/dbg mode for more details.
+WARNING: At least one element took more than 10 iterations to converge in inverse_map()...
+Rerun in devel/dbg mode for more details.
+WARNING: At least one element took more than 10 iterations to converge in inverse_map()...
+Rerun in devel/dbg mode for more details.
+WARNING: At least one element took more than 10 iterations to converge in inverse_map()...
+Rerun in devel/dbg mode for more details.
+WARNING: At least one element took more than 10 iterations to converge in inverse_map()...
+Rerun in devel/dbg mode for more details.
+WARNING: At least one element took more than 10 iterations to converge in inverse_map()...
+Rerun in devel/dbg mode for more details.
+WARNING: At least one element took more than 10 iterations to converge in inverse_map()...
+Rerun in devel/dbg mode for more details.
+WARNING: At least one element took more than 10 iterations to converge in inverse_map()...
+Rerun in devel/dbg mode for more details.
+WARNING: At least one element took more than 10 iterations to converge in inverse_map()...
+Rerun in devel/dbg mode for more details.
+ERROR: Newton scheme FAILED to converge in 21 iterations in element 61141 for physical point = (x,y,z)=( 486.704,  394.175,        0)
+  Elem Information
+   id()=61141, unique_id()=123093, subdomain_id()=1, processor_id()=12
+   type()=QUAD4
+   dim()=2
+   n_nodes()=4
+   mapping=LAGRANGE_MAP
+    0  Node id()=61491, processor_id()=12, Point=(x,y,z)=(   505.2,  351.727,        0)
+    DoFs=(0/0/784046) (0/1/784047) (0/2/784048) (0/3/784049) (0/4/784050) (0/5/784051) (0/6/784052) (0/7/784053) (0/8/784054) (0/9/784055) (0/14/799970) (0/15/799971) (0/16/799972) (0/17/799973) (0/18/807860) (0/19/807861) (1/4/246308) (1/5/250181) 
+    1  Node id()=61492, processor_id()=12, Point=(x,y,z)=( 448.779,  394.774,        0)
+    DoFs=(0/0/784056) (0/1/784057) (0/2/784058) (0/3/784059) (0/4/784060) (0/5/784061) (0/6/784062) (0/7/784063) (0/8/784064) (0/9/784065) (0/14/799974) (0/15/799975) (0/16/799976) (0/17/799977) (0/18/807862) (0/19/807863) (1/4/246309) (1/5/250182) 
+    2  Node id()=61667, processor_id()=12, Point=(x,y,z)=( 493.307,  360.669,        0)
+    DoFs=(0/0/784546) (0/1/784547) (0/2/784548) (0/3/784549) (0/4/784550) (0/5/784551) (0/6/784552) (0/7/784553) (0/8/784554) (0/9/784555) (0/14/800170) (0/15/800171) (0/16/800172) (0/17/800173) (0/18/807960) (0/19/807961) (1/4/246358) (1/5/250231) 
+    3  Node id()=61666, processor_id()=12, Point=(x,y,z)=( 484.934,  403.153,        0)
+    DoFs=(0/0/784536) (0/1/784537) (0/2/784538) (0/3/784539) (0/4/784540) (0/5/784541) (0/6/784542) (0/7/784543) (0/8/784544) (0/9/784545) (0/14/800166) (0/15/800167) (0/16/800168) (0/17/800169) (0/18/807958) (0/19/807959) (1/4/246357) (1/5/250230) 
+   n_sides()=4
+    neighbor(0)=60966
+    neighbor(1)=61142
+    neighbor(2)=nullptr
+    neighbor(3)=61140
+   hmin()=14.8802, hmax()=70.9684
+   volume()=630.453
+   active()=1, ancestor()=0, subactive()=0, has_children()=0
+   parent()=nullptr
+   level()=0, p_level()=0
+   refinement_flag()=COARSEN
+   p_refinement_flag()=DO_NOTHING
+   DoFs=(1/0/234842) (1/2/238663) (1/3/242484) 
+WARNING: At least one element took more than 10 iterations to converge in inverse_map()...
+Rerun in devel/dbg mode for more details.
+WARNING: At least one element took more than 10 iterations to converge in inverse_map()...
+Rerun in devel/dbg mode for more details.
+WARNING: At least one element took more than 10 iterations to converge in inverse_map()...
+Rerun in devel/dbg mode for more details.
+
+[31m
+*** ERROR ***
+/home/emmanuel324/projects/belson324/KKS_large_largescale/6-25-25/BCrystal_5/BCrystal_5.i:1737.3:
+The following error occurred in the TimeStepper 'IterationAdaptiveDT' of type IterationAdaptiveDT.
+
+Solve failed and timestep already at dtmin, cannot continue![39m
+
+Abort(1) on node 2 (rank 2 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 2
+
+[31m
+*** ERROR ***
+/home/emmanuel324/projects/belson324/KKS_large_largescale/6-25-25/BCrystal_5/BCrystal_5.i:1737.3:
+The following error occurred in the TimeStepper 'IterationAdaptiveDT' of type IterationAdaptiveDT.
+
+Solve failed and timestep already at dtmin, cannot continue![39m
+
+Abort(1) on node 10 (rank 10 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 10
+
+[31m
+*** ERROR ***
+/home/emmanuel324/projects/belson324/KKS_large_largescale/6-25-25/BCrystal_5/BCrystal_5.i:1737.3:
+The following error occurred in the TimeStepper 'IterationAdaptiveDT' of type IterationAdaptiveDT.
+
+Solve failed and timestep already at dtmin, cannot continue![39m
+
+Abort(1) on node 13 (rank 13 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 13
+
+[31m
+*** ERROR ***
+/home/emmanuel324/projects/belson324/KKS_large_largescale/6-25-25/BCrystal_5/BCrystal_5.i:1737.3:
+The following error occurred in the TimeStepper 'IterationAdaptiveDT' of type IterationAdaptiveDT.
+
+Solve failed and timestep already at dtmin, cannot continue![39m
+
+Abort(1) on node 1 (rank 1 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 1
+
+[31m
+*** ERROR ***
+/home/emmanuel324/projects/belson324/KKS_large_largescale/6-25-25/BCrystal_5/BCrystal_5.i:1737.3:
+The following error occurred in the TimeStepper 'IterationAdaptiveDT' of type IterationAdaptiveDT.
+
+Solve failed and timestep already at dtmin, cannot continue![39m
+
+Abort(1) on node 5 (rank 5 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 5
+
+[31m
+*** ERROR ***
+/home/emmanuel324/projects/belson324/KKS_large_largescale/6-25-25/BCrystal_5/BCrystal_5.i:1737.3:
+The following error occurred in the TimeStepper 'IterationAdaptiveDT' of type IterationAdaptiveDT.
+
+Solve failed and timestep already at dtmin, cannot continue![39m
+
+Abort(1) on node 7 (rank 7 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 7
+
+[31m
+*** ERROR ***
+/home/emmanuel324/projects/belson324/KKS_large_largescale/6-25-25/BCrystal_5/BCrystal_5.i:1737.3:
+The following error occurred in the TimeStepper 'IterationAdaptiveDT' of type IterationAdaptiveDT.
+
+Solve failed and timestep already at dtmin, cannot continue![39m
+
+Abort(1) on node 9 (rank 9 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 9
+
+[31m
+*** ERROR ***
+/home/emmanuel324/projects/belson324/KKS_large_largescale/6-25-25/BCrystal_5/BCrystal_5.i:1737.3:
+The following error occurred in the TimeStepper 'IterationAdaptiveDT' of type IterationAdaptiveDT.
+
+Solve failed and timestep already at dtmin, cannot continue![39m
+
+
+[31m
+*** ERROR ***
+/home/emmanuel324/projects/belson324/KKS_large_largescale/6-25-25/BCrystal_5/BCrystal_5.i:1737.3:
+The following error occurred in the TimeStepper 'IterationAdaptiveDT' of type IterationAdaptiveDT.
+
+Solve failed and timestep already at dtmin, cannot continue![39m
+
+Abort(1) on node 14 (rank 14 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 14
+
+[31m
+*** ERROR ***
+/home/emmanuel324/projects/belson324/KKS_large_largescale/6-25-25/BCrystal_5/BCrystal_5.i:1737.3:
+The following error occurred in the TimeStepper 'IterationAdaptiveDT' of type IterationAdaptiveDT.
+
+Solve failed and timestep already at dtmin, cannot continue![39m
+
+Abort(1) on node 15 (rank 15 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 15
+Abort(1) on node 4 (rank 4 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 4
+
+[31m
+*** ERROR ***
+/home/emmanuel324/projects/belson324/KKS_large_largescale/6-25-25/BCrystal_5/BCrystal_5.i:1737.3:
+The following error occurred in the TimeStepper 'IterationAdaptiveDT' of type IterationAdaptiveDT.
+
+Solve failed and timestep already at dtmin, cannot continue![39m
+
+Abort(1) on node 12 (rank 12 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 12
+
+[31m
+*** ERROR ***
+/home/emmanuel324/projects/belson324/KKS_large_largescale/6-25-25/BCrystal_5/BCrystal_5.i:1737.3:
+The following error occurred in the TimeStepper 'IterationAdaptiveDT' of type IterationAdaptiveDT.
+
+Solve failed and timestep already at dtmin, cannot continue![39m
+
+Abort(1) on node 3 (rank 3 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 3
+
+[31m
+*** ERROR ***
+/home/emmanuel324/projects/belson324/KKS_large_largescale/6-25-25/BCrystal_5/BCrystal_5.i:1737.3:
+The following error occurred in the TimeStepper 'IterationAdaptiveDT' of type IterationAdaptiveDT.
+
+Solve failed and timestep already at dtmin, cannot continue![39m
+
+Abort(1) on node 6 (rank 6 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 6
+
+[31m
+*** ERROR ***
+/home/emmanuel324/projects/belson324/KKS_large_largescale/6-25-25/BCrystal_5/BCrystal_5.i:1737.3:
+The following error occurred in the TimeStepper 'IterationAdaptiveDT' of type IterationAdaptiveDT.
+
+Solve failed and timestep already at dtmin, cannot continue![39m
+
+Abort(1) on node 11 (rank 11 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 11
+
+[31m
+*** ERROR ***
+/home/emmanuel324/projects/belson324/KKS_large_largescale/6-25-25/BCrystal_5/BCrystal_5.i:1737.3:
+The following error occurred in the TimeStepper 'IterationAdaptiveDT' of type IterationAdaptiveDT.
+
+Solve failed and timestep already at dtmin, cannot continue![39m
+
+Abort(1) on node 0 (rank 0 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 0
+
+[31m
+*** ERROR ***
+/home/emmanuel324/projects/belson324/KKS_large_largescale/6-25-25/BCrystal_5/BCrystal_5.i:1737.3:
+The following error occurred in the TimeStepper 'IterationAdaptiveDT' of type IterationAdaptiveDT.
+
+Solve failed and timestep already at dtmin, cannot continue![39m
+
+Abort(1) on node 8 (rank 8 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 8
+slurmstepd: error: *** STEP 3217791.0 ON tc237 CANCELLED AT 2025-07-19T02:33:47 ***
+srun: Job step aborted: Waiting up to 62 seconds for job step to finish.
+srun: error: tc237: tasks 1,7,9-11,14-15: Aborted (core dumped)
+srun: error: tc237: task 12: Aborted (core dumped)
+srun: error: tc237: tasks 3-4,6,13: Aborted (core dumped)
+srun: error: tc237: tasks 0,2,8: Aborted (core dumped)
+srun: error: tc237: task 5: Aborted (core dumped)

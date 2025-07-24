@@ -1,0 +1,93 @@
+Resetting modules to system default. Reseting $MODULEPATH back to system default. All extra directories will be removed from $MODULEPATH.
+WARNING: At least one element took more than 10 iterations to converge in inverse_map()...
+Rerun in devel/dbg mode for more details.
+WARNING: At least one element took more than 10 iterations to converge in inverse_map()...
+Rerun in devel/dbg mode for more details.
+WARNING: At least one element took more than 10 iterations to converge in inverse_map()...
+Rerun in devel/dbg mode for more details.
+WARNING: At least one element took more than 10 iterations to converge in inverse_map()...
+Rerun in devel/dbg mode for more details.
+WARNING: At least one element took more than 10 iterations to converge in inverse_map()...
+Rerun in devel/dbg mode for more details.
+WARNING: At least one element took more than 10 iterations to converge in inverse_map()...
+Rerun in devel/dbg mode for more details.
+WARNING: At least one element took more than 10 iterations to converge in inverse_map()...
+Rerun in devel/dbg mode for more details.
+WARNING: At least one element took more than 10 iterations to converge in inverse_map()...
+Rerun in devel/dbg mode for more details.
+
+[31m
+*** ERROR ***
+/home/emmanuel324/projects/belson324/KKS_large_largescale/6-25-25/BCrystal_3/BCrystal_3.i:1729.3:
+The following error occurred in the TimeStepper 'IterationAdaptiveDT' of type IterationAdaptiveDT.
+
+Solve failed and timestep already at dtmin, cannot continue![39m
+
+Abort(1) on node 1 (rank 1 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 1
+
+[31m
+*** ERROR ***
+/home/emmanuel324/projects/belson324/KKS_large_largescale/6-25-25/BCrystal_3/BCrystal_3.i:1729.3:
+The following error occurred in the TimeStepper 'IterationAdaptiveDT' of type IterationAdaptiveDT.
+
+Solve failed and timestep already at dtmin, cannot continue![39m
+
+Abort(1) on node 6 (rank 6 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 6
+
+[31m
+*** ERROR ***
+/home/emmanuel324/projects/belson324/KKS_large_largescale/6-25-25/BCrystal_3/BCrystal_3.i:1729.3:
+The following error occurred in the TimeStepper 'IterationAdaptiveDT' of type IterationAdaptiveDT.
+
+Solve failed and timestep already at dtmin, cannot continue![39m
+
+Abort(1) on node 3 (rank 3 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 3
+
+[31m
+*** ERROR ***
+/home/emmanuel324/projects/belson324/KKS_large_largescale/6-25-25/BCrystal_3/BCrystal_3.i:1729.3:
+The following error occurred in the TimeStepper 'IterationAdaptiveDT' of type IterationAdaptiveDT.
+
+Solve failed and timestep already at dtmin, cannot continue![39m
+
+Abort(1) on node 7 (rank 7 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 7
+
+[31m
+*** ERROR ***
+/home/emmanuel324/projects/belson324/KKS_large_largescale/6-25-25/BCrystal_3/BCrystal_3.i:1729.3:
+The following error occurred in the TimeStepper 'IterationAdaptiveDT' of type IterationAdaptiveDT.
+
+Solve failed and timestep already at dtmin, cannot continue![39m
+
+Abort(1) on node 2 (rank 2 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 2
+
+[31m
+*** ERROR ***
+/home/emmanuel324/projects/belson324/KKS_large_largescale/6-25-25/BCrystal_3/BCrystal_3.i:1729.3:
+The following error occurred in the TimeStepper 'IterationAdaptiveDT' of type IterationAdaptiveDT.
+
+Solve failed and timestep already at dtmin, cannot continue![39m
+
+Abort(1) on node 4 (rank 4 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 4
+
+[31m
+*** ERROR ***
+/home/emmanuel324/projects/belson324/KKS_large_largescale/6-25-25/BCrystal_3/BCrystal_3.i:1729.3:
+The following error occurred in the TimeStepper 'IterationAdaptiveDT' of type IterationAdaptiveDT.
+
+Solve failed and timestep already at dtmin, cannot continue![39m
+
+Abort(1) on node 5 (rank 5 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 5
+
+[31m
+*** ERROR ***
+/home/emmanuel324/projects/belson324/KKS_large_largescale/6-25-25/BCrystal_3/BCrystal_3.i:1729.3:
+The following error occurred in the TimeStepper 'IterationAdaptiveDT' of type IterationAdaptiveDT.
+
+Solve failed and timestep already at dtmin, cannot continue![39m
+
+Abort(1) on node 0 (rank 0 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 0
+slurmstepd: error: *** STEP 3215869.0 ON tc148 CANCELLED AT 2025-07-18T16:00:15 ***
+srun: Job step aborted: Waiting up to 62 seconds for job step to finish.
+srun: error: tc148: tasks 1-7: Aborted (core dumped)
+srun: error: tc148: task 0: Aborted (core dumped)

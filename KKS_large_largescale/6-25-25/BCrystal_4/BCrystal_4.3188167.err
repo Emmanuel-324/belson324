@@ -1,0 +1,95 @@
+Resetting modules to system default. Reseting $MODULEPATH back to system default. All extra directories will be removed from $MODULEPATH.
+
+[31m
+*** ERROR ***
+The following error occurred in the Problem 'MOOSE Problem' of type FEProblem.
+
+Material property ' phasem_gr0_eigen_strainpv1_gr0', requested by 'strain_phasepv1_gr0' is not defined on block 0
+[39m
+
+Abort(1) on node 0 (rank 0 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 0
+
+[31m
+*** ERROR ***
+The following error occurred in the Problem 'MOOSE Problem' of type FEProblem.
+
+Material property ' phasem_gr0_eigen_strainpv1_gr0', requested by 'strain_phasepv1_gr0' is not defined on block 0
+[39m
+
+Abort(1) on node 2 (rank 2 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 2
+
+[31m
+*** ERROR ***
+The following error occurred in the Problem 'MOOSE Problem' of type FEProblem.
+
+Material property ' phasem_gr0_eigen_strainpv1_gr0', requested by 'strain_phasepv1_gr0' is not defined on block 0
+[39m
+
+Abort(1) on node 4 (rank 4 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 4
+
+[31m
+*** ERROR ***
+The following error occurred in the Problem 'MOOSE Problem' of type FEProblem.
+
+Material property ' phasem_gr0_eigen_strainpv1_gr0', requested by 'strain_phasepv1_gr0' is not defined on block 0
+[39m
+
+Abort(1) on node 7 (rank 7 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 7
+
+[31m
+*** ERROR ***
+The following error occurred in the Problem 'MOOSE Problem' of type FEProblem.
+
+Material property ' phasem_gr0_eigen_strainpv1_gr0', requested by 'strain_phasepv1_gr0' is not defined on block 0
+[39m
+
+Abort(1) on node 1 (rank 1 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 1
+
+[31m
+*** ERROR ***
+The following error occurred in the Problem 'MOOSE Problem' of type FEProblem.
+
+Material property ' phasem_gr0_eigen_strainpv1_gr0', requested by 'strain_phasepv1_gr0' is not defined on block 0
+[39m
+
+Abort(1) on node 3 (rank 3 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 3
+
+[31m
+*** ERROR ***
+The following error occurred in the Problem 'MOOSE Problem' of type FEProblem.
+
+Material property ' phasem_gr0_eigen_strainpv1_gr0', requested by 'strain_phasepv1_gr0' is not defined on block 0
+[39m
+
+Abort(1) on node 5 (rank 5 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 5
+
+[31m
+*** ERROR ***
+The following error occurred in the Problem 'MOOSE Problem' of type FEProblem.
+
+Material property ' phasem_gr0_eigen_strainpv1_gr0', requested by 'strain_phasepv1_gr0' is not defined on block 0
+[39m
+
+Abort(1) on node 6 (rank 6 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 6
+
+[31m
+*** ERROR ***
+The following error occurred in the Problem 'MOOSE Problem' of type FEProblem.
+
+Material property ' phasem_gr0_eigen_strainpv1_gr0', requested by 'strain_phasepv1_gr0' is not defined on block 0
+[39m
+
+Abort(1) on node 8 (rank 8 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 8
+
+[31m
+*** ERROR ***
+The following error occurred in the Problem 'MOOSE Problem' of type FEProblem.
+
+Material property ' phasem_gr0_eigen_strainpv1_gr0', requested by 'strain_phasepv1_gr0' is not defined on block 0
+[39m
+
+Abort(1) on node 9 (rank 9 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 9
+slurmstepd: error: *** STEP 3188167.0 ON tc-intel016 CANCELLED AT 2025-07-08T17:36:47 ***
+srun: Job step aborted: Waiting up to 62 seconds for job step to finish.
+srun: error: tc-intel016: tasks 1-9: Aborted (core dumped)
+srun: error: tc-intel016: task 0: Aborted (core dumped)
