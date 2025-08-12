@@ -108,10 +108,15 @@
     order = FIRST
     family = LAGRANGE
   [../]
-  [temperature]
+  [temperature_gr0]
     order = FIRST
     family = LAGRANGE
-    block = '0 1'
+    block = 0 
+  []
+  [temperature_gr1]
+    order = FIRST
+    family = LAGRANGE
+    block = 1
   []
 []
 
@@ -799,7 +804,7 @@
     base_name = phasem_gr1
     fill_method = symmetric9
      euler_angle_1 = 0
-    euler_angle_2  = 0
+    euler_angle_2  = 45
     euler_angle_3  = 0
     block = 1
   [../]
@@ -819,7 +824,7 @@
     base_name = phasepv1_gr1
     fill_method = symmetric9
     euler_angle_1 = 0
-    euler_angle_2 = 0
+    euler_angle_2 = 45
     euler_angle_3 = 0
     block = 1
   [../]
@@ -839,7 +844,7 @@
     base_name = phasepv2_gr1
     fill_method = symmetric9
     euler_angle_1 = 0
-    euler_angle_2 = 0
+    euler_angle_2 = 45
     euler_angle_3 = 0
     block = 1
   [../]
@@ -858,8 +863,8 @@
     C_ijkl = '290.6 187 160.7 290.6 187 309.6 114.2 114.2 119.2'
     base_name = phasepv3_gr1
     fill_method = symmetric9
-    euler_angle_1 = 60
-    euler_angle_2 = 0
+    euler_angle_1 = 0
+    euler_angle_2 = 45
     euler_angle_3 = 0
     block = 1
   [../]
@@ -1685,11 +1690,19 @@
 []
 
 [AuxKernels]
-  [temperature]
+  [temperature_gr0]
     type = FunctionAux
-    variable = temperature
+    variable = temperature_gr0
     function = '1023'
     execute_on = timestep_begin
+    block = 0
+  []
+   [temperature_gr1]
+    type = FunctionAux
+    variable = temperature_gr1
+    function = '1023'
+    execute_on = timestep_begin
+    block = 1
   []
   [./Energy_total]
     type = KKSMultiFreeEnergy
@@ -1723,28 +1736,24 @@
 [Executioner]
   type = Transient
   solve_type = 'PJFNK'
-  petsc_options_iname = '-pc_type -pc_factor_mat_solver_package -snes_type -pc_factor_shift_type'
-  petsc_options_value = 'lu            mumps            vinewtonrsls nonzero'
-  
-
+  petsc_options_iname = '-pc_type -pc_factor_mat_solver_package -snes_type'
+  petsc_options_value = 'lu            mumps            vinewtonrsls'
 
   l_max_its = 50
-  nl_max_its = 40
-  l_tol = 1.0e-4
+  nl_max_its = 25
+  l_tol = 1.0e-3
   nl_rel_tol = 1.0e-6
-  nl_abs_tol = 1.0e-10
-  dtmin = 1e-8
-  dtmax = 1e-1
+  nl_abs_tol = 1.0e-8
+
   end_time = 50000
 
   [./TimeStepper]
     type = IterationAdaptiveDT
-    dt = 1e-6
-    cutback_factor = 0.25
-    growth_factor = 1.15
+    dt = 5e-4
+    cutback_factor = 0.75
+    growth_factor = 1.2
     optimal_iterations = 20
   [../]
- 
 []
 
 [Preconditioning]
@@ -1800,8 +1809,6 @@
 
 [Outputs]
   exodus = true
-  print_linear_residuals = true
-  print_nonlinear_residuals = true
   [./table]
     type = CSV
     execute_on = timestep_end
@@ -1809,6 +1816,6 @@
   [./checkpoint]
      type = Checkpoint
      num_files = 10
-     time_step_interval = 10
+     interval = 10
   [../]
 []

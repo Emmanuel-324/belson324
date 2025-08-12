@@ -1,1 +1,84 @@
 Resetting modules to system default. Reseting $MODULEPATH back to system default. All extra directories will be removed from $MODULEPATH.
+libMesh terminating:
+filesystem error: cannot check if file is empty: No such file or directory [BCrystal_6b_checkpoint_cp/0104-restart-5.rd]
+Abort(1) on node 5 (rank 5 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 5
+srun: Job step aborted: Waiting up to 62 seconds for job step to finish.
+libMesh terminating:
+filesystem error: cannot check if file is empty: No such file or directory [BCrystal_6b_checkpoint_cp/0104-restart-6.rd]
+Abort(1) on node 6 (rank 6 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 6
+terminate called after throwing an instance of 'std::filesystem::__cxx11::filesystem_error'
+  what():  filesystem error: cannot check if file is empty: No such file or directory [BCrystal_6b_checkpoint_cp/0104-restart-6.rd]
+libMesh terminating:
+filesystem error: cannot check if file is empty: No such file or directory [BCrystal_6b_checkpoint_cp/0104-restart-11.rd]
+Abort(1) on node 11 (rank 11 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 11
+terminate called after throwing an instance of 'std::filesystem::__cxx11::filesystem_error'
+  what():  filesystem error: cannot check if file is empty: No such file or directory [BCrystal_6b_checkpoint_cp/0104-restart-11.rd]
+libMesh terminating:
+filesystem error: cannot check if file is empty: No such file or directory [BCrystal_6b_checkpoint_cp/0104-restart-12.rd]
+Abort(1) on node 12 (rank 12 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 12
+terminate called after throwing an instance of 'std::filesystem::__cxx11::filesystem_error'
+  what():  filesystem error: cannot check if file is empty: No such file or directory [BCrystal_6b_checkpoint_cp/0104-restart-12.rd]
+libMesh terminating:
+filesystem error: cannot check if file is empty: No such file or directory [BCrystal_6b_checkpoint_cp/0104-restart-14.rd]
+Abort(1) on node 14 (rank 14 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 14
+terminate called after throwing an instance of 'std::filesystem::__cxx11::filesystem_error'
+  what():  filesystem error: cannot check if file is empty: No such file or directory [BCrystal_6b_checkpoint_cp/0104-restart-14.rd]
+terminate called after throwing an instance of 'std::filesystem::__cxx11::filesystem_error'
+  what():  filesystem error: cannot check if file is empty: No such file or directory [BCrystal_6b_checkpoint_cp/0104-restart-5.rd]
+slurmstepd: error: *** STEP 3233788.0 ON tc175 CANCELLED AT 2025-07-25T12:25:49 ***
+libMesh terminating:
+filesystem error: cannot check if file is empty: No such file or directory [BCrystal_6b_checkpoint_cp/0104-restart-13.rd]
+Abort(1) on node 13 (rank 13 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 13
+terminate called after throwing an instance of 'std::filesystem::__cxx11::filesystem_error'
+  what():  filesystem error: cannot check if file is empty: No such file or directory [BCrystal_6b_checkpoint_cp/0104-restart-13.rd]
+libMesh terminating:
+filesystem error: cannot check if file is empty: No such file or directory [BCrystal_6b_checkpoint_cp/0104-restart-1.rd]
+Abort(1) on node 1 (rank 1 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 1
+terminate called after throwing an instance of 'std::filesystem::__cxx11::filesystem_error'
+  what():  filesystem error: cannot check if file is empty: No such file or directory [BCrystal_6b_checkpoint_cp/0104-restart-1.rd]
+libMesh terminating:
+filesystem error: cannot check if file is empty: No such file or directory [BCrystal_6b_checkpoint_cp/0104-restart-15.rd]
+Abort(1) on node 15 (rank 15 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 15
+terminate called after throwing an instance of 'std::filesystem::__cxx11::filesystem_error'
+  what():  filesystem error: cannot check if file is empty: No such file or directory [BCrystal_6b_checkpoint_cp/0104-restart-15.rd]
+libMesh terminating:
+filesystem error: cannot check if file is empty: No such file or directory [BCrystal_6b_checkpoint_cp/0104-restart-3.rd]
+Abort(1) on node 3 (rank 3 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 3
+terminate called after throwing an instance of 'std::filesystem::__cxx11::filesystem_error'
+  what():  filesystem error: cannot check if file is empty: No such file or directory [BCrystal_6b_checkpoint_cp/0104-restart-3.rd]
+libMesh terminating:
+filesystem error: cannot check if file is empty: No such file or directory [BCrystal_6b_checkpoint_cp/0104-restart-2.rd]
+Abort(1) on node 2 (rank 2 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 2
+terminate called after throwing an instance of 'std::filesystem::__cxx11::filesystem_error'
+  what():  filesystem error: cannot check if file is empty: No such file or directory [BCrystal_6b_checkpoint_cp/0104-restart-2.rd]
+libMesh terminating:
+filesystem error: cannot check if file is empty: No such file or directory [BCrystal_6b_checkpoint_cp/0104-restart-10.rd]
+Abort(1) on node 10 (rank 10 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 10
+terminate called after throwing an instance of 'std::filesystem::__cxx11::filesystem_error'
+libMesh terminating:
+  what():  filesystem error: cannot check if file is empty: No such file or directory [BCrystal_6b_checkpoint_cp/0104-restart-10.rd]
+filesystem error: cannot check if file is empty: No such file or directory [BCrystal_6b_checkpoint_cp/0104-restart-9.rd]
+Abort(1) on node 9 (rank 9 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 9
+terminate called after throwing an instance of 'std::filesystem::__cxx11::filesystem_error'
+  what():  filesystem error: cannot check if file is empty: No such file or directory [BCrystal_6b_checkpoint_cp/0104-restart-9.rd]
+libMesh terminating:
+filesystem error: cannot check if file is empty: No such file or directory [BCrystal_6b_checkpoint_cp/0104-restart-8.rd]
+Abort(1) on node 8 (rank 8 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 8
+terminate called after throwing an instance of 'std::filesystem::__cxx11::filesystem_error'
+  what():  filesystem error: cannot check if file is empty: No such file or directory [BCrystal_6b_checkpoint_cp/0104-restart-8.rd]
+libMesh terminating:
+filesystem error: cannot check if file is empty: No such file or directory [BCrystal_6b_checkpoint_cp/0104-restart-0.rd]
+Abort(1) on node 0 (rank 0 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 0
+terminate called after throwing an instance of 'std::filesystem::__cxx11::filesystem_error'
+  what():  filesystem error: cannot check if file is empty: No such file or directory [BCrystal_6b_checkpoint_cp/0104-restart-0.rd]
+libMesh terminating:
+filesystem error: cannot check if file is empty: No such file or directory [BCrystal_6b_checkpoint_cp/0104-restart-7.rd]
+Abort(1) on node 7 (rank 7 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 7
+terminate called after throwing an instance of 'std::filesystem::__cxx11::filesystem_error'
+  what():  filesystem error: cannot check if file is empty: No such file or directory [BCrystal_6b_checkpoint_cp/0104-restart-7.rd]
+libMesh terminating:
+filesystem error: cannot check if file is empty: No such file or directory [BCrystal_6b_checkpoint_cp/0104-restart-4.rd]
+Abort(1) on node 4 (rank 4 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 4
+terminate called after throwing an instance of 'std::filesystem::__cxx11::filesystem_error'
+  what():  filesystem error: cannot check if file is empty: No such file or directory [BCrystal_6b_checkpoint_cp/0104-restart-4.rd]
+srun: error: tc175: tasks 0-15: Aborted (core dumped)

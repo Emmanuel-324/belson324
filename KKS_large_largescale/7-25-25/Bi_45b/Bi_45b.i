@@ -108,10 +108,15 @@
     order = FIRST
     family = LAGRANGE
   [../]
-  [temperature]
+  [temperature_gr0]
     order = FIRST
     family = LAGRANGE
-    block = '0 1'
+    block = 0 
+  []
+  [temperature_gr1]
+    order = FIRST
+    family = LAGRANGE
+    block = 1
   []
 []
 
@@ -376,15 +381,15 @@
   [./c1]
     variable = c1
     type = RandomIC
-    min = 0.01775	
-    max = 0.03025
+    min = 0.01
+    max = 0.03
     seed = 89	
   [../]
   [./c2]
     variable = c2
     type = RandomIC
-    min = 0.03175	
-    max = 0.04425
+    min = 0.032
+    max = 0.044
     seed = 89	
   [../]
 
@@ -798,7 +803,7 @@
     C_ijkl = '272.1 169 169 272.1 169 272.1 131 131 131' #Ghorbanpour, S., et al., A crystal plasticity model incorporating the effects of     
     base_name = phasem_gr1
     fill_method = symmetric9
-     euler_angle_1 = 0
+     euler_angle_1 = 45
     euler_angle_2  = 0
     euler_angle_3  = 0
     block = 1
@@ -818,7 +823,7 @@
     C_ijkl = '290.6 187 160.7 290.6 187 309.6 114.2 114.2 119.2'#Ghorbanpour, S., et al., A crystal plasticity model incorporating the effects of    
     base_name = phasepv1_gr1
     fill_method = symmetric9
-    euler_angle_1 = 0
+    euler_angle_1 = 45
     euler_angle_2 = 0
     euler_angle_3 = 0
     block = 1
@@ -838,7 +843,7 @@
     C_ijkl = '243 154.8 154.8 243 154.8 243 132.3 132.3 132.3'
     base_name = phasepv2_gr1
     fill_method = symmetric9
-    euler_angle_1 = 0
+    euler_angle_1 = 45
     euler_angle_2 = 0
     euler_angle_3 = 0
     block = 1
@@ -858,7 +863,7 @@
     C_ijkl = '290.6 187 160.7 290.6 187 309.6 114.2 114.2 119.2'
     base_name = phasepv3_gr1
     fill_method = symmetric9
-    euler_angle_1 = 60
+    euler_angle_1 = 45
     euler_angle_2 = 0
     euler_angle_3 = 0
     block = 1
@@ -963,7 +968,7 @@
   [./eigen_strainpv1_gr0]
     type = ComputeEigenstrain
     base_name = phasepv1_gr0
-    eigen_base = '0.005 0.0067 0 0 0 0'
+    eigen_base = '0.0286 0.0067 0 0 0 0'
     prefactor = misfit_gr0
     eigenstrain_name = eigen_strainpv1_gr0
     block = 0
@@ -971,7 +976,7 @@
   [./eigen_strainpv1_gr1]
     type = ComputeEigenstrain
     base_name = phasepv1_gr1
-    eigen_base = '0.005 0.0067 0 0 0 0'
+    eigen_base = '0.0286 0.0067 0 0 0 0'
     prefactor = misfit_gr1
     eigenstrain_name = eigen_strainpv1_gr1
     block = 1
@@ -996,7 +1001,7 @@
   [./eigen_strainpv3_gr0]
     type = ComputeEigenstrain
     base_name = phasepv3_gr0
-    eigen_base = '0.0067 0.005 0 0 0 0'
+    eigen_base = '0.0067 0.0286 0 0 0 0'
     prefactor = misfit_gr0
     eigenstrain_name = eigen_strainpv3_gr0
     block = 0
@@ -1004,9 +1009,9 @@
   [./eigen_strainpv3_gr1]
     type = ComputeEigenstrain
     base_name = phasepv3_gr1
-    eigen_base = '0.0067 0.005 0 0 0 0'
-    prefactor = misfit_gr1
+    eigen_base = '0.0067 0.0286 0 0 0 0'
     eigenstrain_name = eigen_strainpv3_gr1
+    prefactor = misfit_gr1
     block = 1
   [../]
 
@@ -1685,11 +1690,19 @@
 []
 
 [AuxKernels]
-  [temperature]
+  [temperature_gr0]
     type = FunctionAux
-    variable = temperature
+    variable = temperature_gr0
     function = '1023'
     execute_on = timestep_begin
+    block = 0
+  []
+   [temperature_gr1]
+    type = FunctionAux
+    variable = temperature_gr1
+    function = '1023'
+    execute_on = timestep_begin
+    block = 1
   []
   [./Energy_total]
     type = KKSMultiFreeEnergy
@@ -1723,28 +1736,30 @@
 [Executioner]
   type = Transient
   solve_type = 'PJFNK'
-  petsc_options_iname = '-pc_type -pc_factor_mat_solver_package -snes_type -pc_factor_shift_type'
-  petsc_options_value = 'lu            mumps            vinewtonrsls nonzero'
-  
-
+  petsc_options_iname = '-pc_type -pc_factor_mat_solver_package -snes_type'
+  petsc_options_value = 'lu            mumps            vinewtonrsls'
 
   l_max_its = 50
-  nl_max_its = 40
-  l_tol = 1.0e-4
+  nl_max_its = 25
+  l_tol = 1.0e-3
   nl_rel_tol = 1.0e-6
-  nl_abs_tol = 1.0e-10
-  dtmin = 1e-8
-  dtmax = 1e-1
+  nl_abs_tol = 1.0e-8
+
   end_time = 50000
 
   [./TimeStepper]
     type = IterationAdaptiveDT
-    dt = 1e-6
-    cutback_factor = 0.25
-    growth_factor = 1.15
+    dt = 5e-4
+    cutback_factor = 0.75
+    growth_factor = 1.2
     optimal_iterations = 20
   [../]
- 
+ [./Adaptivity]
+    initial_adaptivity = 0
+    refine_fraction = 0.7
+    coarsen_fraction = 0.1
+    max_h_level = 1
+  [../] 
 []
 
 [Preconditioning]
@@ -1766,32 +1781,32 @@
      function = bc_func
      block = 0
    [../]
-  [./gr1area_gr0]
+  [./pv1_area_gr0]
     type = ElementIntegralVariablePostprocessor_new2
     variable = eta_pv1_gr0
     block = 0
   [../]
-   [./gr2area_gr0]
+   [./pv2_area_gr0]
     type = ElementIntegralVariablePostprocessor_new2
     variable = eta_pv2_gr0
     block = 0
   [../]
-  [./gr3area_gr0]
+  [./pv3_area_gr0]
     type = ElementIntegralVariablePostprocessor_new2
     variable = eta_pv3_gr0
     block = 0
   [../]
-   [./gr1area_gr1]
+   [./pv1_area_gr1]
     type = ElementIntegralVariablePostprocessor_new2
     variable = eta_pv1_gr1
     block = 1
   [../]
-   [./gr2area_gr1]
+   [./pv2_area_gr1]
     type = ElementIntegralVariablePostprocessor_new2
     variable = eta_pv2_gr1
     block = 1
   [../]
-  [./gr3area_gr1]
+  [./pv3_area_gr1]
     type = ElementIntegralVariablePostprocessor_new2
     variable = eta_pv3_gr1
     block = 1
@@ -1800,8 +1815,6 @@
 
 [Outputs]
   exodus = true
-  print_linear_residuals = true
-  print_nonlinear_residuals = true
   [./table]
     type = CSV
     execute_on = timestep_end
@@ -1809,6 +1822,6 @@
   [./checkpoint]
      type = Checkpoint
      num_files = 10
-     time_step_interval = 10
+     interval = 10
   [../]
 []

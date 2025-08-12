@@ -108,10 +108,15 @@
     order = FIRST
     family = LAGRANGE
   [../]
-  [temperature]
+  [temperature_gr0]
     order = FIRST
     family = LAGRANGE
-    block = '0 1'
+    block = 0 
+  []
+  [temperature_gr1]
+    order = FIRST
+    family = LAGRANGE
+    block = 1
   []
 []
 
@@ -653,60 +658,238 @@
     block = 1
 [../]
   # Coefficients for diffusion equation
-  [./Dhm_gr0]
+  # --- self terms for c1: D11
+  [./D11hm_gr0]
     type = DerivativeParsedMaterial
-    material_property_names = 'D_gr0 hm_gr0'
-    expression = D_gr0*hm_gr0
-    property_name = Dhm_gr0
+    material_property_names = 'D11_gr0 hm_gr0'
+    expression = D11_gr0*hm_gr0
+    property_name = D11hm_gr0
     block = 0
   [../]
-  [./Dhpv1_gr0]
+  [./D11hpv1_gr0]
     type = DerivativeParsedMaterial
-    material_property_names = 'D_gr0 hpv1_gr0'
-    expression = D_gr0*hpv1_gr0
-    property_name = Dhpv1_gr0
+    material_property_names = 'D11_gr0 hpv1_gr0'
+    expression = D11_gr0*hpv1_gr0
+    property_name = D11hpv1_gr0
     block = 0
   [../]
-  [./Dhpv2_gr0]
+  [./D11hpv2_gr0]
     type = DerivativeParsedMaterial
-    material_property_names = 'D_gr0 hpv2_gr0'
-    expression = D_gr0*hpv2_gr0
-    property_name = Dhpv2_gr0
+    material_property_names = 'D11_gr0 hpv2_gr0'
+    expression = D11_gr0*hpv2_gr0
+    property_name = D11hpv2_gr0
     block = 0
   [../]
-  [./Dhpv3_gr0]
+  [./D11hpv3_gr0]
     type = DerivativeParsedMaterial
-    material_property_names = 'D_gr0 hpv3_gr0'
-    expression = D_gr0*hpv3_gr0
-    property_name = Dhpv3_gr0
+    material_property_names = 'D11_gr0 hpv3_gr0'
+    expression = D11_gr0*hpv3_gr0
+    property_name = D11hpv3_gr0
     block = 0
   [../]
-  [./Dhm_gr1]
+
+# --- cross term for c1: D12 
+  [./D12hm_gr0]
     type = DerivativeParsedMaterial
-    material_property_names = 'D_gr1 hm_gr1'
-    expression = D_gr1*hm_gr1
-    property_name = Dhm_gr1
+    material_property_names = 'D12_gr0 hm_gr0'
+    expression = D12_gr0*hm_gr0
+    property_name = D12hm_gr0
+    block = 0
+  [../]
+  [./D12hpv1_gr0]
+    type = DerivativeParsedMaterial
+    material_property_names = 'D12_gr0 hpv1_gr0'
+    expression = D12_gr0*hpv1_gr0
+    property_name = D12hpv1_gr0
+    block = 0
+  [../]
+  [./D12hpv2_gr0]
+    type = DerivativeParsedMaterial
+    material_property_names = 'D12_gr0 hpv2_gr0'
+    expression = D12_gr0*hpv2_gr0
+    property_name = D12hpv2_gr0
+    block = 0
+  [../]
+  [./D12hpv3_gr0]
+    type = DerivativeParsedMaterial
+    material_property_names = 'D12_gr0 hpv3_gr0'
+    expression = D12_gr0*hpv3_gr0
+    property_name = D12hpv3_gr0
+    block = 0
+  [../]
+
+ #--- self terms for c2: D22
+  [./D22hm_gr0]
+    type = DerivativeParsedMaterial
+    material_property_names = 'D22_gr0 hm_gr0'
+    expression = D22_gr0*hm_gr0
+    property_name = D22hm_gr0
+    block = 0
+  [../]
+  [./D22hpv1_gr0]
+    type = DerivativeParsedMaterial
+    material_property_names = 'D22_gr0 hpv1_gr0'
+    expression = D22_gr0*hpv1_gr0
+    property_name = D22hpv1_gr0
+    block = 0
+  [../]
+  [./D22hpv2_gr0]
+    type = DerivativeParsedMaterial
+    material_property_names = 'D22_gr0 hpv2_gr0'
+    expression = D22_gr0*hpv2_gr0
+    property_name = D22hpv2_gr0
+    block = 0
+  [../]
+  [./D22hpv3_gr0]
+    type = DerivativeParsedMaterial
+    material_property_names = 'D22_gr0 hpv3_gr0'
+    expression = D22_gr0*hpv3_gr0
+    property_name = D22hpv3_gr0
+    block = 0
+  [../]
+# --- cross term for c2: D21
+  [./D21hm_gr0]
+    type = DerivativeParsedMaterial
+    material_property_names = 'D21_gr0 hm_gr0'
+    expression = D21_gr0*hm_gr0
+    property_name = D21hm_gr0
+    block = 0
+  [../]
+  [./D21hpv1_gr0]
+    type = DerivativeParsedMaterial
+    material_property_names = 'D21_gr0 hpv1_gr0'
+    expression = D21_gr0*hpv1_gr0
+    property_name = D21hpv1_gr0
+    block = 0
+  [../]
+  [./D21hpv2_gr0]
+    type = DerivativeParsedMaterial
+    material_property_names = 'D21_gr0 hpv2_gr0'
+    expression = D21_gr0*hpv2_gr0
+    property_name = D21hpv2_gr0
+    block = 0
+  [../]
+  [./D21hpv3_gr0]
+    type = DerivativeParsedMaterial
+    material_property_names = 'D21_gr0 hpv3_gr0'
+    expression = D21_gr0*hpv3_gr0
+    property_name = D21hpv3_gr0
+    block = 0
+  [../]
+# --- self terms for c1: D11
+  [./D11hm_gr1]
+    type = DerivativeParsedMaterial
+    material_property_names = 'D11_gr1 hm_gr1'
+    expression = D11_gr1*hm_gr1
+    property_name = D11hm_gr1
     block = 1
   [../]
-  [./Dhpv1_gr1]
+  [./D11hpv1_gr1]
     type = DerivativeParsedMaterial
-    material_property_names = 'D_gr1 hpv1_gr1'
-    expression = D_gr1*hpv1_gr1
-    property_name = Dhpv1_gr1
+    material_property_names = 'D11_gr1 hpv1_gr1'
+    expression = D11_gr1*hpv1_gr1
+    property_name = D11hpv1_gr1
     block = 1
   [../]
-  [./Dhpv2_gr1]
+  [./D11hpv2_gr1]
     type = DerivativeParsedMaterial
-    material_property_names = 'D_gr1 hpv2_gr1'
-    expression = D_gr1*hpv2_gr1
-    property_name = Dhpv2_gr1
+    material_property_names = 'D11_gr1 hpv2_gr1'
+    expression = D11_gr1*hpv2_gr1
+    property_name = D11hpv2_gr1
     block = 1
   [../]
-  [./Dhpv3_gr1]
+  [./D11hpv3_gr1]
     type = DerivativeParsedMaterial
-    material_property_names = 'D_gr1 hpv3_gr1'
-    expression = D_gr1*hpv3_gr1
-    property_name = Dhpv3_gr1
+    material_property_names = 'D11_gr1 hpv3_gr1'
+    expression = D11_gr1*hpv3_gr1
+    property_name = D11hpv3_gr1
+    block = 1
+  [../]
+# --- cross term for c1: D12 
+  [./D12hm_gr1]
+    type = DerivativeParsedMaterial
+    material_property_names = 'D12_gr1 hm_gr1'
+    expression = D12_gr1*hm_gr1
+    property_name = D12hm_gr1
+    block = 1
+  [../]
+  [./D12hpv1_gr1]
+    type = DerivativeParsedMaterial
+    material_property_names = 'D12_gr1 hpv1_gr1'
+    expression = D12_gr1*hpv1_gr1
+    property_name = D12hpv1_gr1
+    block = 1
+  [../]
+  [./D12hpv2_gr1]
+    type = DerivativeParsedMaterial
+    material_property_names = 'D12_gr1 hpv2_gr1'
+    expression = D12_gr1*hpv2_gr1
+    property_name = D12hpv2_gr1
+    block = 1
+  [../]
+  [./D12hpv3_gr1]
+    type = DerivativeParsedMaterial
+    material_property_names = 'D12_gr1 hpv3_gr1'
+    expression = D12_gr1*hpv3_gr1
+    property_name = D12hpv3_gr1
+    block = 1
+  [../]
+# --- self terms for c2: D22
+  [./D22hm_gr1]
+    type = DerivativeParsedMaterial
+    material_property_names = 'D22_gr1 hm_gr1'
+    expression = D22_gr1*hm_gr1
+    property_name = D22hm_gr1
+    block = 1
+  [../]
+  [./D22hpv1_gr1]
+    type = DerivativeParsedMaterial
+    material_property_names = 'D22_gr1 hpv1_gr1'
+    expression = D22_gr1*hpv1_gr1
+    property_name = D22hpv1_gr1
+    block = 1
+  [../]
+  [./D22hpv2_gr1]
+    type = DerivativeParsedMaterial
+    material_property_names = 'D22_gr1 hpv2_gr1'
+    expression = D22_gr1*hpv2_gr1
+    property_name = D22hpv2_gr1
+    block = 1
+  [../]
+  [./D22hpv3_gr1]
+    type = DerivativeParsedMaterial
+    material_property_names = 'D22_gr1 hpv3_gr1'
+    expression = D22_gr1*hpv3_gr1
+    property_name = D22hpv3_gr1
+    block = 1
+  [../]
+# --- cross term for c2: D21
+  [./D21hm_gr1]
+    type = DerivativeParsedMaterial
+    material_property_names = 'D21_gr1 hm_gr1'
+    expression = D21_gr1*hm_gr1
+    property_name = D21hm_gr1
+    block = 1
+  [../]
+  [./D21hpv1_gr1]
+    type = DerivativeParsedMaterial
+    material_property_names = 'D21_gr1 hpv1_gr1'
+    expression = D21_gr1*hpv1_gr1
+    property_name = D21hpv1_gr1
+    block = 1
+  [../]
+  [./D21hpv2_gr1]
+    type = DerivativeParsedMaterial
+    material_property_names = 'D21_gr1 hpv2_gr1'
+    expression = D21_gr1*hpv2_gr1
+    property_name = D21hpv2_gr1
+    block = 1
+  [../]
+  [./D21hpv3_gr1]
+    type = DerivativeParsedMaterial
+    material_property_names = 'D21_gr1 hpv3_gr1'
+    expression = D21_gr1*hpv3_gr1
+    property_name = D21hpv3_gr1
     block = 1
   [../]
 
@@ -771,14 +954,14 @@
   # constant properties
   [./constants_gr0]
     type = GenericConstantMaterial
-    prop_names  = 'L_gr0    kappa_gr0  D_gr0  misfit_gr0     W_gr0'
-    prop_values = '0.3       0.01        1        1        0.01'
+    prop_names  = 'L_gr0    kappa_gr0  D11_gr0 D22_gr0 D12_gr0 D21_gr0 misfit_gr0     W_gr0'
+    prop_values = '0.3       0.01        1        1     -0.5    -0.5      1            0.01'
     block = 0
   [../]
    [./constants_gr1]
     type = GenericConstantMaterial
-    prop_names  = 'L_gr1    kappa_gr1  D_gr1  misfit_gr1     W_gr1'
-    prop_values = '0.3         0.01      1        1        0.01'
+    prop_names  = 'L_gr1    kappa_gr1  D11_gr1  D22_gr1  D12_gr1  D21_gr1  misfit_gr1     W_gr1'
+    prop_values = '0.3         0.01      1        1        -0.5    -0.5         1         0.01'
     block = 1
   [../]
 
@@ -858,7 +1041,7 @@
     C_ijkl = '290.6 187 160.7 290.6 187 309.6 114.2 114.2 119.2'
     base_name = phasepv3_gr1
     fill_method = symmetric9
-    euler_angle_1 = 60
+    euler_angle_1 = 0
     euler_angle_2 = 0
     euler_angle_3 = 0
     block = 1
@@ -963,7 +1146,7 @@
   [./eigen_strainpv1_gr0]
     type = ComputeEigenstrain
     base_name = phasepv1_gr0
-    eigen_base = '0.005 0.0067 0 0 0 0'
+    eigen_base = '0.0286 0.0067 0 0 0 0'
     prefactor = misfit_gr0
     eigenstrain_name = eigen_strainpv1_gr0
     block = 0
@@ -971,7 +1154,7 @@
   [./eigen_strainpv1_gr1]
     type = ComputeEigenstrain
     base_name = phasepv1_gr1
-    eigen_base = '0.005 0.0067 0 0 0 0'
+    eigen_base = '0.0286 0.0067 0 0 0 0'
     prefactor = misfit_gr1
     eigenstrain_name = eigen_strainpv1_gr1
     block = 1
@@ -996,7 +1179,7 @@
   [./eigen_strainpv3_gr0]
     type = ComputeEigenstrain
     base_name = phasepv3_gr0
-    eigen_base = '0.0067 0.005 0 0 0 0'
+    eigen_base = '0.0067 0.0286 0 0 0 0'
     prefactor = misfit_gr0
     eigenstrain_name = eigen_strainpv3_gr0
     block = 0
@@ -1004,7 +1187,7 @@
   [./eigen_strainpv3_gr1]
     type = ComputeEigenstrain
     base_name = phasepv3_gr1
-    eigen_base = '0.0067 0.005 0 0 0 0'
+    eigen_base = '0.0067 0.0286 0 0 0 0'
     prefactor = misfit_gr1
     eigenstrain_name = eigen_strainpv3_gr1
     block = 1
@@ -1401,124 +1584,257 @@
     type = TimeDerivative
     variable = c1
   [../]
+  [./diff_time_c2]
+    type = TimeDerivative
+    variable = c2
+  [../]
+   # ===== Grain 0 (block = 0) =====
+  # ==== c1 equation: self terms (D11 ∇c1) ====
   [./diff_c1m_gr0]
     type = MatDiffusion
     variable = c1
-    diffusivity = Dhm_gr0
+    diffusivity = D11hm_gr0
     v = c1m
     block = 0
   [../]
   [./diff_c1pv1_gr0]
     type = MatDiffusion
     variable = c1
-    diffusivity = Dhpv1_gr0
+    diffusivity = D11hpv1_gr0
     v = c1pv1
     block = 0
   [../]
   [./diff_c1pv2_gr0]
     type = MatDiffusion
     variable = c1
-    diffusivity = Dhpv2_gr0
+    diffusivity = D11hpv2_gr0
     v = c1pv2
     block = 0
   [../]
   [./diff_c1pv3_gr0]
     type = MatDiffusion
     variable = c1
-    diffusivity = Dhpv3_gr0
+    diffusivity = D11hpv3_gr0
     v = c1pv3
     block = 0
   [../]
-  [./diff_c1m_gr1]
-    type = MatDiffusion
+
+   # ===== Grain 0 (block = 0) =====
+ # ==== c1 equation: cross terms (D12 ∇c2) ====
+ [./diff_c1m_gr0_cross]
+   type = MatDiffusion
     variable = c1
-    diffusivity = Dhm_gr1
-    v = c1m
-    block = 1
+    diffusivity = D12hm_gr0
+    v = c2m
+    block = 0
   [../]
-  [./diff_c1pv1_gr1]
+  [./diff_c1pv1_gr0_cross]
     type = MatDiffusion
     variable = c1
-    diffusivity = Dhpv1_gr1
-    v = c1pv1
-    block = 1
+    diffusivity = D12hpv1_gr0
+    v = c2pv1
+    block = 0
   [../]
-  [./diff_c1pv2_gr1]
+  [./diff_c1pv2_gr0_cross]
     type = MatDiffusion
     variable = c1
-    diffusivity = Dhpv2_gr1
-    v = c1pv2
-     block = 1
+    diffusivity = D12hpv2_gr0
+    v = c2pv2
+    block = 0
   [../]
-  [./diff_c1pv3_gr1]
+  [./diff_c1pv3_gr0_cross]
     type = MatDiffusion
     variable = c1
-    diffusivity = Dhpv3_gr1
-    v = c1pv3
-    block = 1
+    diffusivity = D12hpv3_gr0
+    v = c2pv3
+    block = 0
   [../]
 
-  #Kernels for diffusion equation of c2
-  [./diff_time_c2]
-    type = TimeDerivative
-    variable = c2
-  [../]
-  [./diff_c2m_gr0]
+ # ===== Grain 0 (block = 0) =====
+ # ==== c2 equation: cross terms (D22 ∇c2) ====
+ [./diff_c2m_gr0]
     type = MatDiffusion
     variable = c2
-    diffusivity = Dhm_gr0
+    diffusivity = D22hm_gr0
     v = c2m
     block = 0
   [../]
   [./diff_c2pv1_gr0]
     type = MatDiffusion
     variable = c2
-    diffusivity = Dhpv1_gr0
+    diffusivity = D22hpv1_gr0
     v = c2pv1
     block = 0
   [../]
   [./diff_c2pv2_gr0]
     type = MatDiffusion
     variable = c2
-    diffusivity = Dhpv2_gr0
+    diffusivity = D22hpv2_gr0
     v = c2pv2
      block = 0
   [../]
-  [./diff_c2pv3]
+  [./diff_c2pv3_gr0]
     type = MatDiffusion
     variable = c2
-    diffusivity = Dhpv3_gr0
+    diffusivity = D22hpv3_gr0
     v = c2pv3
     block = 0
   [../]
+  
+  # ===== Grain 0 (block = 0) =====
+ # ==== c2 equation: cross terms (D21 ∇c1) ====
+  [./diff_c2m_gr0_cross]
+    type = MatDiffusion
+    variable = c2
+    diffusivity = D21hm_gr0
+    v = c1m
+    block = 0
+  [../]
+  [./diff_c2pv1_gr0_cross]
+    type = MatDiffusion
+    variable = c2
+    diffusivity = D21hpv1_gr0
+    v = c1pv1
+    block = 0
+  [../]
+  [./diff_c2pv2_gr0_cross]
+    type = MatDiffusion  
+    variable = c2
+    diffusivity = D21hpv2_gr0
+    v = c1pv2
+     block = 0
+  [../]
+  [./diff_c2pv3_gr0_cross]
+    type = MatDiffusion
+    variable = c2
+    diffusivity = D21hpv3_gr0
+    v = c1pv3
+    block = 0
+  [../]
+
+
+   # ===== Grain 1 (block = 1) =====
+  # ==== c1 equation: self terms (D11 ∇c1) ====
+  [./diff_c1m_gr1]
+    type = MatDiffusion
+    variable = c1
+    diffusivity = D11hm_gr1
+    v = c1m
+    block = 1
+  [../] 
+  [./diff_c1pv1_gr1]
+    type = MatDiffusion
+    variable = c1
+    diffusivity = D11hpv1_gr1
+    v = c1pv1
+    block = 1
+  [../]
+  [./diff_c1pv2_gr1]
+    type = MatDiffusion
+    variable = c1
+    diffusivity = D11hpv2_gr1
+    v = c1pv2
+     block = 1
+  [../]
+  [./diff_c1pv3_gr1]
+    type = MatDiffusion
+    variable = c1
+    diffusivity = D11hpv3_gr1
+    v = c1pv3
+    block = 1
+  [../]
+
+   # ===== Grain 1 (block = 1) =====
+ # ==== c1 equation: cross terms (D12 ∇c2) ====
+ [./diff_c1m_gr1_cross]
+    type = MatDiffusion
+    variable = c1
+    diffusivity = D12hm_gr1
+    v = c2m
+    block = 1 
+  [../]
+  [./diff_c1pv1_gr1_cross]
+    type = MatDiffusion
+    variable = c1
+    diffusivity = D12hpv1_gr1
+    v = c2pv1
+    block = 1
+  [../]
+  [./diff_c1pv2_gr1_cross]
+    type = MatDiffusion
+    variable = c1
+    diffusivity = D12hpv2_gr1
+    v = c2pv2
+     block = 1
+  [../]
+  [./diff_c1pv3_gr1_cross]
+    type = MatDiffusion
+    variable = c1
+    diffusivity = D12hpv3_gr1
+    v = c2pv3
+    block = 1
+  [../]
+ 
+  # ===== Grain 1 (block = 1) =====
+ # ==== c2 equation: self terms (D22 ∇c2) ====  
   [./diff_c2m_gr1]
     type = MatDiffusion
     variable = c2
-    diffusivity = Dhm_gr1
+    diffusivity = D22hm_gr1
     v = c2m
     block = 1
   [../]
   [./diff_c2pv1_gr1]
     type = MatDiffusion
     variable = c2
-    diffusivity = Dhpv1_gr1
+    diffusivity = D22hpv1_gr1
     v = c2pv1
     block = 1
   [../]
   [./diff_c2pv2_gr1]
     type = MatDiffusion
     variable = c2
-    diffusivity = Dhpv2_gr1
+    diffusivity = D22hpv2_gr1
     v = c2pv2
      block = 1
   [../]
   [./diff_c2pv3_gr1]
     type = MatDiffusion
     variable = c2
-    diffusivity = Dhpv3_gr1
+    diffusivity = D22hpv3_gr1
     v = c2pv3
     block = 1
-  [../]      
+  [../]
+  # ===== Grain 1 (block = 1) =====
+ # ==== c2 equation: cross terms (D21 ∇c1) ====
+  [./diff_c2m_gr1_cross]
+    type = MatDiffusion
+    variable = c2
+    diffusivity = D21hm_gr1
+    v = c1m
+    block = 1
+  [../]
+  [./diff_c2pv1_gr1_cross]
+    type = MatDiffusion
+    variable = c2
+    diffusivity = D21hpv1_gr1
+    v = c1pv1
+    block = 1
+  [../]
+  [./diff_c2pv2_gr1_cross]
+    type = MatDiffusion
+    variable = c2
+    diffusivity = D21hpv2_gr1
+    v = c1pv2
+     block = 1
+  [../]
+  [./diff_c2pv3_gr1_cross]
+    type = MatDiffusion
+    variable = c2
+    diffusivity = D21hpv3_gr1
+    v = c1pv3
+    block = 1
+  [../]
     
   # Phase concentration constraints
     [./chempot1m_pv1_gr0]
@@ -1685,11 +2001,19 @@
 []
 
 [AuxKernels]
-  [temperature]
+  [temperature_gr0]
     type = FunctionAux
-    variable = temperature
+    variable = temperature_gr0
     function = '1023'
     execute_on = timestep_begin
+    block = 0
+  []
+   [temperature_gr1]
+    type = FunctionAux
+    variable = temperature_gr1
+    function = '1023'
+    execute_on = timestep_begin
+    block = 1
   []
   [./Energy_total]
     type = KKSMultiFreeEnergy
@@ -1723,28 +2047,30 @@
 [Executioner]
   type = Transient
   solve_type = 'PJFNK'
-  petsc_options_iname = '-pc_type -pc_factor_mat_solver_package -snes_type -pc_factor_shift_type'
-  petsc_options_value = 'lu            mumps            vinewtonrsls nonzero'
-  
-
+  petsc_options_iname = '-pc_type -pc_factor_mat_solver_package -snes_type'
+  petsc_options_value = 'lu            mumps            vinewtonrsls'
 
   l_max_its = 50
-  nl_max_its = 40
-  l_tol = 1.0e-4
+  nl_max_its = 25
+  l_tol = 1.0e-3
   nl_rel_tol = 1.0e-6
-  nl_abs_tol = 1.0e-10
-  dtmin = 1e-8
-  dtmax = 1e-1
+  nl_abs_tol = 1.0e-8
+
   end_time = 50000
 
   [./TimeStepper]
     type = IterationAdaptiveDT
-    dt = 1e-6
-    cutback_factor = 0.25
-    growth_factor = 1.15
+    dt = 5e-4
+    cutback_factor = 0.75
+    growth_factor = 1.2
     optimal_iterations = 20
   [../]
- 
+ [./Adaptivity]
+    initial_adaptivity = 0
+    refine_fraction = 0.7
+    coarsen_fraction = 0.1
+    max_h_level = 1
+  [../] 
 []
 
 [Preconditioning]
@@ -1766,32 +2092,32 @@
      function = bc_func
      block = 0
    [../]
-  [./gr1area_gr0]
+  [./pv1_area_gr0]
     type = ElementIntegralVariablePostprocessor_new2
     variable = eta_pv1_gr0
     block = 0
   [../]
-   [./gr2area_gr0]
+   [./pv2_area_gr0]
     type = ElementIntegralVariablePostprocessor_new2
     variable = eta_pv2_gr0
     block = 0
   [../]
-  [./gr3area_gr0]
+  [./pv3_area_gr0]
     type = ElementIntegralVariablePostprocessor_new2
     variable = eta_pv3_gr0
     block = 0
   [../]
-   [./gr1area_gr1]
+   [./pv1_area_gr1]
     type = ElementIntegralVariablePostprocessor_new2
     variable = eta_pv1_gr1
     block = 1
   [../]
-   [./gr2area_gr1]
+   [./pv2_area_gr1]
     type = ElementIntegralVariablePostprocessor_new2
     variable = eta_pv2_gr1
     block = 1
   [../]
-  [./gr3area_gr1]
+  [./pv3_area_gr1]
     type = ElementIntegralVariablePostprocessor_new2
     variable = eta_pv3_gr1
     block = 1
@@ -1800,8 +2126,6 @@
 
 [Outputs]
   exodus = true
-  print_linear_residuals = true
-  print_nonlinear_residuals = true
   [./table]
     type = CSV
     execute_on = timestep_end
@@ -1809,6 +2133,6 @@
   [./checkpoint]
      type = Checkpoint
      num_files = 10
-     time_step_interval = 10
+     interval = 10
   [../]
 []
