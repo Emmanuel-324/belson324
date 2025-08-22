@@ -4,7 +4,7 @@
 #SBATCH --error=Grain_BM1.%j.err       
 #SBATCH --nodes=1                                                              
 #SBATCH --ntasks-per-node=8
-#SBATCH --cpus-per-task=10
+#SBATCH --cpus-per-task=4
 #SBATCH --account=amcorrosion                                                  
 #SBATCH --partition=normal_q                                                   
 #SBATCH --time=20:00:00    

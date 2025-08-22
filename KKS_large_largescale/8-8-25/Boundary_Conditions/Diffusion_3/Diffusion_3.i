@@ -4,47 +4,72 @@
 []
 
 [Mesh]
+  # left grain
   [phasem_gr0]
     type = GeneratedMeshGenerator
     dim = 2
     nx = 175
     ny = 175
-#   nz = 2
     xmin = 0
-    xmax = 350
+    xmax = 345
     ymin = 0
     ymax = 350
-    zmin = 0
-    zmax = 0
     elem_type = QUAD4
   []
-  [phasem_gr0_id]
-    type = SubdomainIDGenerator
-    input = phasem_gr0
-    subdomain_id = 0
+
+  # grain-boundary strip
+  [gb]
+    type = GeneratedMeshGenerator
+    dim = 2
+    nx = 4
+    ny = 175
+    xmin = 345
+    xmax = 355           # 10 units wide strip
+    ymin = 0
+    ymax = 350
+    elem_type = QUAD4
   []
+
+  # right grain
   [phasem_gr1]
     type = GeneratedMeshGenerator
     dim = 2
     nx = 175
     ny = 175
-#   nz = 2
-    xmin = 350
+    xmin = 355
     xmax = 700
     ymin = 0
     ymax = 350
-    zmin = 0
-    zmax = 0
     elem_type = QUAD4
+  []
+
+  # assign subdomain ids
+  [phasem_gr0_id]
+    type = SubdomainIDGenerator
+    input = phasem_gr0
+    subdomain_id = 0
+  []
+  [gb_id]
+    type = SubdomainIDGenerator
+    input = gb
+    subdomain_id = 2
   []
   [phasem_gr1_id]
     type = SubdomainIDGenerator
     input = phasem_gr1
     subdomain_id = 1
   []
-  [sticher]
+
+  # stitch them in order: left | gb | right
+  [stitch_0_gb]
     type = StitchedMeshGenerator
-    inputs = 'phasem_gr0_id phasem_gr1_id'
+    inputs = 'phasem_gr0_id gb_id'
+    stitch_boundaries_pairs = 'right left'
+    prevent_boundary_ids_overlap = false
+  []
+  [stitch_all]
+    type = StitchedMeshGenerator
+    inputs = 'stitch_0_gb phasem_gr1_id'
     stitch_boundaries_pairs = 'right left'
     prevent_boundary_ids_overlap = false
   []
@@ -265,49 +290,41 @@
   [./eta_m_gr0]
     order = FIRST
     family = LAGRANGE
-    block = 0
   [../]
   # order parameter pv1
   [./eta_pv1_gr0]
     order = FIRST
     family = LAGRANGE
-    block = 0
   [../]
   # order parameter pv2
   [./eta_pv2_gr0]
     order = FIRST
     family = LAGRANGE
-    block = 0
   [../]
 # order parameter pv3
   [./eta_pv3_gr0]
     order = FIRST
     family = LAGRANGE
-    block = 0
   [../]
    # order parameter m
   [./eta_m_gr1]
     order = FIRST
     family = LAGRANGE
-    block = 1
   [../]
   # order parameter pv1
   [./eta_pv1_gr1]
     order = FIRST
     family = LAGRANGE
-    block = 1
   [../]
   # order parameter pv2
   [./eta_pv2_gr1]
     order = FIRST
     family = LAGRANGE
-    block = 1
   [../]
 # order parameter pv3
   [./eta_pv3_gr1]
     order = FIRST
     family = LAGRANGE
-    block = 1
   [../]
 
   [./disp_x]
@@ -411,7 +428,7 @@
     base_name = phasem_gr0
     property_name = fe_m_gr0
     coupled_variables = ' '
-    block = 0
+    block = '0 2'
   [../]
   # Total free energy of the phase m in gr0
   [./Total_energy_m_gr0]
@@ -435,7 +452,7 @@
     base_name = phasem_gr1
     property_name = fe_m_gr1
     coupled_variables = ' '
-    block = 1
+    block = '1 2'
   [../]
   # Total free energy of the phase m in gr1
   [./Total_energy_m_gr1]
@@ -599,7 +616,7 @@
     phase_etas = eta_m_gr0
     all_etas = 'eta_pv1_gr0 eta_pv2_gr0 eta_pv3_gr0 eta_m_gr0'
     h_name = hm_gr0
-    block = 0
+    block = '0  2'
   [../]
   # hpv1(eta_pv1_gr0, eta_pv2_gr0,eta_pv3_gr0, eta_m_gr0)
   [./hpv1_gr0]
@@ -631,7 +648,7 @@
     phase_etas = eta_m_gr1
     all_etas = 'eta_pv1_gr1 eta_pv2_gr1 eta_pv3_gr1 eta_m_gr1'
     h_name = hm_gr1
-    block = 1
+    block = '1 2'
   [../]
   # hpv1(eta_pv1_gr1, eta_pv2_gr1,eta_pv3_gr1, eta_m_gr1)
   [./hpv1_gr1]
@@ -964,6 +981,12 @@
     prop_values = '0.3         0.01      1        1        -0.5    -0.5         1         0.01'
     block = 1
   [../]
+  [./constants_gb]
+  type = GenericConstantMaterial
+  prop_names  = 'L_gb  kappa_gb  D  misfit  W'
+  prop_values = '0.3   0.01      5.0  1.0   0.01'
+  block = 2
+  [../]
 
   #Mechanical properties
   [./Stiffness_phasem_gr0]
@@ -974,7 +997,7 @@
     euler_angle_1 = 0
     euler_angle_2 = 0
     euler_angle_3 = 0
-    block = 0
+    block =  '0 2'
   [../]
    [./Stiffness_phasem_gr1]
     type = ComputeElasticityTensor
@@ -984,7 +1007,7 @@
      euler_angle_1 = 0
     euler_angle_2  = 0
     euler_angle_3  = 0
-    block = 1
+    block = '1 2'
   [../]
   [./Stiffness_phasepv1_gr0]
     type = ComputeElasticityTensor
@@ -1080,25 +1103,25 @@
   [./stress_phasem_gr0]
     type = ComputeLinearElasticStress
     base_name = phasem_gr0
-    block = 0
+    block = '0 2'
   [../]
   [./stress_phasem_gr1]
     type = ComputeLinearElasticStress
     base_name = phasem_gr1
-    block = 1
+    block = '1 2'
   [../]
 
   [./strain_phasem_gr0]
     type = ComputeSmallStrain
     displacements = 'disp_x disp_y'
     base_name = phasem_gr0
-    block = 0
+    block = '0 2'
   [../]
   [./strain_phasem_gr1]
     type = ComputeSmallStrain
     displacements = 'disp_x disp_y'
     base_name = phasem_gr1
-    block = 1
+    block = '1 2'
   [../]
   [./strain_phasepv1_gr0]
     type = ComputeSmallStrain
@@ -1199,24 +1222,31 @@
     type = MultiPhaseStressMaterial
     phase_base = 'phasepv1_gr0 phasepv2_gr0 phasepv3_gr0 phasem_gr0'
     h          = 'hpv1_gr0     hpv2_gr0   hpv3_gr0   hm_gr0'
-    block = 0
+    block = '0 '
   [../]
    [./global_stress_gr1]
     type = MultiPhaseStressMaterial
     phase_base = 'phasepv1_gr1 phasepv2_gr1 phasepv3_gr1 phasem_gr1'
     h          = 'hpv1_gr1     hpv2_gr1   hpv3_gr1   hm_gr1'
-    block = 1
+    block = '1 '
   [../]
+  [./global_stress_gb]
+    type = MultiPhaseStressMaterial
+    phase_base = ' phasem_gr1 phasem_gr0 '
+    h          = '   hm_gr1   hm_gr0'
+    block = '0 1 2'
+  [../]
+  
 
   [./global_strain_gr0]
     type = ComputeSmallStrain
     displacements = 'disp_x disp_y'
-    block = 0
+    block = '0 2'
   [../]
   [./global_strain_gr1]
     type = ComputeSmallStrain
     displacements = 'disp_x disp_y'
-    block = 1
+    block = '1 2'
   [../]
 []
 
@@ -2065,8 +2095,12 @@
     growth_factor = 1.2
     optimal_iterations = 20
   [../]
-
-  
+ [./Adaptivity]
+    initial_adaptivity = 0
+    refine_fraction = 0.7
+    coarsen_fraction = 0.1
+    max_h_level = 1
+  [../] 
 []
 
 [Preconditioning]

@@ -86,6 +86,10 @@
 
 
 [AuxVariables]
+  [./gb_scale_aux]
+    family = MONOMIAL
+    order  = FIRST
+  [../]
   [./Energy]
     order = CONSTANT
     family = MONOMIAL
@@ -326,6 +330,12 @@
     expression = sin(alpha*pi*x)
     symbol_names = alpha
     symbol_values = 16
+  [../]
+  [./gb_scale_fn]
+    type = ParsedFunction
+    expression = '1 + (gb_factor - 1)*0.5*(tanh((w/2 - abs(x - x0))/delta) + 1)'
+    symbol_names = 'x0          w     delta   gb_factor'
+    symbol_values = '350.0     5.0      1       10.0'
   [../]
 []
 
@@ -657,33 +667,38 @@
     h_name = hpv3_gr1
     block = 1
 [../]
+  
   # Coefficients for diffusion equation
   # --- self terms for c1: D11
   [./D11hm_gr0]
     type = DerivativeParsedMaterial
+    coupled_variables = 'gb_scale_aux'
     material_property_names = 'D11_gr0 hm_gr0'
-    expression = D11_gr0*hm_gr0
+    expression = gb_scale_aux*(D11_gr0*hm_gr0)
     property_name = D11hm_gr0
     block = 0
   [../]
   [./D11hpv1_gr0]
     type = DerivativeParsedMaterial
+    coupled_variables = 'gb_scale_aux'
     material_property_names = 'D11_gr0 hpv1_gr0'
-    expression = D11_gr0*hpv1_gr0
+    expression = gb_scale_aux*(D11_gr0*hpv1_gr0)
     property_name = D11hpv1_gr0
     block = 0
   [../]
   [./D11hpv2_gr0]
     type = DerivativeParsedMaterial
+    coupled_variables = 'gb_scale_aux'
     material_property_names = 'D11_gr0 hpv2_gr0'
-    expression = D11_gr0*hpv2_gr0
+    expression = gb_scale_aux*(D11_gr0*hpv2_gr0)
     property_name = D11hpv2_gr0
     block = 0
   [../]
   [./D11hpv3_gr0]
     type = DerivativeParsedMaterial
+    coupled_variables = 'gb_scale_aux'
     material_property_names = 'D11_gr0 hpv3_gr0'
-    expression = D11_gr0*hpv3_gr0
+    expression = gb_scale_aux*(D11_gr0*hpv3_gr0)
     property_name = D11hpv3_gr0
     block = 0
   [../]
@@ -691,29 +706,33 @@
 # --- cross term for c1: D12 
   [./D12hm_gr0]
     type = DerivativeParsedMaterial
+    coupled_variables = 'gb_scale_aux'
     material_property_names = 'D12_gr0 hm_gr0'
-    expression = D12_gr0*hm_gr0
+    expression = gb_scale_aux*(D12_gr0*hm_gr0)  
     property_name = D12hm_gr0
     block = 0
   [../]
   [./D12hpv1_gr0]
     type = DerivativeParsedMaterial
+    coupled_variables = 'gb_scale_aux'
     material_property_names = 'D12_gr0 hpv1_gr0'
-    expression = D12_gr0*hpv1_gr0
+    expression = gb_scale_aux*(D12_gr0*hpv1_gr0)
     property_name = D12hpv1_gr0
     block = 0
   [../]
   [./D12hpv2_gr0]
     type = DerivativeParsedMaterial
+    coupled_variables = 'gb_scale_aux'
     material_property_names = 'D12_gr0 hpv2_gr0'
-    expression = D12_gr0*hpv2_gr0
+    expression = gb_scale_aux*(D12_gr0*hpv2_gr0)
     property_name = D12hpv2_gr0
     block = 0
   [../]
   [./D12hpv3_gr0]
     type = DerivativeParsedMaterial
+    coupled_variables = 'gb_scale_aux'
     material_property_names = 'D12_gr0 hpv3_gr0'
-    expression = D12_gr0*hpv3_gr0
+    expression = gb_scale_aux*(D12_gr0*hpv3_gr0)
     property_name = D12hpv3_gr0
     block = 0
   [../]
@@ -721,174 +740,198 @@
  #--- self terms for c2: D22
   [./D22hm_gr0]
     type = DerivativeParsedMaterial
+    coupled_variables = 'gb_scale_aux'
     material_property_names = 'D22_gr0 hm_gr0'
-    expression = D22_gr0*hm_gr0
+    expression = gb_scale_aux*(D22_gr0*hm_gr0)
     property_name = D22hm_gr0
     block = 0
   [../]
   [./D22hpv1_gr0]
     type = DerivativeParsedMaterial
+    coupled_variables = 'gb_scale_aux'
     material_property_names = 'D22_gr0 hpv1_gr0'
-    expression = D22_gr0*hpv1_gr0
+    expression = gb_scale_aux*(D22_gr0*hpv1_gr0)
     property_name = D22hpv1_gr0
     block = 0
   [../]
   [./D22hpv2_gr0]
     type = DerivativeParsedMaterial
+    coupled_variables = 'gb_scale_aux'
     material_property_names = 'D22_gr0 hpv2_gr0'
-    expression = D22_gr0*hpv2_gr0
+    expression = gb_scale_aux*(D22_gr0*hpv2_gr0)
     property_name = D22hpv2_gr0
     block = 0
   [../]
   [./D22hpv3_gr0]
     type = DerivativeParsedMaterial
+    coupled_variables = 'gb_scale_aux'
     material_property_names = 'D22_gr0 hpv3_gr0'
-    expression = D22_gr0*hpv3_gr0
+    expression = gb_scale_aux*(D22_gr0*hpv3_gr0)
     property_name = D22hpv3_gr0
     block = 0
   [../]
 # --- cross term for c2: D21
   [./D21hm_gr0]
     type = DerivativeParsedMaterial
+    coupled_variables = 'gb_scale_aux'
     material_property_names = 'D21_gr0 hm_gr0'
-    expression = D21_gr0*hm_gr0
+    expression = gb_scale_aux*(D21_gr0*hm_gr0)
     property_name = D21hm_gr0
     block = 0
   [../]
   [./D21hpv1_gr0]
     type = DerivativeParsedMaterial
+    coupled_variables = 'gb_scale_aux'
     material_property_names = 'D21_gr0 hpv1_gr0'
-    expression = D21_gr0*hpv1_gr0
+    expression = gb_scale_aux*(D21_gr0*hpv1_gr0)
     property_name = D21hpv1_gr0
     block = 0
   [../]
   [./D21hpv2_gr0]
     type = DerivativeParsedMaterial
+    coupled_variables = 'gb_scale_aux'
     material_property_names = 'D21_gr0 hpv2_gr0'
-    expression = D21_gr0*hpv2_gr0
+    expression = gb_scale_aux*(D21_gr0*hpv2_gr0)
     property_name = D21hpv2_gr0
     block = 0
   [../]
   [./D21hpv3_gr0]
     type = DerivativeParsedMaterial
+    coupled_variables = 'gb_scale_aux'
     material_property_names = 'D21_gr0 hpv3_gr0'
-    expression = D21_gr0*hpv3_gr0
+    expression = gb_scale_aux*(D21_gr0*hpv3_gr0)
     property_name = D21hpv3_gr0
     block = 0
   [../]
 # --- self terms for c1: D11
   [./D11hm_gr1]
     type = DerivativeParsedMaterial
+    coupled_variables = 'gb_scale_aux'
     material_property_names = 'D11_gr1 hm_gr1'
-    expression = D11_gr1*hm_gr1
+    expression = gb_scale_aux*(D11_gr1*hm_gr1)
     property_name = D11hm_gr1
     block = 1
   [../]
   [./D11hpv1_gr1]
     type = DerivativeParsedMaterial
+    coupled_variables = 'gb_scale_aux'
     material_property_names = 'D11_gr1 hpv1_gr1'
-    expression = D11_gr1*hpv1_gr1
+    expression = gb_scale_aux*(D11_gr1*hpv1_gr1)
     property_name = D11hpv1_gr1
     block = 1
   [../]
   [./D11hpv2_gr1]
     type = DerivativeParsedMaterial
+    coupled_variables = 'gb_scale_aux'
     material_property_names = 'D11_gr1 hpv2_gr1'
-    expression = D11_gr1*hpv2_gr1
+    expression = gb_scale_aux*(D11_gr1*hpv2_gr1)
     property_name = D11hpv2_gr1
     block = 1
   [../]
   [./D11hpv3_gr1]
     type = DerivativeParsedMaterial
+    coupled_variables = 'gb_scale_aux'
     material_property_names = 'D11_gr1 hpv3_gr1'
-    expression = D11_gr1*hpv3_gr1
+    expression = gb_scale_aux*(D11_gr1*hpv3_gr1)
     property_name = D11hpv3_gr1
     block = 1
   [../]
 # --- cross term for c1: D12 
   [./D12hm_gr1]
     type = DerivativeParsedMaterial
+    coupled_variables = 'gb_scale_aux'
     material_property_names = 'D12_gr1 hm_gr1'
-    expression = D12_gr1*hm_gr1
+    expression = gb_scale_aux*(D12_gr1*hm_gr1)
     property_name = D12hm_gr1
     block = 1
   [../]
   [./D12hpv1_gr1]
     type = DerivativeParsedMaterial
+    coupled_variables = 'gb_scale_aux'
     material_property_names = 'D12_gr1 hpv1_gr1'
-    expression = D12_gr1*hpv1_gr1
+    expression = gb_scale_aux*(D12_gr1*hpv1_gr1)
     property_name = D12hpv1_gr1
     block = 1
   [../]
   [./D12hpv2_gr1]
     type = DerivativeParsedMaterial
+    coupled_variables = 'gb_scale_aux'
     material_property_names = 'D12_gr1 hpv2_gr1'
-    expression = D12_gr1*hpv2_gr1
+    expression = gb_scale_aux*(D12_gr1*hpv2_gr1)
     property_name = D12hpv2_gr1
     block = 1
   [../]
   [./D12hpv3_gr1]
     type = DerivativeParsedMaterial
+    coupled_variables = 'gb_scale_aux'
     material_property_names = 'D12_gr1 hpv3_gr1'
-    expression = D12_gr1*hpv3_gr1
+    expression = gb_scale_aux*(D12_gr1*hpv3_gr1)
     property_name = D12hpv3_gr1
     block = 1
   [../]
 # --- self terms for c2: D22
   [./D22hm_gr1]
     type = DerivativeParsedMaterial
+    coupled_variables = 'gb_scale_aux'
     material_property_names = 'D22_gr1 hm_gr1'
-    expression = D22_gr1*hm_gr1
+    expression = gb_scale_aux*(D22_gr1*hm_gr1)
     property_name = D22hm_gr1
     block = 1
   [../]
   [./D22hpv1_gr1]
     type = DerivativeParsedMaterial
+    coupled_variables = 'gb_scale_aux'
     material_property_names = 'D22_gr1 hpv1_gr1'
-    expression = D22_gr1*hpv1_gr1
+    expression = gb_scale_aux*(D22_gr1*hpv1_gr1)
     property_name = D22hpv1_gr1
     block = 1
   [../]
   [./D22hpv2_gr1]
     type = DerivativeParsedMaterial
+    coupled_variables = 'gb_scale_aux'
     material_property_names = 'D22_gr1 hpv2_gr1'
-    expression = D22_gr1*hpv2_gr1
+    expression = gb_scale_aux*(D22_gr1*hpv2_gr1)
     property_name = D22hpv2_gr1
     block = 1
   [../]
   [./D22hpv3_gr1]
     type = DerivativeParsedMaterial
+    coupled_variables = 'gb_scale_aux'
     material_property_names = 'D22_gr1 hpv3_gr1'
-    expression = D22_gr1*hpv3_gr1
+    expression = gb_scale_aux*(D22_gr1*hpv3_gr1)
     property_name = D22hpv3_gr1
     block = 1
   [../]
 # --- cross term for c2: D21
   [./D21hm_gr1]
     type = DerivativeParsedMaterial
+    coupled_variables = 'gb_scale_aux'
     material_property_names = 'D21_gr1 hm_gr1'
-    expression = D21_gr1*hm_gr1
+    expression = gb_scale_aux*(D21_gr1*hm_gr1)
     property_name = D21hm_gr1
     block = 1
   [../]
   [./D21hpv1_gr1]
     type = DerivativeParsedMaterial
+    coupled_variables = 'gb_scale_aux'
     material_property_names = 'D21_gr1 hpv1_gr1'
-    expression = D21_gr1*hpv1_gr1
+    expression = gb_scale_aux*(D21_gr1*hpv1_gr1)
     property_name = D21hpv1_gr1
     block = 1
   [../]
   [./D21hpv2_gr1]
     type = DerivativeParsedMaterial
+    coupled_variables = 'gb_scale_aux'
     material_property_names = 'D21_gr1 hpv2_gr1'
-    expression = D21_gr1*hpv2_gr1
+    expression = gb_scale_aux*(D21_gr1*hpv2_gr1)
     property_name = D21hpv2_gr1
     block = 1
   [../]
   [./D21hpv3_gr1]
     type = DerivativeParsedMaterial
+    coupled_variables = 'gb_scale_aux'
     material_property_names = 'D21_gr1 hpv3_gr1'
-    expression = D21_gr1*hpv3_gr1
+    expression = gb_scale_aux*(D21_gr1*hpv3_gr1)
     property_name = D21hpv3_gr1
     block = 1
   [../]
@@ -951,6 +994,7 @@
     block = 1
   [../]
 
+ 
   # constant properties
   [./constants_gr0]
     type = GenericConstantMaterial
@@ -2001,6 +2045,11 @@
 []
 
 [AuxKernels]
+  [./gb_scale_eval]
+    type     = FunctionAux
+    variable = gb_scale_aux
+    function = gb_scale_fn
+  [../]
   [temperature_gr0]
     type = FunctionAux
     variable = temperature_gr0
@@ -2066,7 +2115,6 @@
     optimal_iterations = 20
   [../]
 
-  
 []
 
 [Preconditioning]
@@ -2122,6 +2170,7 @@
 
 [Outputs]
   exodus = true
+  csv = true
   [./table]
     type = CSV
     execute_on = timestep_end

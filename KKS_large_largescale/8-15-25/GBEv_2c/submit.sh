@@ -1,13 +1,13 @@
 #!/bin/bash                                                                     
-#SBATCH --job-name=Test_1.i                                            
-#SBATCH --output=Test_1.%j.out 
-#SBATCH --error=Test_1.%j.err       
+#SBATCH --job-name=GBEv_2c.i                                            
+#SBATCH --output=GBEv_2c.%j.out 
+#SBATCH --error=GBEv_2c.%j.err       
 #SBATCH --nodes=1                                                              
-#SBATCH --ntasks-per-node=6
-#SBATCH --cpus-per-task=4
+#SBATCH --ntasks-per-node=12
+#SBATCH --cpus-per-task=10
 #SBATCH --account=amcorrosion                                                  
 #SBATCH --partition=normal_q                                                   
-#SBATCH --time=20:00:00    
+#SBATCH --time=7-00:00:00     
 ##SBATCH --mem=gpu:pascal:4
 ##SBATCH --mem=254G                                                     
 ##SBATCH --export=NONE # this makes sure the compute environment is clean        
@@ -26,7 +26,7 @@ export PATH="$CONDA_PREFIX/bin:$PATH"
 # Go to job submission directory
 cd "${SLURM_SUBMIT_DIR}"
 
-srun --export=ALL --mpi=pmi2 -n 6 /home/emmanuel324/projects/belson324/belson324-opt  -i  Test_1.i
+srun --export=ALL --mpi=pmi2 -n 12 /home/emmanuel324/projects/belson324/belson324-opt  -i  GBEv_2c.i
 
 
 
