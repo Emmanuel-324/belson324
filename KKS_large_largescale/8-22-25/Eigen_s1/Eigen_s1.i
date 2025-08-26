@@ -335,7 +335,7 @@
     type = ParsedFunction
     expression = '1 + (gb_factor - 1)*0.5*(tanh((w/2 - abs(x - x0))/delta) + 1)'
     symbol_names = 'x0          w     delta   gb_factor'
-    symbol_values = '350.0     50.0      1       4.0'
+    symbol_values = '350.0     20.0      1       5.0'
   [../]
 []
 
@@ -1190,7 +1190,7 @@
   [./eigen_strainpv1_gr0]
     type = ComputeEigenstrain
     base_name = phasepv1_gr0
-    eigen_base = '0.0 0.0 0 0 0 0'
+    eigen_base = '0.0067 0.0206 0 0 0 0'
     prefactor = misfit_gr0
     eigenstrain_name = eigen_strainpv1_gr0
     block = 0
@@ -1198,7 +1198,7 @@
   [./eigen_strainpv1_gr1]
     type = ComputeEigenstrain
     base_name = phasepv1_gr1
-    eigen_base = '0.0 0.00 0 0 0 0'
+    eigen_base = '0.0067 0.0206 0 0 0 0'
     prefactor = misfit_gr1
     eigenstrain_name = eigen_strainpv1_gr1
     block = 1
@@ -1223,7 +1223,7 @@
   [./eigen_strainpv3_gr0]
     type = ComputeEigenstrain
     base_name = phasepv3_gr0
-    eigen_base = '0.00 0.0 0 0 0 0'
+    eigen_base = '0.0206 0.0067 0 0 0 0'
     prefactor = misfit_gr0
     eigenstrain_name = eigen_strainpv3_gr0
     block = 0
@@ -1231,7 +1231,7 @@
   [./eigen_strainpv3_gr1]
     type = ComputeEigenstrain
     base_name = phasepv3_gr1
-    eigen_base = '0.0 0.0 0 0 0 0'
+    eigen_base =  '0.0206 0.0067 0 0 0 0'
     prefactor = misfit_gr1
     eigenstrain_name = eigen_strainpv3_gr1
     block = 1

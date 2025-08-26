@@ -368,7 +368,9 @@
     output_properties = 'Euler_angles'
     outputs = exodus
     base_name = uncracked
+     block = '0 1' 
   [../]
+ 
   [./cracked_stress]
     type = ComputeCrackedStressmod
     c = eta
@@ -376,6 +378,7 @@
     use_current_history_variable = false
     uncracked_base_name = uncracked
     finite_strain_model = false
+     block = '0 1' 
   [../]
   [./degradation]
     type = DerivativeParsedMaterial

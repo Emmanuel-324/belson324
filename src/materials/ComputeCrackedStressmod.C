@@ -9,7 +9,7 @@
 
 #include "ComputeCrackedStressmod.h"
 
-registerMooseObject("beslon324App", ComputeCrackedStressmod);
+registerMooseObject("belson324App", ComputeCrackedStressmod);
 
 InputParameters
 ComputeCrackedStressmod::validParams()

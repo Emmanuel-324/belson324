@@ -335,7 +335,7 @@
     type = ParsedFunction
     expression = '1 + (gb_factor - 1)*0.5*(tanh((w/2 - abs(x - x0))/delta) + 1)'
     symbol_names = 'x0          w     delta   gb_factor'
-    symbol_values = '350.0     50.0      1       4.0'
+    symbol_values = '350.0     15.0     1     5.0'
   [../]
 []
 
@@ -1015,9 +1015,9 @@
     C_ijkl = '272.1 169 169 272.1 169 272.1 131 131 131' #Ghorbanpour, S., et al., A crystal plasticity model incorporating the effects of     
     base_name = phasem_gr0
     fill_method = symmetric9
-    euler_angle_1 = 0
-    euler_angle_2 = 0
-    euler_angle_3 = 0
+    euler_angle_1 = 20
+    euler_angle_2 = 12
+    euler_angle_3 = 25
     block = 0
   [../]
    [./Stiffness_phasem_gr1]
@@ -1025,8 +1025,8 @@
     C_ijkl = '272.1 169 169 272.1 169 272.1 131 131 131' #Ghorbanpour, S., et al., A crystal plasticity model incorporating the effects of     
     base_name = phasem_gr1
     fill_method = symmetric9
-     euler_angle_1 = 0
-    euler_angle_2  = 0
+    euler_angle_1 = 45
+    euler_angle_2  = 5
     euler_angle_3  = 0
     block = 1
   [../]
@@ -1035,9 +1035,9 @@
     C_ijkl = '290.6 187 160.7 290.6 187 309.6 114.2 114.2 119.2'#Ghorbanpour, S., et al., A crystal plasticity model incorporating the effects of    
     base_name = phasepv1_gr0
     fill_method = symmetric9
-    euler_angle_1 = 0
-    euler_angle_2 = 0
-    euler_angle_3 = 0
+    euler_angle_1 = 20
+    euler_angle_2 = 12
+    euler_angle_3 = 25
     block = 0
   [../]
   [./Stiffness_phasepv1_gr1]
@@ -1045,9 +1045,9 @@
     C_ijkl = '290.6 187 160.7 290.6 187 309.6 114.2 114.2 119.2'#Ghorbanpour, S., et al., A crystal plasticity model incorporating the effects of    
     base_name = phasepv1_gr1
     fill_method = symmetric9
-    euler_angle_1 = 0
-    euler_angle_2 = 0
-    euler_angle_3 = 0
+    euler_angle_1 = 45
+    euler_angle_2  = 5
+    euler_angle_3  = 0
     block = 1
   [../]
   [./Stiffness_phasepv2_gr0]
@@ -1055,9 +1055,9 @@
     C_ijkl = '243 154.8 154.8 243 154.8 243 132.3 132.3 132.3'
     base_name = phasepv2_gr0
     fill_method = symmetric9
-    euler_angle_1 = 0
-    euler_angle_2 = 0
-    euler_angle_3 = 0
+    euler_angle_1 = 20
+    euler_angle_2 = 12
+    euler_angle_3 = 25
     block = 0
   [../]
   [./Stiffness_phasepv2_gr1]
@@ -1065,9 +1065,9 @@
     C_ijkl = '243 154.8 154.8 243 154.8 243 132.3 132.3 132.3'
     base_name = phasepv2_gr1
     fill_method = symmetric9
-    euler_angle_1 = 0
-    euler_angle_2 = 0
-    euler_angle_3 = 0
+    euler_angle_1 = 45
+    euler_angle_2  = 5
+    euler_angle_3  = 0
     block = 1
   [../]
   [./Stiffness_phasepv3_gr0]
@@ -1075,9 +1075,9 @@
     C_ijkl = '290.6 187 160.7 290.6 187 309.6 114.2 114.2 119.2'
     base_name = phasepv3_gr0
     fill_method = symmetric9
-    euler_angle_1 = 0
-    euler_angle_2 = 0
-    euler_angle_3 = 0
+    euler_angle_1 = 20
+    euler_angle_2 = 12
+    euler_angle_3 = 25
     block = 0
   [../]
   [./Stiffness_phasepv3_gr1]
@@ -1085,9 +1085,9 @@
     C_ijkl = '290.6 187 160.7 290.6 187 309.6 114.2 114.2 119.2'
     base_name = phasepv3_gr1
     fill_method = symmetric9
-    euler_angle_1 = 0
-    euler_angle_2 = 0
-    euler_angle_3 = 0
+    euler_angle_1 = 45
+    euler_angle_2  = 5
+    euler_angle_3  = 0
     block = 1
   [../]
 
@@ -1190,7 +1190,7 @@
   [./eigen_strainpv1_gr0]
     type = ComputeEigenstrain
     base_name = phasepv1_gr0
-    eigen_base = '0.0 0.0 0 0 0 0'
+    eigen_base = '0.021 0.0067 0 0 0 0'
     prefactor = misfit_gr0
     eigenstrain_name = eigen_strainpv1_gr0
     block = 0
@@ -1198,7 +1198,7 @@
   [./eigen_strainpv1_gr1]
     type = ComputeEigenstrain
     base_name = phasepv1_gr1
-    eigen_base = '0.0 0.00 0 0 0 0'
+    eigen_base = '0.021 0.0067 0 0 0 0'
     prefactor = misfit_gr1
     eigenstrain_name = eigen_strainpv1_gr1
     block = 1
@@ -1223,7 +1223,7 @@
   [./eigen_strainpv3_gr0]
     type = ComputeEigenstrain
     base_name = phasepv3_gr0
-    eigen_base = '0.00 0.0 0 0 0 0'
+    eigen_base = '0.0067 0.021 0 0 0 0'
     prefactor = misfit_gr0
     eigenstrain_name = eigen_strainpv3_gr0
     block = 0
@@ -1231,7 +1231,7 @@
   [./eigen_strainpv3_gr1]
     type = ComputeEigenstrain
     base_name = phasepv3_gr1
-    eigen_base = '0.0 0.0 0 0 0 0'
+    eigen_base = '0.0067 0.021 0 0 0 0'
     prefactor = misfit_gr1
     eigenstrain_name = eigen_strainpv3_gr1
     block = 1
@@ -2045,7 +2045,7 @@
 []
 
 [AuxKernels]
-  [./gb_scale_eval]
+  [./gb_scale_sampler]
     type     = FunctionAux
     variable = gb_scale_aux
     function = gb_scale_fn
@@ -2136,6 +2136,21 @@
      function = bc_func
      block = 0
    [../]
+  [./gb_scale_mean] 
+  type = ElementAverageValue   
+  variable = gb_scale_aux 
+  [../]
+   [./gb_scale_min]  
+   type = ElementExtremeValue   
+   variable = gb_scale_aux 
+   value_type = min 
+   [../] 
+   [./gb_scale_max]  
+   type = ElementExtremeValue
+   variable = gb_scale_aux
+   value_type = max
+   [../]
+
   [./pv1_area_gr0]
     type = ElementIntegralVariablePostprocessor_new2
     variable = eta_pv1_gr0
