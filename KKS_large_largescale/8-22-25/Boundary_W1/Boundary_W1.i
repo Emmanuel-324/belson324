@@ -51,6 +51,13 @@
 []
 
 [BCs]
+  [./eta_pv1_gb_zero]
+    type     = PenaltyDirichletBC
+    variable = eta_pv1
+    boundary = GB
+    value    = 0.0
+    penalty  = 1e6      # big but not insane; tune if needed
+  [../]
   [./u_right_pull]
     type = Pressure
     displacements = 'disp_x disp_y'

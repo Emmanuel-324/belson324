@@ -1,18 +1,50 @@
 # This test is for the multicomponent In718 alloy
 
 [Mesh]
-  type = GeneratedMesh
-  dim = 2
-  nx = 175
-  ny = 175
-#  nz = 2
-  xmin = 0
-  xmax = 350
-  ymin = 0
-  ymax = 350
-  zmin = 0
-  zmax = 0
-#  elem_type = QUAD4
+  [phasem_gr0]
+    type = GeneratedMeshGenerator
+    dim = 2
+    nx = 175
+    ny = 175
+#   nz = 2
+    xmin = 0
+    xmax = 350
+    ymin = 0
+    ymax = 350
+    zmin = 0
+    zmax = 0
+    elem_type = QUAD4
+  []
+  [phasem_gr0_id]
+    type = SubdomainIDGenerator
+    input = phasem_gr0
+    subdomain_id = 0
+  []
+  [phasem_gr1]
+    type = GeneratedMeshGenerator
+    dim = 2
+    nx = 175
+    ny = 175
+#   nz = 2
+    xmin = 350
+    xmax = 700
+    ymin = 0
+    ymax = 350
+    zmin = 0
+    zmax = 0
+    elem_type = QUAD4
+  []
+  [phasem_gr1_id]
+    type = SubdomainIDGenerator
+    input = phasem_gr1
+    subdomain_id = 1
+  []
+  [sticher]
+    type = StitchedMeshGenerator
+    inputs = 'phasem_gr0_id phasem_gr1_id'
+    stitch_boundaries_pairs = 'right left'
+    prevent_boundary_ids_overlap = false
+  []
 []
 
 [BCs]
@@ -58,7 +90,6 @@
   [./stress_xx]
     order = CONSTANT
     family = MONOMIAL
-    block = 0
   [../]
   [./e_xx]
     order = CONSTANT
@@ -197,12 +228,10 @@
   [./disp_x]
     order = FIRST
     family = LAGRANGE
-    block = 0
   [../]
   [./disp_y]
     order = FIRST
     family = LAGRANGE
-    block = 0
   [../]
 []
 
@@ -800,7 +829,7 @@
     args_b   = c1pv3
   [../]
     
-  [./phaseconcentration_c1pv1]
+  [./phaseconcentration_c1pv3]
     type = KKSMultiPhaseConcentration
     variable = c1pv3
     cj = 'c1m c1pv1 c1pv2 c1pv3'
@@ -808,7 +837,7 @@
     etas = 'eta_m eta_pv1 eta_pv2 eta_pv3'
     c = c1
   [../]
-  [./phaseconcentration_c2pv1]
+  [./phaseconcentration_c2pv3]
     type = KKSMultiPhaseConcentration
     variable = c2pv3
     cj = 'c2m c2pv1 c2pv2 c2pv3'
@@ -844,7 +873,6 @@
     index_j = 0
     index_i = 0
     execute_on = timestep_end
-    block = 0
   [../]
 []
 

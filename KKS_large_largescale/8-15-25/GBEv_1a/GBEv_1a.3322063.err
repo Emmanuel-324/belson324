@@ -1,3 +1,6 @@
 Resetting modules to system default. Reseting $MODULEPATH back to system default. All extra directories will be removed from $MODULEPATH.
 WARNING: At least one element took more than 10 iterations to converge in inverse_map()...
 Rerun in devel/dbg mode for more details.
+srun: Job step aborted: Waiting up to 62 seconds for job step to finish.
+slurmstepd: error: *** JOB 3322063 ON tc192 CANCELLED AT 2025-08-27T17:23:06 DUE TO TIME LIMIT ***
+slurmstepd: error: *** STEP 3322063.0 ON tc192 CANCELLED AT 2025-08-27T17:23:06 DUE TO TIME LIMIT ***
