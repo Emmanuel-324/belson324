@@ -58,6 +58,43 @@
 []
 
 [BCs]
+
+  [./eta_pv1_gb_zero_gr0]
+    type     = DirichletBC
+    variable = eta_pv1_gr0
+    boundary = GB
+    value    = 0
+  [../]
+  [./eta_pv2_gb_zero_gr0]
+    type     = DirichletBC
+    variable = eta_pv2_gr0
+    boundary = GB
+    value    = 0
+  [../]
+  [./eta_pv3_gb_zero_gr0]
+    type     = DirichletBC
+    variable = eta_pv3_gr0
+    boundary = GB
+    value    = 0
+  [../]
+  [./eta_pv1_gb_zero_gr1]
+    type     = DirichletBC
+    variable = eta_pv1_gr1
+    boundary = GB
+    value    = 0
+  [../]
+  [./eta_pv2_gb_zero_gr1]
+    type     = DirichletBC
+    variable = eta_pv2_gr1
+    boundary = GB
+    value    = 0
+  [../]
+  [./eta_pv3_gb_zero_gr1]
+    type     = DirichletBC
+    variable = eta_pv3_gr1
+    boundary = GB
+    value    = 0
+  [../]
   [./u_right_pull]
     type = Pressure
     displacements = 'disp_x disp_y'

@@ -1,0 +1,5 @@
+Resetting modules to system default. Reseting $MODULEPATH back to system default. All extra directories will be removed from $MODULEPATH.
+srun: error: tc123: tasks 4,6,11: Segmentation fault (core dumped)
+srun: Job step aborted: Waiting up to 62 seconds for job step to finish.
+slurmstepd: error: *** JOB 3364331 ON tc123 CANCELLED AT 2025-09-04T13:40:55 ***
+slurmstepd: error: *** STEP 3364331.0 ON tc123 CANCELLED AT 2025-09-04T13:40:55 ***

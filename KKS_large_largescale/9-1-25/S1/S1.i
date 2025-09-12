@@ -432,24 +432,36 @@
     type = ComputeElasticityTensor
     C_ijkl = '272.1 169 169 272.1 169 272.1 131 131 131' #Ghorbanpour, S., et al., A crystal plasticity model incorporating the effects of     
     base_name = phasem
+    euler_angle_1 = 45
+    euler_angle_2 = 0
+    euler_angle_3 = 0
     fill_method = symmetric9
   [../]
   [./Stiffness_phasepv1]
     type = ComputeElasticityTensor
     C_ijkl = '290.6 187 160.7 290.6 187 309.6 114.2 114.2 119.2'#Ghorbanpour, S., et al., A crystal plasticity model incorporating the effects of    
     base_name = phasepv1
+    euler_angle_1 = 45
+    euler_angle_2 = 0
+    euler_angle_3 = 0
     fill_method = symmetric9
   [../]
   [./Stiffness_phasepv2]
     type = ComputeElasticityTensor
     C_ijkl = '243 154.8 154.8 243 154.8 243 132.3 132.3 132.3'
     base_name = phasepv2
+    euler_angle_1 = 45
+    euler_angle_2 = 0
+    euler_angle_3 = 0
     fill_method = symmetric9
   [../]
   [./Stiffness_phasepv3]
     type = ComputeElasticityTensor
     C_ijkl = '290.6 187 160.7 290.6 187 309.6 114.2 114.2 119.2'
     base_name = phasepv3
+    euler_angle_1 = 45
+    euler_angle_2 = 0
+    euler_angle_3 = 0
     fill_method = symmetric9
   [../]
 
