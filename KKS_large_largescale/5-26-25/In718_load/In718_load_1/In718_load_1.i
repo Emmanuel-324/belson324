@@ -1,6 +1,5 @@
 # This test is for the multicomponent In718 alloy
 
-
 [Mesh]
   type = GeneratedMesh
   dim = 2

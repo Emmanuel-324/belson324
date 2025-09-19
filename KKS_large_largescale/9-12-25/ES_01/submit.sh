@@ -19,6 +19,7 @@
 module reset
 module load EasyBuild/5.0.0
 module load Miniforge3/24.11.3-0
+module load OpenMPI/4.1.6-GCC-13.2.0
 source activate /home/emmanuel324/mambaforge3/envs/moose 
 
 export PATH="$CONDA_PREFIX/bin:$PATH"
