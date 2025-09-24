@@ -16,37 +16,26 @@
 []
 
 [BCs]
-   # --- x-component: T/√2 on left/right (normals ±x)
+   # --- uniaxial traction pointing along [110]:
+  # apply tension components only on right (x-normal) and top (y-normal)
+  # NOTE: negative factor => tension (outward) in your setup
+
   [./x_part_right]
     type          = Pressure
-    boundary      = right          # normal = +x
+    boundary      = right      # normal = +x
     displacements = 'disp_x disp_y'
     variable      = disp_x
-    factor        = -0.1414213562   # Tx =  T/√2 ; negative => tension (outward)
-  [../]
-  [./x_part_left]
-    type          = Pressure
-    boundary      = left           # normal = -x
-    displacements = 'disp_x disp_y'
-    variable      = disp_x
-    factor        = 0.1414213562  # opposite sign for symmetry
+    factor        = -0.1414213562   # = -(T/√2) with T = 1.0 GPa; scale as needed
   [../]
 
-  # --- y-component: T/√2 on top/bottom (normals ±y)
   [./y_part_top]
     type          = Pressure
-    boundary      = top            # normal = +y
+    boundary      = top        # normal = +y
     displacements = 'disp_x disp_y'
     variable      = disp_y
-    factor        = -0.1414213562   # Ty =  T/√2 ; negative => tension
+    factor        = -0.1414213562   # = -(T/√2)
   [../]
-  [./y_part_bottom]
-    type          = Pressure
-    boundary      = bottom         # normal = -y
-    displacements = 'disp_x disp_y'
-    variable      = disp_y
-    factor        = 0.1414213562
-  [../]
+ 
   [./all_c1]
     type =  NeumannBC
     variable = 'c1'
