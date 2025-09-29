@@ -87,6 +87,58 @@
     family = MONOMIAL
     order  = FIRST
   [../]
+  [./h_pv1_aux]
+     family = MONOMIAL 
+     order = CONSTANT 
+  [../]
+  [./h_pv2_aux]
+    family = MONOMIAL
+    order = CONSTANT
+  [../]
+  [./h_pv3_aux]
+    family = MONOMIAL
+    order = CONSTANT
+  [../]
+  [./h_m_aux]
+    family = MONOMIAL
+    order = CONSTANT
+  [../]
+   [./vonmises]
+    order = CONSTANT
+    family = MONOMIAL
+  [../]
+  [./vonmises_h_pv1]
+    order = CONSTANT
+    family = MONOMIAL
+  [../]
+  [./vonmises_h_pv2]
+    order = CONSTANT
+    family = MONOMIAL
+  [../]
+  [./vonmises_h_pv3]
+    order = CONSTANT
+    family = MONOMIAL
+  [../]
+  [./vonmises_h_m]
+    order = CONSTANT
+    family = MONOMIAL
+  [../]
+  [./stress_xx_h_pv1] 
+    family = MONOMIAL 
+    order = CONSTANT 
+  [../]
+  [./stress_xx_h_pv2]
+    family = MONOMIAL
+    order = CONSTANT
+  [../]
+  [./stress_xx_h_pv3]
+    family = MONOMIAL
+    order = CONSTANT
+  [../]
+  [./stress_xx_h_m]
+    family = MONOMIAL
+    order = CONSTANT
+  [../]
   [./Energy]
     order = CONSTANT
     family = MONOMIAL
@@ -1030,6 +1082,94 @@
     interfacial_vars =  'eta_pv1  eta_pv2  eta_m'
     kappa_names =       'kappa kappa kappa'
   [../]
+   [./vonmises]
+    type = RankTwoScalarAux
+    rank_two_tensor = stress
+    variable = vonmises
+    scalar_type = VonMisesStress
+    execute_on = timestep_end
+  [../]
+   [./copy_h_pv1] 
+  type = MaterialRealAux
+  variable = h_pv1_aux 
+  property = hpv1 
+  execute_on = timestep_end 
+  [../]
+  [./copy_h_pv2] 
+  type = MaterialRealAux 
+  variable = h_pv2_aux 
+  property = hpv2 
+  execute_on = timestep_end 
+  [../]
+  [./copy_h_pv3] 
+  type = MaterialRealAux 
+  variable = h_pv3_aux 
+  property = hpv3 
+  execute_on = timestep_end 
+  [../]
+  [./copy_h_m]   
+  type = MaterialRealAux 
+  variable = h_m_aux   
+  property = hm   
+  execute_on = timestep_end 
+  [../]
+   # Products: h * σ_xx
+   [./vonmises_times_h_pv1]
+     type = ParsedAux
+     variable = vonmises_h_pv1
+     coupled_variables = 'vonmises h_pv1_aux'
+     expression = 'vonmises * h_pv1_aux'
+     execute_on = timestep_end
+   [../]
+  [./vonmises_times_h_pv2]
+      type = ParsedAux
+      variable = vonmises_h_pv2
+      coupled_variables = 'vonmises h_pv2_aux'
+      expression = 'vonmises * h_pv2_aux'
+      execute_on = timestep_end
+    [../]
+    [./vonmises_times_h_pv3]
+      type = ParsedAux
+      variable = vonmises_h_pv3
+      coupled_variables = 'vonmises h_pv3_aux'
+      expression = 'vonmises * h_pv3_aux'
+      execute_on = timestep_end
+    [../]
+    [./vonmises_times_h_m]
+      type = ParsedAux
+      variable = vonmises_h_m
+      coupled_variables = 'vonmises h_m_aux'
+      expression = 'vonmises * h_m_aux'
+      execute_on = timestep_end
+    [../]
+  [./sxx_times_h_pv1]
+    type = ParsedAux
+    variable = stress_xx_h_pv1
+    coupled_variables = 'stress_xx h_pv1_aux'
+    expression = 'stress_xx * h_pv1_aux'
+    execute_on = timestep_end
+  [../]
+  [./sxx_times_h_pv2]
+    type = ParsedAux
+    variable = stress_xx_h_pv2
+    coupled_variables = 'stress_xx h_pv2_aux'
+    expression = 'stress_xx * h_pv2_aux'
+    execute_on = timestep_end
+  [../]
+  [./sxx_times_h_pv3]
+    type = ParsedAux
+    variable = stress_xx_h_pv3
+    coupled_variables = 'stress_xx h_pv3_aux'
+    expression = 'stress_xx * h_pv3_aux'
+    execute_on = timestep_end
+  [../]
+  [./sxx_times_h_m]
+    type = ParsedAux
+    variable = stress_xx_h_m
+    coupled_variables = 'stress_xx h_m_aux'
+    expression = 'stress_xx * h_m_aux'
+    execute_on = timestep_end
+  [../]
   [./stress_xx]
     type = RankTwoAux
     variable = stress_xx
@@ -1084,6 +1224,68 @@
      type = ElementH1Error
      variable = eta_pv1
      function = bc_func
+   [../]
+  [./Energy_total]
+    type = ElementAverageValue
+    variable = Energy
+  []
+  [stress_xx]
+    type = ElementAverageValue
+    variable = stress_xx
+  []
+   [./vonmises]
+    type = ElementAverageValue
+    variable = vonmises
+  [../]
+  [./num_vonmises_pv1]
+  type = ElementIntegralVariablePostprocessor
+  variable = vonmises_h_pv1
+  [../]
+  [./num_vonmises_pv2]
+  type = ElementIntegralVariablePostprocessor
+  variable = vonmises_h_pv2
+  [../]
+  [./num_vonmises_pv3]
+  type = ElementIntegralVariablePostprocessor
+  variable = vonmises_h_pv3
+  [../]
+  [./num_vonmises_m]  
+   type = ElementIntegralVariablePostprocessor
+   variable = vonmises_h_m   
+   [../]
+  [./num_pv1] 
+  type = ElementIntegralVariablePostprocessor 
+  variable = stress_xx_h_pv1 
+  [../]
+  [./num_pv2] 
+  type = ElementIntegralVariablePostprocessor 
+  variable = stress_xx_h_pv2 
+  [../]
+  [./num_pv3] 
+  type = ElementIntegralVariablePostprocessor 
+  variable = stress_xx_h_pv3 
+  [../]
+  [./num_m]  
+   type = ElementIntegralVariablePostprocessor 
+   variable = stress_xx_h_m   
+   [../]
+
+  # Denominators: ∫ h dV  (phase volumes)
+  [./den_pv1] 
+  type = ElementIntegralVariablePostprocessor 
+  variable = h_pv1_aux 
+  [../]
+  [./den_pv2] 
+  type = ElementIntegralVariablePostprocessor 
+  variable = h_pv2_aux 
+  [../]
+  [./den_pv3] 
+  type = ElementIntegralVariablePostprocessor 
+  variable = h_pv3_aux 
+  [../]
+  [./den_m]   
+   type = ElementIntegralVariablePostprocessor 
+   variable = h_m_aux   
    [../]
   [./gr1area]
     type = ElementIntegralVariablePostprocessor_new2

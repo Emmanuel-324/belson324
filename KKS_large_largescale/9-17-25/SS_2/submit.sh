@@ -1,10 +1,10 @@
 #!/bin/bash                                                                     
-#SBATCH --job-name=SS_2a.i                                            
-#SBATCH --output=SS_2a.%j.out 
-#SBATCH --error=SS_2a.%j.err       
+#SBATCH --job-name=SS_2.i                                            
+#SBATCH --output=SS_2.%j.out 
+#SBATCH --error=SS_2.%j.err       
 #SBATCH --nodes=1                                                              
-#SBATCH --ntasks-per-node=16
-#SBATCH --cpus-per-task=8
+#SBATCH --ntasks-per-node=20
+#SBATCH --cpus-per-task=4
 #SBATCH --account=amcorrosion                                                  
 #SBATCH --partition=normal_q                                                   
 #SBATCH --time=7-00:00:00     
@@ -27,7 +27,7 @@ export PATH="$CONDA_PREFIX/bin:$PATH"
 # Go to job submission directory
 cd "${SLURM_SUBMIT_DIR}"
 
-srun --export=ALL --mpi=pmi2 -n 16 /home/emmanuel324/projects/belson324/belson324-opt  -i  SS_2a.i
+srun --export=ALL --mpi=pmi2 -n 20 /home/emmanuel324/projects/belson324/belson324-opt  -i  SS_2.i
 
 
 

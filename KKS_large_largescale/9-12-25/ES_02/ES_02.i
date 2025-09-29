@@ -67,6 +67,26 @@
     family = MONOMIAL
     order = CONSTANT
   [../]
+  [./vonmises]
+    order = CONSTANT
+    family = MONOMIAL
+  [../]
+  [./vonmises_h_pv1]
+    order = CONSTANT
+    family = MONOMIAL
+  [../]
+  [./vonmises_h_pv2]
+    order = CONSTANT
+    family = MONOMIAL
+  [../]
+  [./vonmises_h_pv3]
+    order = CONSTANT
+    family = MONOMIAL
+  [../]
+  [./vonmises_h_m]
+    order = CONSTANT
+    family = MONOMIAL
+  [../]
   [./stress_xx_h_pv1] 
     family = MONOMIAL 
     order = CONSTANT 
@@ -889,6 +909,13 @@
     index_i = 0
     execute_on = timestep_end
   [../]
+    [./vonmises]
+    type = RankTwoScalarAux
+    rank_two_tensor = stress
+    variable = vonmises
+    scalar_type = VonMisesStress
+    execute_on = timestep_end
+  [../]
   [./copy_h_pv1] 
   type = MaterialRealAux
   variable = h_pv1_aux 
@@ -914,6 +941,34 @@
   execute_on = timestep_end 
   [../]
    # Products: h * σ_xx
+    [./vonmises_times_h_pv1]
+     type = ParsedAux
+     variable = vonmises_h_pv1
+     coupled_variables = 'vonmises h_pv1_aux'
+     expression = 'vonmises * h_pv1_aux'
+     execute_on = timestep_end
+   [../]
+  [./vonmises_times_h_pv2]
+      type = ParsedAux
+      variable = vonmises_h_pv2
+      coupled_variables = 'vonmises h_pv2_aux'
+      expression = 'vonmises * h_pv2_aux'
+      execute_on = timestep_end
+    [../]
+    [./vonmises_times_h_pv3]
+      type = ParsedAux
+      variable = vonmises_h_pv3
+      coupled_variables = 'vonmises h_pv3_aux'
+      expression = 'vonmises * h_pv3_aux'
+      execute_on = timestep_end
+    [../]
+    [./vonmises_times_h_m]
+      type = ParsedAux
+      variable = vonmises_h_m
+      coupled_variables = 'vonmises h_m_aux'
+      expression = 'vonmises * h_m_aux'
+      execute_on = timestep_end
+    [../]
   [./sxx_times_h_pv1]
     type = ParsedAux
     variable = stress_xx_h_pv1
@@ -1007,6 +1062,26 @@
     type = ElementAverageValue
     variable = stress_xx
   []
+   [./vonmises]
+    type = ElementAverageValue
+    variable = vonmises
+  [../]
+  [./num_vonmises_pv1]
+  type = ElementIntegralVariablePostprocessor
+  variable = vonmises_h_pv1
+  [../]
+  [./num_vonmises_pv2]
+  type = ElementIntegralVariablePostprocessor
+  variable = vonmises_h_pv2
+  [../]
+  [./num_vonmises_pv3]
+  type = ElementIntegralVariablePostprocessor
+  variable = vonmises_h_pv3
+  [../]
+  [./num_vonmises_m]  
+   type = ElementIntegralVariablePostprocessor
+   variable = vonmises_h_m   
+   [../]
   [./num_pv1] 
   type = ElementIntegralVariablePostprocessor 
   variable = stress_xx_h_pv1 

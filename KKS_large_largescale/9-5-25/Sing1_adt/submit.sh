@@ -3,8 +3,8 @@
 #SBATCH --output=Sing1_adt.%j.out 
 #SBATCH --error=Sing1_adt.%j.err       
 #SBATCH --nodes=1                                                              
-#SBATCH --ntasks-per-node=16
-#SBATCH --cpus-per-task=8
+#SBATCH --ntasks-per-node=25
+#SBATCH --cpus-per-task=4
 #SBATCH --account=amcorrosion                                                  
 #SBATCH --partition=normal_q                                                   
 #SBATCH --time=7-00:00:00     
@@ -26,7 +26,7 @@ export PATH="$CONDA_PREFIX/bin:$PATH"
 # Go to job submission directory
 cd "${SLURM_SUBMIT_DIR}"
 
-srun --export=ALL --mpi=pmi2 -n 16 /home/emmanuel324/projects/belson324/belson324-opt  -i  Sing1_adt.i
+srun --export=ALL --mpi=pmi2 -n 25 /home/emmanuel324/projects/belson324/belson324-opt  -i  Sing1_adt.i
 
 
 
