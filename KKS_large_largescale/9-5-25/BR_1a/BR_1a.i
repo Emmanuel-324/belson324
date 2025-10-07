@@ -87,6 +87,58 @@
     family = MONOMIAL
     order  = FIRST
   [../]
+  [./h_pv1_aux]
+     family = MONOMIAL 
+     order = CONSTANT 
+  [../]
+  [./h_pv2_aux]
+    family = MONOMIAL
+    order = CONSTANT
+  [../]
+  [./h_pv3_aux]
+    family = MONOMIAL
+    order = CONSTANT
+  [../]
+  [./h_m_aux]
+    family = MONOMIAL
+    order = CONSTANT
+  [../]
+   [./vonmises]
+    order = CONSTANT
+    family = MONOMIAL
+  [../]
+  [./vonmises_h_pv1]
+    order = CONSTANT
+    family = MONOMIAL
+  [../]
+  [./vonmises_h_pv2]
+    order = CONSTANT
+    family = MONOMIAL
+  [../]
+  [./vonmises_h_pv3]
+    order = CONSTANT
+    family = MONOMIAL
+  [../]
+  [./vonmises_h_m]
+    order = CONSTANT
+    family = MONOMIAL
+  [../]
+  [./stress_xx_h_pv1] 
+    family = MONOMIAL 
+    order = CONSTANT 
+  [../]
+  [./stress_xx_h_pv2]
+    family = MONOMIAL
+    order = CONSTANT
+  [../]
+  [./stress_xx_h_pv3]
+    family = MONOMIAL
+    order = CONSTANT
+  [../]
+  [./stress_xx_h_m]
+    family = MONOMIAL
+    order = CONSTANT
+  [../]
   [./Energy]
     order = CONSTANT
     family = MONOMIAL
@@ -477,9 +529,9 @@
     C_ijkl = '272.1 169 169 272.1 169 272.1 131 131 131' #Ghorbanpour, S., et al., A crystal plasticity model incorporating the effects of     
     base_name = phasem
     fill_method = symmetric9
-    euler_angle_1 = 30
-    euler_angle_2 = 45
-    euler_angle_3 = 60
+    euler_angle_1 = 0   
+    euler_angle_2 = 0
+    euler_angle_3 = 0
     block = 0
   [../]
   [./Stiffness_phasem_g1]
@@ -497,9 +549,9 @@
   base_name   = phasepv1
   C_ijkl      = '290.6 187 160.7 290.6 187 309.6 114.2 114.2 119.2'
   fill_method = symmetric9
-  euler_angle_1 = 30
-  euler_angle_2 = 45
-  euler_angle_3 = 60
+  euler_angle_1 = 0
+  euler_angle_2 = 0
+  euler_angle_3 = 0
   block = 0
 [../]
 [./Stiffness_phasepv1_g1]
@@ -517,9 +569,9 @@
   C_ijkl = '243 154.8 154.8 243 154.8 243 132.3 132.3 132.3'
   base_name = phasepv2
   fill_method = symmetric9
-  euler_angle_1 = 30
-  euler_angle_2 = 45
-  euler_angle_3 = 60
+  euler_angle_1 = 0
+  euler_angle_2 = 0
+  euler_angle_3 = 0
   block = 0
   [../]
   [./Stiffness_phasepv2_g1]
@@ -537,9 +589,9 @@
     C_ijkl = '290.6 187 160.7 290.6 187 309.6 114.2 114.2 119.2'
     base_name = phasepv3
     fill_method = symmetric9
-    euler_angle_1 = 30
-    euler_angle_2 = 45
-    euler_angle_3 = 60
+    euler_angle_1 = 0
+    euler_angle_2 = 0
+    euler_angle_3 = 0
     block = 0
   [../]
   [./Stiffness_phasepv3_g1]
@@ -653,7 +705,7 @@
     type = ComputeRotatedEigenstrain
     base_name = phasepv1
     eigen_base = '0.028 0.0067 0 0 0 0'
-    Euler_angles = '30 45 60'
+    Euler_angles = '0 0 0'
     prefactor = misfit
     eigenstrain_name = eigenstrainpv1
     block = 0
@@ -672,7 +724,7 @@
     type = ComputeRotatedEigenstrain
     base_name = phasepv2
     eigen_base = '-0.003 -0.003 0 0 0 0'
-    Euler_angles = '30 45 60'
+    Euler_angles = '0 0 0'
     prefactor = misfit
     eigenstrain_name = eigenstrainpv2
     block = 0
@@ -690,7 +742,7 @@
     type = ComputeRotatedEigenstrain
     base_name = phasepv3
     eigen_base = '0.0067 0.028 0 0 0 0'
-    Euler_angles = '30 45 60'
+    Euler_angles = '0 0 0'
     prefactor = misfit
     eigenstrain_name = eigenstrainpv3
     block = 0
@@ -1030,6 +1082,94 @@
     interfacial_vars =  'eta_pv1  eta_pv2  eta_m'
     kappa_names =       'kappa kappa kappa'
   [../]
+   [./vonmises]
+    type = RankTwoScalarAux
+    rank_two_tensor = stress
+    variable = vonmises
+    scalar_type = VonMisesStress
+    execute_on = timestep_end
+  [../]
+   [./copy_h_pv1] 
+  type = MaterialRealAux
+  variable = h_pv1_aux 
+  property = hpv1 
+  execute_on = timestep_end 
+  [../]
+  [./copy_h_pv2] 
+  type = MaterialRealAux 
+  variable = h_pv2_aux 
+  property = hpv2 
+  execute_on = timestep_end 
+  [../]
+  [./copy_h_pv3] 
+  type = MaterialRealAux 
+  variable = h_pv3_aux 
+  property = hpv3 
+  execute_on = timestep_end 
+  [../]
+  [./copy_h_m]   
+  type = MaterialRealAux 
+  variable = h_m_aux   
+  property = hm   
+  execute_on = timestep_end 
+  [../]
+   # Products: h * σ_xx
+   [./vonmises_times_h_pv1]
+     type = ParsedAux
+     variable = vonmises_h_pv1
+     coupled_variables = 'vonmises h_pv1_aux'
+     expression = 'vonmises * h_pv1_aux'
+     execute_on = timestep_end
+   [../]
+  [./vonmises_times_h_pv2]
+      type = ParsedAux
+      variable = vonmises_h_pv2
+      coupled_variables = 'vonmises h_pv2_aux'
+      expression = 'vonmises * h_pv2_aux'
+      execute_on = timestep_end
+    [../]
+    [./vonmises_times_h_pv3]
+      type = ParsedAux
+      variable = vonmises_h_pv3
+      coupled_variables = 'vonmises h_pv3_aux'
+      expression = 'vonmises * h_pv3_aux'
+      execute_on = timestep_end
+    [../]
+    [./vonmises_times_h_m]
+      type = ParsedAux
+      variable = vonmises_h_m
+      coupled_variables = 'vonmises h_m_aux'
+      expression = 'vonmises * h_m_aux'
+      execute_on = timestep_end
+    [../]
+  [./sxx_times_h_pv1]
+    type = ParsedAux
+    variable = stress_xx_h_pv1
+    coupled_variables = 'stress_xx h_pv1_aux'
+    expression = 'stress_xx * h_pv1_aux'
+    execute_on = timestep_end
+  [../]
+  [./sxx_times_h_pv2]
+    type = ParsedAux
+    variable = stress_xx_h_pv2
+    coupled_variables = 'stress_xx h_pv2_aux'
+    expression = 'stress_xx * h_pv2_aux'
+    execute_on = timestep_end
+  [../]
+  [./sxx_times_h_pv3]
+    type = ParsedAux
+    variable = stress_xx_h_pv3
+    coupled_variables = 'stress_xx h_pv3_aux'
+    expression = 'stress_xx * h_pv3_aux'
+    execute_on = timestep_end
+  [../]
+  [./sxx_times_h_m]
+    type = ParsedAux
+    variable = stress_xx_h_m
+    coupled_variables = 'stress_xx h_m_aux'
+    expression = 'stress_xx * h_m_aux'
+    execute_on = timestep_end
+  [../]
   [./stress_xx]
     type = RankTwoAux
     variable = stress_xx
@@ -1084,6 +1224,68 @@
      type = ElementH1Error
      variable = eta_pv1
      function = bc_func
+   [../]
+  [./Energy_total]
+    type = ElementAverageValue
+    variable = Energy
+  []
+  [stress_xx]
+    type = ElementAverageValue
+    variable = stress_xx
+  []
+   [./vonmises]
+    type = ElementAverageValue
+    variable = vonmises
+  [../]
+  [./num_vonmises_pv1]
+  type = ElementIntegralVariablePostprocessor
+  variable = vonmises_h_pv1
+  [../]
+  [./num_vonmises_pv2]
+  type = ElementIntegralVariablePostprocessor
+  variable = vonmises_h_pv2
+  [../]
+  [./num_vonmises_pv3]
+  type = ElementIntegralVariablePostprocessor
+  variable = vonmises_h_pv3
+  [../]
+  [./num_vonmises_m]  
+   type = ElementIntegralVariablePostprocessor
+   variable = vonmises_h_m   
+   [../]
+  [./num_pv1] 
+  type = ElementIntegralVariablePostprocessor 
+  variable = stress_xx_h_pv1 
+  [../]
+  [./num_pv2] 
+  type = ElementIntegralVariablePostprocessor 
+  variable = stress_xx_h_pv2 
+  [../]
+  [./num_pv3] 
+  type = ElementIntegralVariablePostprocessor 
+  variable = stress_xx_h_pv3 
+  [../]
+  [./num_m]  
+   type = ElementIntegralVariablePostprocessor 
+   variable = stress_xx_h_m   
+   [../]
+
+  # Denominators: ∫ h dV  (phase volumes)
+  [./den_pv1] 
+  type = ElementIntegralVariablePostprocessor 
+  variable = h_pv1_aux 
+  [../]
+  [./den_pv2] 
+  type = ElementIntegralVariablePostprocessor 
+  variable = h_pv2_aux 
+  [../]
+  [./den_pv3] 
+  type = ElementIntegralVariablePostprocessor 
+  variable = h_pv3_aux 
+  [../]
+  [./den_m]   
+   type = ElementIntegralVariablePostprocessor 
+   variable = h_m_aux   
    [../]
   [./gr1area]
     type = ElementIntegralVariablePostprocessor_new2

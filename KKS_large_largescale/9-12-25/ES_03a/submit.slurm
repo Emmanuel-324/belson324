@@ -24,7 +24,7 @@ export NUMEXPR_NUM_THREADS=${SLURM_CPUS_PER_TASK}
 export VTK_SMP_MAX_THREADS=${SLURM_CPUS_PER_TASK}
 
 "$PY" aspect_ratio_new.py \
-  --root "/home/emmanuel324/projects/belson324/KKS_large_largescale/9-12-25/ES_03" \
+  --root "/home/emmanuel324/projects/belson324/KKS_large_largescale/9-12-25/ES_03a" \
   --start_step 70 \
   --auto_res \
   --tau1 0.5 \

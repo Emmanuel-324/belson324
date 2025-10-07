@@ -1,4 +1,0 @@
-Resetting modules to system default. Reseting $MODULEPATH back to system default. All extra directories will be removed from $MODULEPATH.
-srun: Job step aborted: Waiting up to 62 seconds for job step to finish.
-slurmstepd: error: *** JOB 3380297 ON tc251 CANCELLED AT 2025-09-16T07:41:36 DUE TO TIME LIMIT ***
-slurmstepd: error: *** STEP 3380297.0 ON tc251 CANCELLED AT 2025-09-16T07:41:36 DUE TO TIME LIMIT ***

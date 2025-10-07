@@ -1,1 +1,13 @@
 Resetting modules to system default. Reseting $MODULEPATH back to system default. All extra directories will be removed from $MODULEPATH.
+libMesh terminating:
+Error writing nodal values.
+[0] ../src/mesh/exodusII_io_helper.C, line 4567, compiled Jan  4 2025 at 01:18:42
+
+Abort(1) on node 0 (rank 0 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 0
+terminate called after throwing an instance of 'libMesh::LogicError'
+slurmstepd: error: *** STEP 3452005.0 ON tc135 CANCELLED AT 2025-10-03T16:10:47 ***
+srun: Job step aborted: Waiting up to 62 seconds for job step to finish.
+  what():  Error writing nodal values.
+[0] ../src/mesh/exodusII_io_helper.C, line 4567, compiled Jan  4 2025 at 01:18:42
+
+srun: error: tc135: tasks 0-24: Killed

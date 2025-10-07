@@ -25,16 +25,9 @@
     boundary      = right      # normal = +x
     displacements = 'disp_x disp_y'
     variable      = disp_x
-    factor        = -0.70710678   # = -(T/√2) with T = 1.0 GPa; scale as needed
+    factor        = -0.070710678   # = -(T/√2) with T = 1.0 GPa; scale as needed
   [../]
 
-  [./y_part_top]
-    type          = Pressure
-    boundary      = top        # normal = +y
-    displacements = 'disp_x disp_y'
-    variable      = disp_y
-    factor        = -0.70710678   # = -(T/√2)
-  [../]
   [./all_c1]
     type =  NeumannBC
     variable = 'c1'
@@ -966,13 +959,6 @@
     growth_factor = 1.2
     optimal_iterations = 20
   [../]
-  [./Adaptivity]
-    initial_adaptivity = 0
-    refine_fraction = 0.7
-    coarsen_fraction = 0.1
-    max_h_level = 1
-  [../]
-
 []
 
 [Preconditioning]
