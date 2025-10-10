@@ -1,10 +1,10 @@
 #!/bin/bash                                                                     
-#SBATCH --job-name=E_03.i                                            
-#SBATCH --output=E_03.%j.out 
-#SBATCH --error=E_03.%j.err       
+#SBATCH --job-name=BG_02a.i                                            
+#SBATCH --output=BG_02a.%j.out 
+#SBATCH --error=BG_02a.%j.err       
 #SBATCH --nodes=1                                                              
-#SBATCH --ntasks-per-node=30
-#SBATCH --cpus-per-task=4
+#SBATCH --ntasks-per-node=40
+#SBATCH --cpus-per-task=3
 #SBATCH --account=amcorrosion                                                  
 #SBATCH --partition=normal_q                                                   
 #SBATCH --time=7-00:00:00     
@@ -19,7 +19,6 @@
 module reset
 module load EasyBuild/5.0.0
 module load Miniforge3/24.11.3-0
-module load OpenMPI/4.1.6-GCC-13.2.0
 source activate /home/emmanuel324/mambaforge3/envs/moose 
 
 export PATH="$CONDA_PREFIX/bin:$PATH"
@@ -27,7 +26,7 @@ export PATH="$CONDA_PREFIX/bin:$PATH"
 # Go to job submission directory
 cd "${SLURM_SUBMIT_DIR}"
 
-srun --export=ALL --mpi=pmi2 -n 30 /home/emmanuel324/projects/belson324/belson324-opt  -i  E_03.i
+srun --export=ALL --mpi=pmi2 -n 40 /home/emmanuel324/projects/belson324/belson324-opt  -i  BG_02a.i
 
 
 

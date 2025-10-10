@@ -322,7 +322,7 @@
     type = ParsedFunction
     expression = '1 + (gb_factor - 1)*0.5*(tanh((w/2 - abs(x - x0))/delta) + 1)'
     symbol_names = 'x0          w     delta   gb_factor'
-    symbol_values = '350.0     30.0     1     5.0'
+    symbol_values = '350.0     30.0     1     20'
   [../]
 
 []
@@ -1081,6 +1081,11 @@
 []
 
 [AuxKernels]
+  [./gb_scale_eval]
+    type     = FunctionAux
+    variable = gb_scale_aux
+    function = gb_scale_fn
+  [../]
   [./set_one] 
    type = ParsedAux 
    variable = one 
@@ -1115,7 +1120,6 @@
   expression='g_aux * h_pv3_aux' 
   execute_on=timestep_end 
   [../]
-
   [temperature]
     type = FunctionAux
     variable = temperature
@@ -1337,19 +1341,19 @@
    type = ElementIntegralVariablePostprocessor 
    variable = h_m_aux   
    [../]
-  [./gr1area]
+  [./eta_pv1]
     type = ElementIntegralVariablePostprocessor_new2
     variable = eta_pv1
   [../]
-   [./gr2area]
+   [./eta_pv2]
     type = ElementIntegralVariablePostprocessor_new2
     variable = eta_pv2
   [../]
-  [./gr3area]
+  [./eta_pv3]
     type = ElementIntegralVariablePostprocessor_new2
     variable = eta_pv3
   [../]
-  [./A_total]   
+   [./A_total]   
   type=ElementIntegralVariablePostprocessor 
   variable=one       
   [../]
@@ -1357,7 +1361,6 @@
   type=ElementIntegralVariablePostprocessor 
   variable=g_aux     
   [../]
-  
   
   [./den_g_pv1] 
   type=ElementIntegralVariablePostprocessor 
@@ -1371,8 +1374,7 @@
   type=ElementIntegralVariablePostprocessor 
   variable=h_g_pv3   
   [../]
-
-  # fractions in GB band and in whole domain
+   # fractions in GB band and in whole domain
   [./frac_g_pv1] 
   type=ParsedPostprocessor 
   pp_names='den_g_pv1 A_g'      

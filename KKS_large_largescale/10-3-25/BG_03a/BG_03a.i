@@ -322,7 +322,7 @@
     type = ParsedFunction
     expression = '1 + (gb_factor - 1)*0.5*(tanh((w/2 - abs(x - x0))/delta) + 1)'
     symbol_names = 'x0          w     delta   gb_factor'
-    symbol_values = '350.0     30.0     1     50'
+    symbol_values = '350.0     30.0     1     1e3'
   [../]
 
 []

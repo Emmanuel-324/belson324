@@ -558,7 +558,7 @@
   [./eigen_strainpv1]
     type = ComputeRotatedEigenstrain
     base_name = phasepv1
-    eigen_base = '0.03 0.003 0 0 0 0'
+    eigen_base = '0.005 0.0005 0 0 0 0'
     Euler_angles = '0 0 0'
     prefactor = misfit
     eigenstrain_name = eigenstrainpv1
@@ -575,7 +575,7 @@
   [./eigen_strainpv3]
     type = ComputeRotatedEigenstrain
     base_name = phasepv3
-    eigen_base = '0.003 0.03 0 0 0 0'
+    eigen_base = '0.0005 0.005 0 0 0 0'
     Euler_angles = '0 0 0'
     prefactor = misfit
     eigenstrain_name = eigenstrainpv3
