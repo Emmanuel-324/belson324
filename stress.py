@@ -3,7 +3,7 @@ from pathlib import Path
 import numpy as np
 
 # ---- SET THIS ----
-file_path = Path(r"C:/Users/adugy/Downloads/9-19-25/ES_03/ES_03_table.csv")  # or .xlsx
+file_path = Path(r"/home/emmanuel324/projects/belson324/KKS_large_largescale/10-13-25/EigenA1_a/EigenA1_a_table.csv")  # or .xlsx
 
 # ------------------
 
@@ -17,17 +17,9 @@ def read_any(path: Path) -> pd.DataFrame:
         except Exception:
             return pd.read_csv(path, sep="\t")
 
-def write_any(df: pd.DataFrame, path: Path):
-    if path.suffix.lower() in [".xlsx", ".xls"]:
-        # overwrite same Excel file (single sheet)
-        with pd.ExcelWriter(path, engine="openpyxl", mode="w") as xw:
-            df.to_excel(xw, index=False)
-    else:
-        df.to_csv(path, index=False)
-
 df = read_any(file_path)
 
-required = ["num_pv1","num_pv2","num_pv3","num_m",
+required = ["num_vonmises_pv1","num_vonmises_pv2","num_vonmises_pv3","num_vonmises_m",
             "den_pv1","den_pv2","den_pv3","den_m"]
 missing = [c for c in required if c not in df.columns]
 if missing:
@@ -39,13 +31,30 @@ def safe_div(n, d):
     d = pd.to_numeric(d, errors="coerce")
     return np.where(d != 0, n / d, np.nan)
 
-df["avg_pv1_stress_xx"] = safe_div(df["num_pv1"], df["den_pv1"])
-df["avg_pv2_stress_xx"] = safe_div(df["num_pv2"], df["den_pv2"])
-df["avg_pv3_stress_xx"] = safe_div(df["num_pv3"], df["den_pv3"])
-df["avg_m_stress_xx"]   = safe_div(df["num_m"],   df["den_m"])
+# Calculate von Mises stress for each phase
+df["pv1_vonmises_stress"] = safe_div(df["num_vonmises_pv1"], df["den_pv1"])
+df["pv2_vonmises_stress"] = safe_div(df["num_vonmises_pv2"], df["den_pv2"])
+df["pv3_vonmises_stress"] = safe_div(df["num_vonmises_pv3"], df["den_pv3"])
+df["m_vonmises_stress"]   = safe_div(df["num_vonmises_m"],   df["den_m"])
 
-write_any(df, file_path)
-print("Per-phase average stress (σ_xx) added:",
-      "[avg_pv1_stress_xx, avg_pv2_stress_xx, avg_pv3_stress_xx, avg_m_stress_xx]")
-print(f"Saved to: {file_path}")
+# Create the output path for the new Excel file in the same directory
+output_dir = file_path.parent
+output_path = output_dir / "stress.xlsx"
 
+# Write the results to a new Excel file
+with pd.ExcelWriter(output_path, engine="openpyxl") as writer:
+    # Write the full dataset with new columns
+    df.to_excel(writer, sheet_name="stress_analysis", index=False)
+    
+    # Create a summary sheet with just the stress columns
+    stress_cols = ['time'] + [col for col in df.columns if 'vonmises_stress' in col]
+    df[stress_cols].to_excel(writer, sheet_name="stress_summary", index=False)
+
+print("Per-phase von Mises stress (σ_xx) calculated:")
+print("  - pv1_vonmises_stress: von Mises stress in γ'' variant 1")
+print("  - pv2_vonmises_stress: von Mises stress in γ'' variant 2") 
+print("  - pv3_vonmises_stress: von Mises stress in γ'' variant 3")
+print("  - m_vonmises_stress: von Mises stress in matrix (γ)")
+print(f"\nResults saved to: {output_path}")
+print(f"  - Sheet 'stress_analysis': Full dataset with stress columns")
+print(f"  - Sheet 'stress_summary': Time vs stress columns only")

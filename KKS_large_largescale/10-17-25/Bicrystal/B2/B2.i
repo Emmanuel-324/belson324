@@ -1,16 +1,16 @@
 # This test is for the multicomponent In718 alloy
 
 [Mesh]
-  [phasem_gr0]
+   [phasem_gr0]
     type = GeneratedMeshGenerator
     dim = 2
     nx = 175
     ny = 175
 #   nz = 2
     xmin = 0
-    xmax = 400
+    xmax = 350
     ymin = 0
-    ymax = 400
+    ymax = 350
     zmin = 0
     zmax = 0
     elem_type = QUAD4
@@ -83,6 +83,21 @@
 
 
 [AuxVariables]
+   # Smooth GB band weight (dimensionless)
+  [./gb_mask]
+    family = MONOMIAL
+    order  = CONSTANT
+  [../]
+
+  # Weighted fields (for integrals/averages)
+  [./c2_gb_w]
+    family = MONOMIAL
+    order  = CONSTANT
+  [../]
+  [./dc2_gb_w]
+    family = MONOMIAL
+    order  = CONSTANT
+  [../]
   [./h_g_pv1] 
   family=MONOMIAL 
   order=CONSTANT 
@@ -363,6 +378,7 @@
     symbol_names = alpha
     symbol_values = 16
   [../]
+  
    [./gb_scale_fn]
     type = ParsedFunction
     expression = '1 + (gb_factor - 1)*0.5*(tanh((w/2 - abs(x - x0))/delta) + 1)'
@@ -370,53 +386,120 @@
     symbol_values = '350.0     30.0     1     20'
   [../]
 
+   # Smooth switch: ~0 before 3 h, ~1 after 3 h
+  # Convert simulation time -> hours with t/6630.57
+  [./gate_3h]
+    type  = ParsedFunction
+    value = '0.5*(1 + tanh((t/6630.57 - 3.0)/0.2))'
+  [../]
+
+  # (Optional) smooth tiny δ seed at the GB if you want to guarantee nucleation there
+  [./eta4_tiny_gb_fn]
+    type  = ParsedFunction
+    value = '0.02*exp(-pow((x - 350)/1.0, 2))'            # ~5 nm half-width, amplitude 0.02
+  [../] 
+# ---- Nb (c2) enrichment at the grain boundary (x = 350 sim units) ----
+  # Baseline values from Wang: x_Al ≈ 0.024, x_Nb ≈ 0.038 (adjust if your alloy differs).
+  # dC_nb is the peak enrichment (keep modest to preserve mass balance).
+  [./c2_gb_enrich_fn]
+    type  = ParsedFunction
+    value = '0.038 + 0.005*exp(-pow((x - 350)/5.0, 2))'   # center at GB, ~25 nm half-width
+  [../]
 []
 
 [ICs]
   [./eta_pv1]
     variable = eta_pv1
     type = RandomIC
-    min = -0.6
-    max = 0.6
+    min = 0
+    max = 0.1
     seed = 324
   [../]
   [./eta_pv2]
     variable = eta_pv2
     type = RandomIC
-    min = -0.6
-    max = 0.6
+    min = 0
+    max = 0.1
     seed = 230	
   [../]
   [./eta_pv3]
     variable = eta_pv3
     type = RandomIC
-    min = -0.6
-    max = 0.6
+    min = 0
+    max = 0.1
     seed = 307	
   [../]
-  [./eta_pv4]
-    variable = eta_pv4
-    type = RandomIC
-    min = -0.6
-    max = 0.6
-    seed = 512	
-  [../]
  
-  [./c1]
-    variable = c1
-    type = RandomIC
-    min = 0.010	
-    max = 0.030
-    seed = 403	
-  [../]
-  [./c2]
-    variable = c2
-    type = RandomIC
-    min = 0.032	
-    max = 0.044
-    seed = 89	
+  [./eta_pv4_zero]
+    type=ConstantIC
+    variable = eta_pv4
+    value=0.0
   [../]
 
+    [./c1_global_ic]
+    type     = ConstantIC
+    variable = c1
+    value    = 0.024            # adjust to your alloy if different
+  [../]
+  [./c2_global_ic]
+    type     = FunctionIC
+    variable = c2
+    function = c2_gb_enrich_fn
+  [../]
+ # ---------- KKS per-phase compositions ----------
+  # Initialize all per-phase c2 fields from the same GB-enriched profile
+  [./c2m_ic]
+    type=FunctionIC
+    variable=c2m
+    function=c2_gb_enrich_fn
+  [../]
+  [./c2pv1_ic]
+    type=FunctionIC
+    variable=c2pv1
+    function=c2_gb_enrich_fn
+  [../]
+  [./c2pv2_ic]
+    type=FunctionIC
+    variable=c2pv2
+    function=c2_gb_enrich_fn
+  [../]
+  [./c2pv3_ic]
+    type=FunctionIC
+    variable=c2pv3
+    function=c2_gb_enrich_fn
+  [../]
+  [./c2pv4_ic]
+    type=FunctionIC
+    variable=c2pv4
+    function=c2_gb_enrich_fn
+  [../]
+
+  # Al-like per-phase (c1*): match the global baseline for a consistent start
+  [./c1m_ic]
+    type=ConstantIC
+    variable=c1m
+    value=0.024
+  [../]
+  [./c1pv1_ic]
+    type=ConstantIC
+    variable=c1pv1
+    value=0.024
+  [../]
+  [./c1pv2_ic]
+    type=ConstantIC
+    variable=c1pv2
+    value=0.024
+  [../]
+  [./c1pv3_ic]
+    type=ConstantIC
+    variable=c1pv3
+    value=0.024
+  [../]
+  [./c1pv4_ic]
+    type=ConstantIC
+    variable=c1pv4
+    value=0.024
+  [../]
 []
 
 
@@ -504,12 +587,17 @@
     sum_materials = 'fc_pv3 fe_pv3'
     coupled_variables = 'c1pv3 c2pv3'
   [../]
-  [./f4]
+   # --- δ chemical free energy (gated ON at ~3 h) ---
+  # Lowered prefactor (35 < 50) makes δ thermodynamically more favorable than γ″,
+  # matching that δ is the equilibrium phase. 'gate_3h' keeps it ~0 before 3 h.
+  [./fc_pv4_gated]
     type = DerivativeParsedMaterial
-    property_name = fc_pv4
+    property_name     = fc_pv4_gated
     coupled_variables = 'c1pv4 c2pv4'
-    expression = '50.0*((c1pv4-0.187)^2+2*(c2pv4-0.0157)^2)'
+    material_property_names = 'gate_3h'
+    expression        =  'gate_3h*(35*((c1pv4 - 0.0157)^2 + 2*(c2pv4 - 0.187)^2))'
   [../]
+
   # Elastic energy of the phase 4
   [./elastic_free_energy_pv4]
     type = ElasticEnergyMaterial
@@ -518,10 +606,10 @@
     coupled_variables = ' '
   [../]
     # Total free energy of the phase 4
-  [./Total_energy_pv4]
+  [./Total_energy_pv4_gated]
     type = DerivativeSumMaterial
-    property_name = Fpv4
-    sum_materials = 'fc_pv4 fe_pv4'
+    property_name  = Fpv4                 # keep same name your kernels expect
+    sum_materials  = 'fc_pv4_gated fe_pv4'
     coupled_variables = 'c1pv4 c2pv4'
   [../]
 
@@ -635,6 +723,11 @@
     prop_names  = 'L    kappa  D  misfit     W'
     prop_values = '0.3  0.01   1    1        0.01'
   [../]
+  [./gate_3h_prop]
+    type        = GenericFunctionMaterial
+    prop_names  = 'gate_3h'
+    prop_values = 'gate_3h'
+  [../]
 
   #Mechanical properties
   [./Stiffness_phasem_g0]
@@ -725,18 +818,8 @@
     euler_angle_1 = 0
     euler_angle_2 = 0
     euler_angle_3 = 0
-    block = 0
   [../]
-  [./Stiffness_phasepv4_g1]
-    type = ComputeElasticityTensor
-    C_ijkl = '290.6 187 160.7 290.6 187 309.6 114.2 114.2 119.2'
-    base_name = phasepv4
-    fill_method = symmetric9
-    euler_angle_1 = 45
-    euler_angle_2 = 0
-    euler_angle_3 = 0
-    block = 1
-  [../]
+  
 
   [./stress_phasepv1_g0]
     type = ComputeLinearElasticStress
@@ -771,13 +854,8 @@
   [./stress_phasepv4_g0]
     type = ComputeLinearElasticStress
     base_name = phasepv4
-    block = 0
   [../]
-  [./stress_phasepv4_g1]
-    type = ComputeLinearElasticStress
-    base_name = phasepv4
-    block = 1
-  [../]
+
   [./stress_phasem_g0]
     type = ComputeLinearElasticStress
     base_name = phasem
@@ -848,15 +926,8 @@
     displacements = 'disp_x disp_y'
     base_name = phasepv4
     eigenstrain_names = eigenstrainpv4
-    block = 0
   [../]
-  [./strain_phasepv4_g1]
-    type = ComputeSmallStrain
-    displacements = 'disp_x disp_y'
-    base_name = phasepv4
-    eigenstrain_names = eigenstrainpv4
-    block = 1
-  [../]
+ 
 
 
 
@@ -918,21 +989,12 @@
   [./eigen_strainpv4_g0]
     type = ComputeRotatedEigenstrain
     base_name = phasepv4
-    eigen_base = '0.00532 0.01332 0.02378 0 0 0'
-    Euler_angles = '0 0 0'
-    prefactor = misfit
+    eigen_base = '0.005320 0.01332 0.02378 0 0 0'
+    Euler_angles = '5.176036589 1.150261992 2.456873451'
+    prefactor = gate_3h
     eigenstrain_name = eigenstrainpv4
-    block = 0
   [../]
-   [./eigen_strainpv4_g1]
-    type = ComputeRotatedEigenstrain
-    base_name = phasepv4
-    eigen_base = '0.00532 0.01332 0.02378 0 0 0'
-    Euler_angles = '45 0 0'
-    prefactor = misfit
-    eigenstrain_name = eigenstrainpv4
-    block = 1
-  [../]
+  
 
 
   # Generate the global stress from the phase stresses
@@ -1333,6 +1395,27 @@
 []
 
 [AuxKernels]
+[./c2_gb_enrich_fn]
+    type      = FunctionAux
+    variable  = gb_mask
+    function  = c2_gb_enrich_fn
+  [../]
+
+  # 2) Weighted c2 for integration/averaging over GB band
+  [./c2_times_mask]
+    type               = ParsedAux
+    variable           = c2_gb_w
+    coupled_variables  = 'c2 gb_mask'
+    expression         = 'c2 * gb_mask'
+  [../]
+
+  # 3) Weighted ∆c2 relative to a baseline (set baseline to your far-field Nb, e.g. 0.038)
+  [./dc2_times_mask]
+    type               = ParsedAux
+    variable           = dc2_gb_w
+    coupled_variables  = 'c2 gb_mask'
+    expression         = '(c2 - 0.038) * gb_mask'
+  [../]
   [./gb_scale_eval]
     type     = FunctionAux
     variable = gb_scale_aux

@@ -8,9 +8,9 @@
     ny = 175
 #   nz = 2
     xmin = 0
-    xmax = 400
+    xmax = 350
     ymin = 0
-    ymax = 400
+    ymax = 350
     zmin = 0
     zmax = 0
     elem_type = QUAD4
@@ -369,6 +369,12 @@
     symbol_names = 'x0          w     delta   gb_factor'
     symbol_values = '350.0     30.0     1     20'
   [../]
+   # Smooth step: ~1 for x < 4 sim units (~20 nm), ~0 elsewhere
+  [./eta4_plate_fn]
+    type  = ParsedFunction
+    # width parameter (0.4) ~ 2 nm in sim units (2/5)
+    value = '0.5*(1 - tanh((x - 4.0)/0.4))'
+  [../]
 
 []
 
@@ -394,12 +400,10 @@
     max = 0.6
     seed = 307	
   [../]
-  [./eta_pv4]
-    variable = eta_pv4
-    type = RandomIC
-    min = -0.6
-    max = 0.6
-    seed = 512	
+[./eta4_plate_ic]
+    type     = FunctionIC
+    variable = eta_pv4            # your δ order parameter name
+    function = eta4_plate_fn
   [../]
  
   [./c1]
@@ -508,7 +512,7 @@
     type = DerivativeParsedMaterial
     property_name = fc_pv4
     coupled_variables = 'c1pv4 c2pv4'
-    expression = '50.0*((c1pv4-0.187)^2+2*(c2pv4-0.0157)^2)'
+    expression = '50.0*((c1pv4-0.000727)^2+2*(c2pv4-0.196)^2)'
   [../]
   # Elastic energy of the phase 4
   [./elastic_free_energy_pv4]
@@ -717,7 +721,7 @@
     euler_angle_3 = 0
     block = 1
   [../]
-  [./Stiffness_phasepv4_g0]
+  [./Stiffness_phasepv4]
     type = ComputeElasticityTensor
     C_ijkl = '290.6 187 160.7 290.6 187 309.6 114.2 114.2 119.2'
     base_name = phasepv4
@@ -725,18 +729,8 @@
     euler_angle_1 = 0
     euler_angle_2 = 0
     euler_angle_3 = 0
-    block = 0
   [../]
-  [./Stiffness_phasepv4_g1]
-    type = ComputeElasticityTensor
-    C_ijkl = '290.6 187 160.7 290.6 187 309.6 114.2 114.2 119.2'
-    base_name = phasepv4
-    fill_method = symmetric9
-    euler_angle_1 = 45
-    euler_angle_2 = 0
-    euler_angle_3 = 0
-    block = 1
-  [../]
+  
 
   [./stress_phasepv1_g0]
     type = ComputeLinearElasticStress
@@ -771,13 +765,8 @@
   [./stress_phasepv4_g0]
     type = ComputeLinearElasticStress
     base_name = phasepv4
-    block = 0
   [../]
-  [./stress_phasepv4_g1]
-    type = ComputeLinearElasticStress
-    base_name = phasepv4
-    block = 1
-  [../]
+
   [./stress_phasem_g0]
     type = ComputeLinearElasticStress
     base_name = phasem
@@ -848,15 +837,8 @@
     displacements = 'disp_x disp_y'
     base_name = phasepv4
     eigenstrain_names = eigenstrainpv4
-    block = 0
   [../]
-  [./strain_phasepv4_g1]
-    type = ComputeSmallStrain
-    displacements = 'disp_x disp_y'
-    base_name = phasepv4
-    eigenstrain_names = eigenstrainpv4
-    block = 1
-  [../]
+ 
 
 
 
@@ -918,21 +900,12 @@
   [./eigen_strainpv4_g0]
     type = ComputeRotatedEigenstrain
     base_name = phasepv4
-    eigen_base = '0.00532 0.01332 0.02378 0 0 0'
-    Euler_angles = '0 0 0'
+    eigen_base = '0.005320 0.01332 0.02378 0 0 0'
+    Euler_angles = '5.176036589 1.150261992 2.456873451'
     prefactor = misfit
     eigenstrain_name = eigenstrainpv4
-    block = 0
   [../]
-   [./eigen_strainpv4_g1]
-    type = ComputeRotatedEigenstrain
-    base_name = phasepv4
-    eigen_base = '0.00532 0.01332 0.02378 0 0 0'
-    Euler_angles = '45 0 0'
-    prefactor = misfit
-    eigenstrain_name = eigenstrainpv4
-    block = 1
-  [../]
+  
 
 
   # Generate the global stress from the phase stresses

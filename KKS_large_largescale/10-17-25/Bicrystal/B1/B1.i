@@ -1,16 +1,16 @@
 # This test is for the multicomponent In718 alloy
 
 [Mesh]
-  [phasem_gr0]
+   [phasem_gr0]
     type = GeneratedMeshGenerator
     dim = 2
     nx = 175
     ny = 175
 #   nz = 2
     xmin = 0
-    xmax = 400
+    xmax = 350
     ymin = 0
-    ymax = 400
+    ymax = 350
     zmin = 0
     zmax = 0
     elem_type = QUAD4
@@ -369,6 +369,40 @@
     symbol_names = 'x0          w     delta   gb_factor'
     symbol_values = '350.0     30.0     1     20'
   [../]
+  [./misfit_c_fn]
+    type  = ParsedFunction
+    value = 'max(0,
+             0.0008021165212002061*(1 - exp(-pow((t/6630.57)/971.593444453216, 0.1699762344312056))))'
+  [../]
+
+  # --- γ″ a-axis eigenstrain ε_a(t) in FRACTION units ---
+  # Quadratic was given in percent; divide coefficients by 100
+  [./misfit_a_fn]
+    type  = ParsedFunction
+    value = 'max(0,
+             (-0.01186976276826582/100.0)*pow(t/6630.57,2)
+             + (0.1285646769555854/100.0)*(t/6630.57)
+             + (-0.10140175573460311/100.0))'
+  [../]
+  # Smooth switch: ~0 before 3 h, ~1 after 3 h
+  # Convert simulation time -> hours with t/6630.57
+  [./gate_3h]
+    type  = ParsedFunction
+    value = '0.5*(1 + tanh((t/6630.57 - 3.0)/0.2))'
+  [../]
+
+  # (Optional) smooth tiny δ seed at the GB if you want to guarantee nucleation there
+  [./eta4_tiny_gb_fn]
+    type  = ParsedFunction
+    value = '0.02*exp(-pow((x - 350)/1.0, 2))'            # ~5 nm half-width, amplitude 0.02
+  [../] 
+# ---- Nb (c2) enrichment at the grain boundary (x = 350 sim units) ----
+  # Baseline values from Wang: x_Al ≈ 0.024, x_Nb ≈ 0.038 (adjust if your alloy differs).
+  # dC_nb is the peak enrichment (keep modest to preserve mass balance).
+  [./c2_gb_enrich_fn]
+    type  = ParsedFunction
+    value = '0.038 + 0.005*exp(-pow((x - 350)/5.0, 2))'   # center at GB, ~25 nm half-width
+  [../]
 
 []
 
@@ -376,47 +410,95 @@
   [./eta_pv1]
     variable = eta_pv1
     type = RandomIC
-    min = -0.6
-    max = 0.6
+    min = 0
+    max = 0.1
     seed = 324
   [../]
   [./eta_pv2]
     variable = eta_pv2
     type = RandomIC
-    min = -0.6
-    max = 0.6
+    min = 0
+    max = 0.1
     seed = 230	
   [../]
   [./eta_pv3]
     variable = eta_pv3
     type = RandomIC
-    min = -0.6
-    max = 0.6
+    min = 0
+    max = 0.1
     seed = 307	
   [../]
-  [./eta_pv4]
-    variable = eta_pv4
-    type = RandomIC
-    min = -0.6
-    max = 0.6
-    seed = 512	
-  [../]
  
-  [./c1]
-    variable = c1
-    type = RandomIC
-    min = 0.010	
-    max = 0.030
-    seed = 403	
-  [../]
-  [./c2]
-    variable = c2
-    type = RandomIC
-    min = 0.032	
-    max = 0.044
-    seed = 89	
+  [./eta_pv4_zero]
+    type=ConstantIC
+    variable = eta_pv4
+    value=0.0
   [../]
 
+    [./c1_global_ic]
+    type     = ConstantIC
+    variable = c1
+    value    = 0.024            # adjust to your alloy if different
+  [../]
+  [./c2_global_ic]
+    type     = FunctionIC
+    variable = c2
+    function = c2_gb_enrich_fn
+  [../]
+ # ---------- KKS per-phase compositions ----------
+  # Initialize all per-phase c2 fields from the same GB-enriched profile
+  [./c2m_ic]
+    type=FunctionIC
+    variable=c2m
+    function=c2_gb_enrich_fn
+  [../]
+  [./c2pv1_ic]
+    type=FunctionIC
+    variable=c2pv1
+    function=c2_gb_enrich_fn
+  [../]
+  [./c2pv2_ic]
+    type=FunctionIC
+    variable=c2pv2
+    function=c2_gb_enrich_fn
+  [../]
+  [./c2pv3_ic]
+    type=FunctionIC
+    variable=c2pv3
+    function=c2_gb_enrich_fn
+  [../]
+  [./c2pv4_ic]
+    type=FunctionIC
+    variable=c2pv4
+    function=c2_gb_enrich_fn
+  [../]
+
+  # Al-like per-phase (c1*): match the global baseline for a consistent start
+  [./c1m_ic]
+    type=ConstantIC
+    variable=c1m
+    value=0.024
+  [../]
+  [./c1pv1_ic]
+    type=ConstantIC
+    variable=c1pv1
+    value=0.024
+  [../]
+  [./c1pv2_ic]
+    type=ConstantIC
+    variable=c1pv2
+    value=0.024
+  [../]
+  [./c1pv3_ic]
+    type=ConstantIC
+    variable=c1pv3
+    value=0.024
+  [../]
+  [./c1pv4_ic]
+    type=ConstantIC
+    variable=c1pv4
+    value=0.024
+  [../]
 []
 
 
@@ -504,11 +586,15 @@
     sum_materials = 'fc_pv3 fe_pv3'
     coupled_variables = 'c1pv3 c2pv3'
   [../]
-  [./f4]
+   # --- δ chemical free energy (gated ON at ~3 h) ---
+  # Lowered prefactor (35 < 50) makes δ thermodynamically more favorable than γ″,
+  # matching that δ is the equilibrium phase. 'gate_3h' keeps it ~0 before 3 h.
+  [./fc_pv4_gated]
     type = DerivativeParsedMaterial
-    property_name = fc_pv4
+    property_name     = fc_pv4_gated
     coupled_variables = 'c1pv4 c2pv4'
-    expression = '50.0*((c1pv4-0.187)^2+2*(c2pv4-0.0157)^2)'
+    material_property_names = 'gate_3h'
+    expression        = 'gate_3h*(35*((c1pv4 - 0.0157)^2 + 2*(c2pv4 - 0.187)^2))'
   [../]
   # Elastic energy of the phase 4
   [./elastic_free_energy_pv4]
@@ -518,10 +604,10 @@
     coupled_variables = ' '
   [../]
     # Total free energy of the phase 4
-  [./Total_energy_pv4]
+  [./Total_energy_pv4_gated]
     type = DerivativeSumMaterial
-    property_name = Fpv4
-    sum_materials = 'fc_pv4 fe_pv4'
+    property_name  = Fpv4                 # keep same name your kernels expect
+    sum_materials  = 'fc_pv4_gated fe_pv4'
     coupled_variables = 'c1pv4 c2pv4'
   [../]
 
@@ -635,6 +721,16 @@
     prop_names  = 'L    kappa  D  misfit     W'
     prop_values = '0.3  0.01   1    1        0.01'
   [../]
+  [./misfit_props]
+    type        = GenericFunctionMaterial
+    prop_names  = 'misfit_c misfit_a'
+    prop_values = 'misfit_c_fn misfit_a_fn'   # <-- function names
+  [../]
+  [./gate_3h_prop]
+    type        = GenericFunctionMaterial
+    prop_names  = 'gate_3h'
+    prop_values = 'gate_3h'
+  [../]
 
   #Mechanical properties
   [./Stiffness_phasem_g0]
@@ -725,18 +821,8 @@
     euler_angle_1 = 0
     euler_angle_2 = 0
     euler_angle_3 = 0
-    block = 0
   [../]
-  [./Stiffness_phasepv4_g1]
-    type = ComputeElasticityTensor
-    C_ijkl = '290.6 187 160.7 290.6 187 309.6 114.2 114.2 119.2'
-    base_name = phasepv4
-    fill_method = symmetric9
-    euler_angle_1 = 45
-    euler_angle_2 = 0
-    euler_angle_3 = 0
-    block = 1
-  [../]
+  
 
   [./stress_phasepv1_g0]
     type = ComputeLinearElasticStress
@@ -771,13 +857,8 @@
   [./stress_phasepv4_g0]
     type = ComputeLinearElasticStress
     base_name = phasepv4
-    block = 0
   [../]
-  [./stress_phasepv4_g1]
-    type = ComputeLinearElasticStress
-    base_name = phasepv4
-    block = 1
-  [../]
+
   [./stress_phasem_g0]
     type = ComputeLinearElasticStress
     base_name = phasem
@@ -805,14 +886,14 @@
     type = ComputeSmallStrain
     displacements = 'disp_x disp_y'
     base_name = phasepv1
-    eigenstrain_names = eigenstrainpv1
+    eigenstrain_names = 'eigenstrainpv1_c eigenstrainpv1_a'
     block = 0
   [../]
   [./strain_phasepv1_g1]
     type = ComputeSmallStrain
     displacements = 'disp_x disp_y'
     base_name = phasepv1
-    eigenstrain_names = eigenstrainpv1
+    eigenstrain_names = 'eigenstrainpv1_c eigenstrainpv1_a'
     block = 1
   [../]
   [./strain_phasepv2_g0]
@@ -833,14 +914,14 @@
     type = ComputeSmallStrain
     displacements = 'disp_x disp_y'
     base_name = phasepv3
-    eigenstrain_names = eigenstrainpv3
+    eigenstrain_names = 'eigenstrainpv3_c eigenstrainpv3_a'
     block = 0
   [../]
   [./strain_phasepv3_g1]
     type = ComputeSmallStrain
     displacements = 'disp_x disp_y'
     base_name = phasepv3
-    eigenstrain_names = eigenstrainpv3
+    eigenstrain_names = 'eigenstrainpv3_c eigenstrainpv3_a'
     block = 1
   [../]
   [./strain_phasepv4_g0]
@@ -848,36 +929,48 @@
     displacements = 'disp_x disp_y'
     base_name = phasepv4
     eigenstrain_names = eigenstrainpv4
-    block = 0
   [../]
-  [./strain_phasepv4_g1]
-    type = ComputeSmallStrain
-    displacements = 'disp_x disp_y'
-    base_name = phasepv4
-    eigenstrain_names = eigenstrainpv4
-    block = 1
-  [../]
-
-
-
-  [./eigen_strainpv1_g0]
+ 
+   # pv1: c-part (only the c-axis component)
+  [./eigen_strainpv1_c_gr0]
     type = ComputeRotatedEigenstrain
     base_name = phasepv1
-    eigen_base = '0.028 0.0067 0 0 0 0'
+    eigen_base = '1 0 0 0 0 0'   # [εc, 0, 0, 0, 0, 0]
     Euler_angles = '0 0 0'
-    prefactor = misfit
-    eigenstrain_name = eigenstrainpv1
+    prefactor = misfit_c
+    eigenstrain_name = eigenstrainpv1_c
     block = 0
   [../]
-  [./eigen_strainpv1_g1]
+  [./eigen_strainpv1_c_gr1]
     type = ComputeRotatedEigenstrain
     base_name = phasepv1
-    eigen_base = '0.028 0.0067 0 0 0 0'
+    eigen_base = '1 0 0 0 0 0'   # [εc, 0, 0, 0, 0, 0]
     Euler_angles = '45 0 0'
-    prefactor = misfit
-    eigenstrain_name = eigenstrainpv1
+    prefactor = misfit_c
+    eigenstrain_name = eigenstrainpv1_c
     block = 1
   [../]
+# pv1: a-part (the two equal a-axis components)
+  [./eigen_strainpv1_a_gr0]
+    type = ComputeRotatedEigenstrain
+    base_name = phasepv1
+    eigen_base = '0 1 1 0 0 0'   # [0, εa, εa, 0, 0, 0]
+    Euler_angles = '0 0 0'
+    prefactor = misfit_a
+    eigenstrain_name = eigenstrainpv1_a
+    block = 0
+  [../]
+  [./eigen_strainpv1_a_gr1]
+    type = ComputeRotatedEigenstrain
+    base_name = phasepv1
+    eigen_base = '0 1 1 0 0 0'   # [0, εa, εa, 0, 0, 0]
+    Euler_angles = '45 0 0'
+    prefactor = misfit_a
+    eigenstrain_name = eigenstrainpv1_a
+    block = 1
+  [../]
+
+
 
   [./eigen_strainpv2_g0]
     type = ComputeRotatedEigenstrain
@@ -897,42 +990,53 @@
     eigenstrain_name = eigenstrainpv2
     block = 1
   [../]
-  [./eigen_strainpv3_g0]
+ [./eigen_strainpv3_c_gr0]
+  type = ComputeRotatedEigenstrain
+  base_name = phasepv3
+  eigen_base = '0 1 0 0 0 0'   # [0, εc, 0, 0, 0, 0]
+  Euler_angles = '0 0 0'
+  prefactor = misfit_c
+  eigenstrain_name = eigenstrainpv3_c
+  block = 0
+[../]
+[./eigen_strainpv3_c_gr1]
+  type = ComputeRotatedEigenstrain
+  base_name = phasepv3
+  eigen_base = '0 1 0 0 0 0'   # [0, εc, 0, 0, 0, 0]
+  Euler_angles = '45 0 0'
+  prefactor = misfit_c
+  eigenstrain_name = eigenstrainpv3_c
+  block = 1
+[../]
+  # pv3: a-part
+  [./eigen_strainpv3_a_gr0]
     type = ComputeRotatedEigenstrain
     base_name = phasepv3
-    eigen_base = '0.0067 0.028 0 0 0 0'
+    eigen_base = '1 0 1 0 0 0'   # [εa, 0, εa, 0, 0, 0]
     Euler_angles = '0 0 0'
-    prefactor = misfit
-    eigenstrain_name = eigenstrainpv3
+    prefactor = misfit_a
+    eigenstrain_name = eigenstrainpv3_a
     block = 0
   [../]
-  [./eigen_strainpv3_g1]
-    type = ComputeRotatedEigenstrain
-    base_name = phasepv3
-    eigen_base = '0.0067 0.028 0 0 0 0'
-    Euler_angles = '45 0 0'
-    prefactor = misfit
-    eigenstrain_name = eigenstrainpv3
-    block = 1
+  [./eigen_strainpv3_a_gr1]
+      type = ComputeRotatedEigenstrain
+      base_name = phasepv3
+      eigen_base = '1 0 1 0 0 0'   # [εa, 0, εa, 0, 0, 0]
+      Euler_angles = '45 0 0'
+      prefactor = misfit_a
+      eigenstrain_name = eigenstrainpv3_a
+      block = 1
   [../]
+
   [./eigen_strainpv4_g0]
     type = ComputeRotatedEigenstrain
     base_name = phasepv4
-    eigen_base = '0.00532 0.01332 0.02378 0 0 0'
-    Euler_angles = '0 0 0'
+    eigen_base = '0.005320 0.01332 0.02378 0 0 0'
+    Euler_angles = '5.176036589 1.150261992 2.456873451'
     prefactor = misfit
     eigenstrain_name = eigenstrainpv4
-    block = 0
   [../]
-   [./eigen_strainpv4_g1]
-    type = ComputeRotatedEigenstrain
-    base_name = phasepv4
-    eigen_base = '0.00532 0.01332 0.02378 0 0 0'
-    Euler_angles = '45 0 0'
-    prefactor = misfit
-    eigenstrain_name = eigenstrainpv4
-    block = 1
-  [../]
+  
 
 
   # Generate the global stress from the phase stresses

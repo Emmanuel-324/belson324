@@ -1,50 +1,18 @@
 # This test is for the multicomponent In718 alloy
 
 [Mesh]
-  [phasem_gr0]
-    type = GeneratedMeshGenerator
-    dim = 2
-    nx = 175
-    ny = 175
-#   nz = 2
-    xmin = 0
-    xmax = 400
-    ymin = 0
-    ymax = 400
-    zmin = 0
-    zmax = 0
-    elem_type = QUAD4
-  []
-  [phasem_gr0_id]
-    type = SubdomainIDGenerator
-    input = phasem_gr0
-    subdomain_id = 0
-  []
-  [phasem_gr1]
-    type = GeneratedMeshGenerator
-    dim = 2
-    nx = 175
-    ny = 175
-#   nz = 2
-    xmin = 350
-    xmax = 700
-    ymin = 0
-    ymax = 350
-    zmin = 0
-    zmax = 0
-    elem_type = QUAD4
-  []
-  [phasem_gr1_id]
-    type = SubdomainIDGenerator
-    input = phasem_gr1
-    subdomain_id = 1
-  []
-  [sticher]
-    type = StitchedMeshGenerator
-    inputs = 'phasem_gr0_id phasem_gr1_id'
-    stitch_boundaries_pairs = 'right left'
-    prevent_boundary_ids_overlap = false
-  []
+  type = GeneratedMesh
+  dim = 2
+  nx = 200 # number of element in x direction
+  ny = 200 # number of element in y direction
+#  nz = 2
+  xmin = 0
+  xmax = 350
+  ymin = 0
+  ymax = 350
+  zmin = 0
+  zmax = 0
+#  elem_type = QUAD4
 []
 
 [BCs]
@@ -83,33 +51,9 @@
 
 
 [AuxVariables]
-  [./h_g_pv1] 
-  family=MONOMIAL 
-  order=CONSTANT 
-  [../]
-  [./h_g_pv2] 
-  family=MONOMIAL 
-  order=CONSTANT 
-  [../]
-  [./h_g_pv3] 
-  family=MONOMIAL 
-  order=CONSTANT 
-  [../]
-  [./h_g_pv4] 
-  family=MONOMIAL 
-  order=CONSTANT 
-  [../]
-  [./g_aux]  
-  family=MONOMIAL 
-  order=CONSTANT 
-  [../]
-  [./one]    
-  family=MONOMIAL 
-  order=CONSTANT 
-  [../]
-   [./gb_scale_aux]
+  [./misfit_c_mat]
     family = MONOMIAL
-    order  = FIRST
+    order = CONSTANT
   [../]
   [./h_pv1_aux]
      family = MONOMIAL 
@@ -120,10 +64,6 @@
     order = CONSTANT
   [../]
   [./h_pv3_aux]
-    family = MONOMIAL
-    order = CONSTANT
-  [../]
-  [./h_pv4_aux]
     family = MONOMIAL
     order = CONSTANT
   [../]
@@ -147,10 +87,6 @@
     order = CONSTANT
     family = MONOMIAL
   [../]
-  [./vonmises_h_pv4]
-    order = CONSTANT
-    family = MONOMIAL
-  [../]
   [./vonmises_h_m]
     order = CONSTANT
     family = MONOMIAL
@@ -164,10 +100,6 @@
     order = CONSTANT
   [../]
   [./stress_xx_h_pv3]
-    family = MONOMIAL
-    order = CONSTANT
-  [../]
-  [./stress_xx_h_pv4]
     family = MONOMIAL
     order = CONSTANT
   [../]
@@ -240,20 +172,6 @@
     bound_type = lower
     bound_value = -1
   [../]
-  [./eta_pv4_upper_bound]
-    type = ConstantBounds
-    variable = bounds_dummy
-    bounded_variable = eta_pv4
-    bound_type = upper
-    bound_value = 1
-  [../]
-  [./eta_pv4_lower_bound]
-    type = ConstantBounds
-    variable = bounds_dummy
-    bounded_variable = eta_pv4
-    bound_type = lower
-    bound_value = -1
-  [../]
 []
 
 
@@ -288,11 +206,6 @@
   order = FIRST
   family = LAGRANGE
 [../]
-  # phase concentration c1 in pv4
-  [./c1pv4]
-    order = FIRST
-    family = LAGRANGE
-  [../]
 
 # phase concentration c2 in matrix
   [./c2m]
@@ -314,11 +227,6 @@
   order = FIRST
   family = LAGRANGE
 [../]
-  # phase concentration c2 in pv4
-  [./c2pv4]
-    order = FIRST
-    family = LAGRANGE
-  [../]
 
   # order parameter m
   [./eta_m]
@@ -340,11 +248,6 @@
   order = FIRST
   family = LAGRANGE
 [../]
-  # order parameter pv4
-  [./eta_pv4]
-    order = FIRST
-    family = LAGRANGE
-  [../]
 
   [./disp_x]
     order = FIRST
@@ -363,13 +266,11 @@
     symbol_names = alpha
     symbol_values = 16
   [../]
-   [./gb_scale_fn]
-    type = ParsedFunction
-    expression = '1 + (gb_factor - 1)*0.5*(tanh((w/2 - abs(x - x0))/delta) + 1)'
-    symbol_names = 'x0          w     delta   gb_factor'
-    symbol_values = '350.0     30.0     1     20'
+   # c-axis (main misfit)
+  [./misfit_c]
+    type  = ParsedFunction
+    value = '0.5*(1 + tanh((t - 20000)/6000))'
   [../]
-
 []
 
 [ICs]
@@ -394,19 +295,11 @@
     max = 0.6
     seed = 307	
   [../]
-  [./eta_pv4]
-    variable = eta_pv4
-    type = RandomIC
-    min = -0.6
-    max = 0.6
-    seed = 512	
-  [../]
- 
   [./c1]
     variable = c1
     type = RandomIC
     min = 0.010	
-    max = 0.030
+    max = 0.03
     seed = 403	
   [../]
   [./c2]
@@ -504,26 +397,6 @@
     sum_materials = 'fc_pv3 fe_pv3'
     coupled_variables = 'c1pv3 c2pv3'
   [../]
-  [./f4]
-    type = DerivativeParsedMaterial
-    property_name = fc_pv4
-    coupled_variables = 'c1pv4 c2pv4'
-    expression = '50.0*((c1pv4-0.187)^2+2*(c2pv4-0.0157)^2)'
-  [../]
-  # Elastic energy of the phase 4
-  [./elastic_free_energy_pv4]
-    type = ElasticEnergyMaterial
-    base_name = phasepv4
-    property_name = fe_pv4
-    coupled_variables = ' '
-  [../]
-    # Total free energy of the phase 4
-  [./Total_energy_pv4]
-    type = DerivativeSumMaterial
-    property_name = Fpv4
-    sum_materials = 'fc_pv4 fe_pv4'
-    coupled_variables = 'c1pv4 c2pv4'
-  [../]
 
   # Switching functions for each phase
   # hm(eta_pv1, eta_pv2, eta_m)
@@ -553,48 +426,30 @@
     all_etas = 'eta_pv1 eta_pv2 eta_pv3 eta_m'
     h_name = hpv3
 [../]
-  # hpv4(eta_pv1, eta_pv2, eta_m)
-  [./hpv4]
-    type = SwitchingFunctionMultiPhaseMaterial
-    phase_etas = eta_pv4
-    all_etas = 'eta_pv1 eta_pv2 eta_pv3 eta_m'
-    h_name = hpv4
-  [../]
   # Coefficients for diffusion equation
   [./Dhm]
     type = DerivativeParsedMaterial
-    coupled_variables = 'gb_scale_aux'
     material_property_names = 'D hm'
-    expression = gb_scale_aux*(D*hm)
+    expression = D*hm
     property_name = Dhm
   [../]
   [./Dhpv1]
     type = DerivativeParsedMaterial
-    coupled_variables = 'gb_scale_aux'
     material_property_names = 'D hpv1'
-    expression = gb_scale_aux*(D*hpv1)
+    expression = D*hpv1
     property_name = Dhpv1
   [../]
   [./Dhpv2]
     type = DerivativeParsedMaterial
-    coupled_variables = 'gb_scale_aux'
     material_property_names = 'D hpv2'
-    expression = gb_scale_aux*(D*hpv2)
+    expression = D*hpv2
     property_name = Dhpv2
   [../]
   [./Dhpv3]
     type = DerivativeParsedMaterial
-    coupled_variables = 'gb_scale_aux'
     material_property_names = 'D hpv3'
-    expression = gb_scale_aux*(D*hpv3)
+    expression = D*hpv3
     property_name = Dhpv3
-  [../]
-  [./Dhpv4]
-    type = DerivativeParsedMaterial
-    coupled_variables = 'gb_scale_aux'
-    material_property_names = 'D hpv4'
-    expression = gb_scale_aux*(D*hpv4)
-    property_name = Dhpv4
   [../]
 
 # Barrier functions for each phase
@@ -622,324 +477,138 @@
     eta = eta_pv3
     function_name = gpv3
   [../]
-  [./gpv4]
-    type = BarrierFunctionMaterial_abs
-    g_order = SIMPLE
-    eta = eta_pv4
-    function_name = gpv4
-  [../]
 
   # constant properties
   [./constants]
     type = GenericConstantMaterial
-    prop_names  = 'L    kappa  D  misfit     W'
-    prop_values = '0.3  0.01   1    1        0.01'
+    prop_names  = 'L    kappa  D   misfit     W'
+    prop_values = '0.3  0.01   1     1      0.01'
+  [../]
+   # Create a material property named "misfit_c" that equals the function misfit_c_fn
+   [./misfit_c_prop]
+    type       = GenericFunctionMaterial
+    prop_names = 'misfit_c'
+    prop_values = 'misfit_c'
   [../]
 
+  # (optional) a-axis ramp, if you want it later
+  # [./misfit_a_prop]
+  #   type       = GenericFunctionMaterial
+  #   prop_names = 'misfit_a'
+  #   functions  = 'misfit_a_fn'
+  # [../]
+    
   #Mechanical properties
-  [./Stiffness_phasem_g0]
+  [./Stiffness_phasem]
     type = ComputeElasticityTensor
     C_ijkl = '272.1 169 169 272.1 169 272.1 131 131 131' #Ghorbanpour, S., et al., A crystal plasticity model incorporating the effects of     
     base_name = phasem
-    fill_method = symmetric9
-    euler_angle_1 = 0   
+    euler_angle_1 = 0
     euler_angle_2 = 0
     euler_angle_3 = 0
-    block = 0
-  [../]
-  [./Stiffness_phasem_g1]
-    type = ComputeElasticityTensor
-    C_ijkl = '272.1 169 169 272.1 169 272.1 131 131 131' #Ghorbanpour, S., et al., A crystal plasticity model incorporating the effects of     
-    base_name = phasem
     fill_method = symmetric9
-    euler_angle_1 = 45
-    euler_angle_2  = 0
-    euler_angle_3  = 0
-    block = 1
   [../]
-  [./Stiffness_phasepv1_g0]
-  type = ComputeElasticityTensor
-  base_name   = phasepv1
-  C_ijkl      = '290.6 187 160.7 290.6 187 309.6 114.2 114.2 119.2'
-  fill_method = symmetric9
-  euler_angle_1 = 0
-  euler_angle_2 = 0
-  euler_angle_3 = 0
-  block = 0
-[../]
-[./Stiffness_phasepv1_g1]
-  type = ComputeElasticityTensor
-  base_name   = phasepv1
-  C_ijkl      = '290.6 187 160.7 290.6 187 309.6 114.2 114.2 119.2'
-  fill_method = symmetric9
-  euler_angle_1 = 45
-  euler_angle_2 = 0
-  euler_angle_3 = 0
-  block = 1
-[../]
-[./Stiffness_phasepv2_g0]
-  type = ComputeElasticityTensor
-  C_ijkl = '243 154.8 154.8 243 154.8 243 132.3 132.3 132.3'
-  base_name = phasepv2
-  fill_method = symmetric9
-  euler_angle_1 = 0
-  euler_angle_2 = 0
-  euler_angle_3 = 0
-  block = 0
+  [./Stiffness_phasepv1]
+    type = ComputeElasticityTensor
+    C_ijkl = '290.6 187 160.7 290.6 187 309.6 114.2 114.2 119.2'#Ghorbanpour, S., et al., A crystal plasticity model incorporating the effects of    
+    base_name = phasepv1
+    euler_angle_1 = 0
+    euler_angle_2 = 0
+    euler_angle_3 = 0
+    fill_method = symmetric9
   [../]
-  [./Stiffness_phasepv2_g1]
+  [./Stiffness_phasepv2]
     type = ComputeElasticityTensor
     C_ijkl = '243 154.8 154.8 243 154.8 243 132.3 132.3 132.3'
     base_name = phasepv2
-    fill_method = symmetric9
-    euler_angle_1 = 45
-    euler_angle_2 = 0
-    euler_angle_3 = 0
-    block = 1
-  [../]
-  [./Stiffness_phasepv3_g0]
-    type = ComputeElasticityTensor
-    C_ijkl = '290.6 187 160.7 290.6 187 309.6 114.2 114.2 119.2'
-    base_name = phasepv3
-    fill_method = symmetric9
     euler_angle_1 = 0
     euler_angle_2 = 0
     euler_angle_3 = 0
-    block = 0
+    fill_method = symmetric9
   [../]
-  [./Stiffness_phasepv3_g1]
+  [./Stiffness_phasepv3]
     type = ComputeElasticityTensor
     C_ijkl = '290.6 187 160.7 290.6 187 309.6 114.2 114.2 119.2'
     base_name = phasepv3
-    fill_method = symmetric9
-    euler_angle_1 = 45
-    euler_angle_2 = 0
-    euler_angle_3 = 0
-    block = 1
-  [../]
-  [./Stiffness_phasepv4_g0]
-    type = ComputeElasticityTensor
-    C_ijkl = '290.6 187 160.7 290.6 187 309.6 114.2 114.2 119.2'
-    base_name = phasepv4
-    fill_method = symmetric9
     euler_angle_1 = 0
     euler_angle_2 = 0
     euler_angle_3 = 0
-    block = 0
-  [../]
-  [./Stiffness_phasepv4_g1]
-    type = ComputeElasticityTensor
-    C_ijkl = '290.6 187 160.7 290.6 187 309.6 114.2 114.2 119.2'
-    base_name = phasepv4
     fill_method = symmetric9
-    euler_angle_1 = 45
-    euler_angle_2 = 0
-    euler_angle_3 = 0
-    block = 1
   [../]
 
-  [./stress_phasepv1_g0]
-    type = ComputeLinearElasticStress
-    base_name = phasepv1 
-    block = 0
-  [../]
-  [./stress_phasepv1_g1]
+  [./stress_phasepv1]
     type = ComputeLinearElasticStress
     base_name = phasepv1
-    block = 1
   [../]
-  [./stress_phasepv2_g0]
+  [./stress_phasepv2]
     type = ComputeLinearElasticStress
     base_name = phasepv2
-    block = 0
   [../]
-  [./stress_phasepv2_g1]
-    type = ComputeLinearElasticStress
-    base_name = phasepv2
-    block = 1
-  [../]
-  [./stress_phasepv3_g0]
+  [./stress_phasepv3]
     type = ComputeLinearElasticStress
     base_name = phasepv3
-    block = 0
   [../]
-  [./stress_phasepv3_g1]
-    type = ComputeLinearElasticStress
-    base_name = phasepv3
-    block = 1
-  [../]
-  [./stress_phasepv4_g0]
-    type = ComputeLinearElasticStress
-    base_name = phasepv4
-    block = 0
-  [../]
-  [./stress_phasepv4_g1]
-    type = ComputeLinearElasticStress
-    base_name = phasepv4
-    block = 1
-  [../]
-  [./stress_phasem_g0]
+  [./stress_phasem]
     type = ComputeLinearElasticStress
     base_name = phasem
-    block = 0
-  [../]
-  [./stress_phasem_g1]
-    type = ComputeLinearElasticStress
-    base_name = phasem
-    block = 1
   [../]
 
-  [./strain_phasem_g0]
+  [./strain_phasem]
     type = ComputeSmallStrain
     displacements = 'disp_x disp_y'
     base_name = phasem
-    block = 0
   [../]
-  [./strain_phasem_g1]
-    type = ComputeSmallStrain
-    displacements = 'disp_x disp_y'
-    base_name = phasem
-    block = 1
-  [../]
-  [./strain_phasepv1_g0]
+  [./strain_phasepv1]
     type = ComputeSmallStrain
     displacements = 'disp_x disp_y'
     base_name = phasepv1
     eigenstrain_names = eigenstrainpv1
-    block = 0
   [../]
-  [./strain_phasepv1_g1]
-    type = ComputeSmallStrain
-    displacements = 'disp_x disp_y'
-    base_name = phasepv1
-    eigenstrain_names = eigenstrainpv1
-    block = 1
-  [../]
-  [./strain_phasepv2_g0]
+  [./strain_phasepv2]
     type = ComputeSmallStrain
     displacements = 'disp_x disp_y'
     base_name = phasepv2
     eigenstrain_names = eigenstrainpv2
-    block = 0
   [../]
-  [./strain_phasepv2_g1]
-    type = ComputeSmallStrain
-    displacements = 'disp_x disp_y'
-    base_name = phasepv2
-    eigenstrain_names = eigenstrainpv2
-    block = 1
-  [../]
-  [./strain_phasepv3_g0]
+  [./strain_phasepv3]
     type = ComputeSmallStrain
     displacements = 'disp_x disp_y'
     base_name = phasepv3
     eigenstrain_names = eigenstrainpv3
-    block = 0
-  [../]
-  [./strain_phasepv3_g1]
-    type = ComputeSmallStrain
-    displacements = 'disp_x disp_y'
-    base_name = phasepv3
-    eigenstrain_names = eigenstrainpv3
-    block = 1
-  [../]
-  [./strain_phasepv4_g0]
-    type = ComputeSmallStrain
-    displacements = 'disp_x disp_y'
-    base_name = phasepv4
-    eigenstrain_names = eigenstrainpv4
-    block = 0
-  [../]
-  [./strain_phasepv4_g1]
-    type = ComputeSmallStrain
-    displacements = 'disp_x disp_y'
-    base_name = phasepv4
-    eigenstrain_names = eigenstrainpv4
-    block = 1
   [../]
 
-
-
-  [./eigen_strainpv1_g0]
+  [./eigen_strainpv1]
     type = ComputeRotatedEigenstrain
     base_name = phasepv1
-    eigen_base = '0.028 0.0067 0 0 0 0'
+    eigen_base = '0.0286 0.0067 0.0067 0 0 0'
     Euler_angles = '0 0 0'
-    prefactor = misfit
+    prefactor = misfit_c
     eigenstrain_name = eigenstrainpv1
-    block = 0
-  [../]
-  [./eigen_strainpv1_g1]
-    type = ComputeRotatedEigenstrain
-    base_name = phasepv1
-    eigen_base = '0.028 0.0067 0 0 0 0'
-    Euler_angles = '45 0 0'
-    prefactor = misfit
-    eigenstrain_name = eigenstrainpv1
-    block = 1
   [../]
 
-  [./eigen_strainpv2_g0]
+  [./eigen_strainpv2]
     type = ComputeRotatedEigenstrain
     base_name = phasepv2
-    eigen_base = '-0.003 -0.003 0 0 0 0'
+    eigen_base = '-0.003 -0.003 -0.003 0 0 0'
     Euler_angles = '0 0 0'
     prefactor = misfit
     eigenstrain_name = eigenstrainpv2
-    block = 0
   [../]
-   [./eigen_strainpv2_g1]
-    type = ComputeRotatedEigenstrain
-    base_name = phasepv2
-    eigen_base = '-0.003 -0.003 0 0 0 0'
-    Euler_angles = '45 0 0'
-    prefactor = misfit
-    eigenstrain_name = eigenstrainpv2
-    block = 1
-  [../]
-  [./eigen_strainpv3_g0]
+  [./eigen_strainpv3]
     type = ComputeRotatedEigenstrain
     base_name = phasepv3
-    eigen_base = '0.0067 0.028 0 0 0 0'
+    eigen_base = '0.0067 0.0286 0.0067 0 0 0'
     Euler_angles = '0 0 0'
-    prefactor = misfit
+    prefactor = misfit_c
     eigenstrain_name = eigenstrainpv3
-    block = 0
-  [../]
-  [./eigen_strainpv3_g1]
-    type = ComputeRotatedEigenstrain
-    base_name = phasepv3
-    eigen_base = '0.0067 0.028 0 0 0 0'
-    Euler_angles = '45 0 0'
-    prefactor = misfit
-    eigenstrain_name = eigenstrainpv3
-    block = 1
-  [../]
-  [./eigen_strainpv4_g0]
-    type = ComputeRotatedEigenstrain
-    base_name = phasepv4
-    eigen_base = '0.00532 0.01332 0.02378 0 0 0'
-    Euler_angles = '0 0 0'
-    prefactor = misfit
-    eigenstrain_name = eigenstrainpv4
-    block = 0
-  [../]
-   [./eigen_strainpv4_g1]
-    type = ComputeRotatedEigenstrain
-    base_name = phasepv4
-    eigen_base = '0.00532 0.01332 0.02378 0 0 0'
-    Euler_angles = '45 0 0'
-    prefactor = misfit
-    eigenstrain_name = eigenstrainpv4
-    block = 1
   [../]
 
 
   # Generate the global stress from the phase stresses
   [./global_stress]
     type = MultiPhaseStressMaterial
-    phase_base = 'phasepv1 phasepv2 phasepv3 phasepv4 phasem'
-    h          = 'hpv1     hpv2   hpv3   hpv4   hm'
+    phase_base = 'phasepv1 phasepv2 phasepv3 phasem'
+    h          = 'hpv1     hpv2   hpv3   hm'
   [../]
 
   [./global_strain]
@@ -961,30 +630,30 @@
   [./ACBulkFpv1]
     type = KKSMultiACBulkF
     variable  = eta_pv1
-    Fj_names  = 'Fpv1 Fpv2 Fpv3 Fpv4 Fm'
-    hj_names  = 'hpv1 hpv2 hpv3 hpv4 hm'
+    Fj_names  = 'Fpv1 Fpv2 Fpv3 Fm'
+    hj_names  = 'hpv1 hpv2 hpv3 hm'
     gi_name   = gpv1
     eta_i     = eta_pv1
     wi        = 0.01
-    coupled_variables      = 'c1pv1 c1pv2 c1pv3 c1pv4 c1m c2pv1 c2pv2 c2pv3 c2pv4 c2m eta_pv2 eta_pv3 eta_pv4 eta_m'
+    coupled_variables      = 'c1pv1 c1pv2 c1pv3 c1m c2pv1 c2pv2 c2pv3 c2m eta_pv2 eta_pv3 eta_m'
   [../]
   [./ACBulkCpv1_c1]
     type = KKSMultiACBulkC
     variable  = eta_pv1
-    Fj_names  = 'Fpv1 Fpv2 Fpv3 Fpv4 Fm'
-    hj_names  = 'hpv1 hpv2 hpv3 hpv4 hm'
-    cj_names  = 'c1pv1 c1pv2 c1pv3 c1pv4 c1m'
+    Fj_names  = 'Fpv1 Fpv2 Fpv3 Fm'
+    hj_names  = 'hpv1 hpv2 hpv3 hm'
+    cj_names  = 'c1pv1 c1pv2 c1pv3 c1m'
     eta_i     = eta_pv1
-    coupled_variables      = 'c2pv1 c2pv2 c2pv3 c2pv4 c2m eta_pv2 eta_pv3 eta_pv4 eta_m'
+    coupled_variables      = 'c2pv1 c2pv2 c2pv3 c2m eta_pv2 eta_pv3 eta_m'
   [../]
   [./ACBulkCpv1_c2]
     type = KKSMultiACBulkC
     variable  = eta_pv1
-    Fj_names  = 'Fpv1 Fpv2 Fpv3 Fpv4 Fm'
-    hj_names  = 'hpv1 hpv2 hpv3 hpv4 hm'
-    cj_names  = 'c2pv1 c2pv2 c2pv3 c2pv4 c2m'
+    Fj_names  = 'Fpv1 Fpv2 Fpv3 Fm'
+    hj_names  = 'hpv1 hpv2 hpv3 hm'
+    cj_names  = 'c2pv1 c2pv2 c2pv3 c2m'
     eta_i     = eta_pv1
-    coupled_variables      = 'c1pv1 c1pv2 c1pv3 c1pv4 c1m  eta_pv2 eta_pv3 eta_pv4 eta_m'
+    coupled_variables      = 'c1pv1 c1pv2 c1pv3 c1m eta_pv2 eta_pv3 eta_m'
   [../]
   [./ACInterfacepv1]
     type = ACInterface
@@ -1000,30 +669,30 @@
   [./ACBulkFpv2]
     type = KKSMultiACBulkF
     variable  = eta_pv2
-    Fj_names  = 'Fpv1 Fpv2 Fpv3 Fpv4 Fm'
-    hj_names  = 'hpv1 hpv2 hpv3 hpv4 hm'
+    Fj_names  = 'Fpv1 Fpv2 Fpv3 Fm'
+    hj_names  = 'hpv1 hpv2 hpv3 hm'
     gi_name   = gpv2
     eta_i     = eta_pv2
     wi        = 0.01
-    coupled_variables      = 'c1pv1 c1pv2 c1pv3 c1pv4 c1m c2pv1 c2pv2 c2pv3 c2pv4 c2m eta_pv1 eta_pv3 eta_pv4 eta_m'
+    coupled_variables      = 'c1pv1 c1pv2 c1pv3 c1m c2pv1 c2pv2 c2pv3 c2m eta_pv1 eta_pv3 eta_m'
   [../]
   [./ACBulkCpv2_c1]
     type = KKSMultiACBulkC
     variable  = eta_pv2
-    Fj_names  = 'Fpv1 Fpv2 Fpv3 Fpv4 Fm'
-    hj_names  = 'hpv1 hpv2 hpv3 hpv4 hm'
-    cj_names  = 'c1pv1 c1pv2 c1pv3 c1pv4 c1m'
+    Fj_names  = 'Fpv1 Fpv2 Fpv3 Fm'
+    hj_names  = 'hpv1 hpv2 hpv3 hm'
+    cj_names  = 'c1pv1 c1pv2 c1pv3 c1m'
     eta_i     = eta_pv2
-    coupled_variables      = 'c2pv1 c2pv2 c2pv3 c2pv4 c2m eta_pv1 eta_pv3 eta_pv4 eta_m'
+    coupled_variables      = 'c2pv1 c2pv2 c2pv3 c2m eta_pv1 eta_pv3 eta_m'
   [../]
   [./ACBulkCpv2_c2]
     type = KKSMultiACBulkC
     variable  = eta_pv2
-    Fj_names  = 'Fpv1 Fpv2 Fpv3 Fpv4 Fm'
-    hj_names  = 'hpv1 hpv2 hpv3 hpv4 hm'
-    cj_names  = 'c2pv1 c2pv2 c2pv3 c2pv4 c2m'
+    Fj_names  = 'Fpv1 Fpv2 Fpv3 Fm'
+    hj_names  = 'hpv1 hpv2 hpv3 hm'
+    cj_names  = 'c2pv1 c2pv2 c2pv3 c2m'
     eta_i     = eta_pv2
-    coupled_variables      = 'c1pv1 c1pv2 c1pv3 c1pv4 c1m eta_pv1 eta_pv3 eta_pv4 eta_m'
+    coupled_variables      = 'c1pv1 c1pv2 c1pv3 c1m eta_pv1 eta_pv3 eta_m'
   [../]
   [./ACInterfacepv2]
     type = ACInterface
@@ -1031,7 +700,7 @@
     kappa_name = kappa
   [../]
 
-  # Kernels for Allen-Cahn equation for eta_pv3
+  # Kernels for Allen-Cahn equation for eta_pv2
   [./deta_pv3_dt]
     type = TimeDerivative
     variable = eta_pv3
@@ -1039,73 +708,34 @@
   [./ACBulkFpv3]
     type = KKSMultiACBulkF
     variable  = eta_pv3
-    Fj_names  = 'Fpv1 Fpv2 Fpv3 Fpv4 Fm'
-    hj_names  = 'hpv1 hpv2 hpv3 hpv4 hm'
+    Fj_names  = 'Fpv1 Fpv2 Fpv3 Fm'
+    hj_names  = 'hpv1 hpv2 hpv3 hm'
     gi_name   = gpv3
     eta_i     = eta_pv3
     wi        = 0.01
-    coupled_variables      = 'c1pv1 c1pv2 c1pv3 c1pv4 c1m c2pv1 c2pv2 c2pv3 c2pv4 c2m eta_pv1 eta_pv2 eta_pv4 eta_m'
+    coupled_variables      = 'c1pv1 c1pv2 c1pv3 c1m c2pv1 c2pv2 c2pv3 c2m eta_pv1 eta_pv2 eta_m'
   [../]
   [./ACBulkCpv3_c1]
     type = KKSMultiACBulkC
     variable  = eta_pv3
-    Fj_names  = 'Fpv1 Fpv2 Fpv3 Fpv4 Fm'
-    hj_names  = 'hpv1 hpv2 hpv3 hpv4 hm'
-    cj_names  = 'c1pv1 c1pv2 c1pv3 c1pv4 c1m'
+    Fj_names  = 'Fpv1 Fpv2 Fpv3 Fm'
+    hj_names  = 'hpv1 hpv2 hpv3 hm'
+    cj_names  = 'c1pv1 c1pv2 c1pv3 c1m'
     eta_i     = eta_pv3
-    coupled_variables      = 'c2pv1 c2pv2 c2pv3 c2pv4 c2m eta_pv1 eta_pv2 eta_pv4 eta_m'
+    coupled_variables      = 'c2pv1 c2pv2 c2pv3 c2m eta_pv1 eta_pv2 eta_m'
   [../]
   [./ACBulkCpv3_c2]
     type = KKSMultiACBulkC
     variable  = eta_pv3
-    Fj_names  = 'Fpv1 Fpv2 Fpv3 Fpv4 Fm'
-    hj_names  = 'hpv1 hpv2 hpv3 hpv4 hm'
-    cj_names  = 'c2pv1 c2pv2 c2pv3 c2pv4 c2m'
+    Fj_names  = 'Fpv1 Fpv2 Fpv3 Fm'
+    hj_names  = 'hpv1 hpv2 hpv3 hm'
+    cj_names  = 'c2pv1 c2pv2 c2pv3 c2m'
     eta_i     = eta_pv3
-    coupled_variables      = 'c1pv1 c1pv2 c1pv3 c1pv4 c1m eta_pv1 eta_pv2 eta_pv4 eta_m'
+    coupled_variables      = 'c1pv1 c1pv2 c1pv3 c1m eta_pv1 eta_pv2 eta_m'
   [../]
   [./ACInterfacepv3]
     type = ACInterface
     variable = eta_pv3
-    kappa_name = kappa
-  [../]
- 
-# Kernels for Allen-Cahn equation for eta_pv4
-  [./deta_pv4_dt]
-    type = TimeDerivative
-    variable = eta_pv4
-  [../]
-  [./ACBulkFpv4]
-    type = KKSMultiACBulkF
-    variable  = eta_pv4
-    Fj_names  = 'Fpv1 Fpv2 Fpv3 Fpv4 Fm'
-    hj_names  = 'hpv1 hpv2 hpv3 hpv4 hm'
-    gi_name   = gpv4
-    eta_i     = eta_pv4
-    wi        = 0.01
-    coupled_variables      = 'c1pv1 c1pv2 c1pv3 c1pv4 c1m c2pv1 c2pv2 c2pv3 c2pv4 c2m eta_pv1 eta_pv2 eta_pv3 eta_m'
-  [../]
-  [./ACBulkCpv4_c1]
-    type = KKSMultiACBulkC
-    variable  = eta_pv4
-    Fj_names  = 'Fpv1 Fpv2 Fpv3 Fpv4 Fm'
-    hj_names  = 'hpv1 hpv2 hpv3 hpv4 hm'
-    cj_names  = 'c1pv1 c1pv2 c1pv3 c1pv4 c1m'
-    eta_i     = eta_pv4
-    coupled_variables      = 'c2pv1 c2pv2 c2pv3 c2pv4 c2m eta_pv1 eta_pv2 eta_pv3 eta_m'
-  [../]
-  [./ACBulkCpv4_c2]
-    type = KKSMultiACBulkC
-    variable  = eta_pv4
-    Fj_names  = 'Fpv1 Fpv2 Fpv3 Fpv4 Fm'
-    hj_names  = 'hpv1 hpv2 hpv3 hpv4 hm'
-    cj_names  = 'c2pv1 c2pv2 c2pv3 c2pv4 c2m'
-    eta_i     = eta_pv4
-    coupled_variables      = 'c1pv1 c1pv2 c1pv3 c1pv4 c1m eta_pv1 eta_pv2 eta_pv3 eta_m'
-  [../]
-  [./ACInterfacepv4]
-    type = ACInterface
-    variable = eta_pv4
     kappa_name = kappa
   [../]
 
@@ -1133,14 +763,8 @@
     variable = eta_m
     v = eta_pv3
     reaction_rate = 1
-  [../]
-  [./eta_pv4reaction]
-    type = MatReaction_abscouple
-    variable = eta_m
-    v = eta_pv4
-    reaction_rate = 1
-  [../]
-  [./on]
+    [../]
+  [./one]
     type = BodyForce
     variable = eta_m
     value = -1.0
@@ -1175,13 +799,6 @@
     diffusivity = Dhpv3
     v = c1pv3
   [../]
-  [./diff_c1pv4]
-    type = MatDiffusion
-    variable = c1
-    diffusivity = Dhpv4
-    v = c1pv4
-  [../]
-
 
   #Kernels for diffusion equation of c2
   [./diff_time_c2]
@@ -1212,13 +829,7 @@
     diffusivity = Dhpv3
     v = c2pv3
   [../]   
-  [./diff_c2pv4]
-    type = MatDiffusion
-    variable = c2
-    diffusivity = Dhpv4
-    v = c2pv4
-  [../]
-
+    
   # Phase concentration constraints
    [./chempot1m_pv1]
     type = KKSPhaseChemicalPotential
@@ -1247,15 +858,6 @@
     args_a   = c2pv2
     args_b   = c2pv3
   [../]
-  [./chempot1m_pv4]
-    type = KKSPhaseChemicalPotential
-    variable = c1pv3
-    cb       = c1pv4
-    fa_name  = Fpv3
-    fb_name  = Fpv4
-    args_a   = c2pv3
-    args_b   = c2pv4
-  [../]
   [./chempot2m_pv1]
     type = KKSPhaseChemicalPotential
     variable = c2m
@@ -1283,49 +885,21 @@
     args_a   = c1pv2
     args_b   = c1pv3
   [../]
-  [./chempot2m_pv4]
-    type = KKSPhaseChemicalPotential
-    variable = c2pv3
-    cb       = c2pv4
-    fa_name  = Fpv3
-    fb_name  = Fpv4
-    args_a   = c1pv3
-    args_b   = c1pv4
-  [../]
     
-  [./phaseconcentration_c1pv3]
+  [./phaseconcentration_c1pv1]
     type = KKSMultiPhaseConcentration
     variable = c1pv3
-    cj = 'c1m c1pv1 c1pv2 c1pv3 c1pv4'
-    hj_names = 'hm hpv1 hpv2 hpv3 hpv4'
-    etas = 'eta_m eta_pv1 eta_pv2 eta_pv3 eta_pv4'
+    cj = 'c1m c1pv1 c1pv2 c1pv3'
+    hj_names = 'hm hpv1 hpv2 hpv3'
+    etas = 'eta_m eta_pv1 eta_pv2 eta_pv3'
     c = c1
   [../]
-
-  [./phaseconcentration_c1pv4]
-    type = KKSMultiPhaseConcentration
-    variable = c1pv4
-    cj = 'c1m c1pv1 c1pv2 c1pv3 c1pv4'
-    hj_names = 'hm hpv1 hpv2 hpv3 hpv4'
-    etas = 'eta_m eta_pv1 eta_pv2 eta_pv3 eta_pv4'
-    c = c1
-  [../]
-
-  [./phaseconcentration_c2pv3]
+  [./phaseconcentration_c2pv1]
     type = KKSMultiPhaseConcentration
     variable = c2pv3
-    cj = 'c2m c2pv1 c2pv2 c2pv3 c2pv4'
-    hj_names = 'hm hpv1 hpv2 hpv3 hpv4'
-    etas = 'eta_m eta_pv1 eta_pv2 eta_pv3 eta_pv4'
-    c = c2
-  [../]
-    
-  [./phaseconcentration_c2pv4]
-    type = KKSMultiPhaseConcentration
-    variable = c2pv4
-    cj = 'c2m c2pv1 c2pv2 c2pv3 c2pv4'
-    hj_names = 'hm hpv1 hpv2 hpv3 hpv4'
-    etas = 'eta_m eta_pv1 eta_pv2 eta_pv3 eta_pv4'
+    cj = 'c2m c2pv1 c2pv2 c2pv3'
+    hj_names = 'hm hpv1 hpv2 hpv3'
+    etas = 'eta_m eta_pv1 eta_pv2 eta_pv3'
     c = c2
   [../]
   
@@ -1333,52 +907,6 @@
 []
 
 [AuxKernels]
-  [./gb_scale_eval]
-    type     = FunctionAux
-    variable = gb_scale_aux
-    function = gb_scale_fn
-  [../]
-  [./set_one] 
-   type = ParsedAux 
-   variable = one 
-   expression = '1' 
-   execute_on = timestep_end 
-  [../]
-    [./copy_g]
-    type = FunctionAux
-    variable = g_aux
-    function = gb_scale_fn
-    execute_on = timestep_end
-  [../]
-# weighted hpv by g (use your actual hpv variable names)
-  [./mk_h_g_pv1] 
-  type=ParsedAux 
-  variable=h_g_pv1 
-  coupled_variables = 'g_aux h_pv1_aux'
-  expression='g_aux * h_pv1_aux' 
-  execute_on=timestep_end 
-  [../]
-  [./mk_h_g_pv2] 
-  type=ParsedAux 
-  variable=h_g_pv2 
-  coupled_variables = 'g_aux h_pv2_aux'
-  expression='g_aux * h_pv2_aux' 
-  execute_on=timestep_end 
-  [../]
-  [./mk_h_g_pv3] 
-  type=ParsedAux 
-  variable=h_g_pv3 
-  coupled_variables = 'g_aux h_pv3_aux'
-  expression='g_aux * h_pv3_aux' 
-  execute_on=timestep_end 
-  [../]
-  [./mk_h_g_pv4]
-  type=ParsedAux
-  variable=h_g_pv4
-  coupled_variables = 'g_aux h_pv4_aux'
-  expression='g_aux * h_pv4_aux'
-  execute_on=timestep_end
-  [../]
   [temperature]
     type = FunctionAux
     variable = temperature
@@ -1387,15 +915,28 @@
   []
   [./Energy_total]
     type = KKSMultiFreeEnergy
-    Fj_names = 'Fpv1 Fpv2 Fpv3 Fpv4 Fm'
-    hj_names = 'hpv1 hpv2 hpv3 hpv4 hm'
-    gj_names = 'gpv1 gpv2 gpv3 gpv4 gm'
+    Fj_names = 'Fpv1 Fpv2 Fm'
+    hj_names = 'hpv1 hpv2 hm'
+    gj_names = 'gpv1 gpv2 gm'
     variable = Energy
     w = 1
-    interfacial_vars =  'eta_pv1  eta_pv2  eta_pv3  eta_pv4  eta_m'
-    kappa_names =       'kappa kappa kappa kappa kappa'
+    interfacial_vars =  'eta_pv1  eta_pv2  eta_m'
+    kappa_names =       'kappa kappa kappa'
   [../]
-   [./vonmises]
+   [./misfit_c_out]
+    type     = MaterialRealAux
+    variable = misfit_c_mat
+    property = misfit_c
+  [../] 
+  [./stress_xx]
+    type = RankTwoAux
+    variable = stress_xx
+    rank_two_tensor = stress
+    index_j = 0
+    index_i = 0
+    execute_on = timestep_end
+  [../]
+  [./vonmises]
     type = RankTwoScalarAux
     rank_two_tensor = stress
     variable = vonmises
@@ -1420,17 +961,11 @@
   property = hpv3 
   execute_on = timestep_end 
   [../]
-  [./copy_h_pv4]
-  type = MaterialRealAux
-  variable = h_pv4_aux
-  property = hpv4
-  execute_on = timestep_end
-  [../]
-  [./copy_h_m]
-  type = MaterialRealAux
-  variable = h_m_aux
-  property = hm
-  execute_on = timestep_end
+  [./copy_h_m]   
+  type = MaterialRealAux 
+  variable = h_m_aux   
+  property = hm   
+  execute_on = timestep_end 
   [../]
    # Products: h * σ_xx
    [./vonmises_times_h_pv1]
@@ -1452,13 +987,6 @@
       variable = vonmises_h_pv3
       coupled_variables = 'vonmises h_pv3_aux'
       expression = 'vonmises * h_pv3_aux'
-      execute_on = timestep_end
-    [../]
-    [./vonmises_times_h_pv4]
-      type = ParsedAux
-      variable = vonmises_h_pv4
-      coupled_variables = 'vonmises h_pv4_aux'
-      expression = 'vonmises * h_pv4_aux'
       execute_on = timestep_end
     [../]
     [./vonmises_times_h_m]
@@ -1489,26 +1017,11 @@
     expression = 'stress_xx * h_pv3_aux'
     execute_on = timestep_end
   [../]
-  [./sxx_times_h_pv4]
-    type = ParsedAux
-    variable = stress_xx_h_pv4
-    coupled_variables = 'stress_xx h_pv4_aux'
-    expression = 'stress_xx * h_pv4_aux'
-    execute_on = timestep_end
-  [../]
   [./sxx_times_h_m]
     type = ParsedAux
     variable = stress_xx_h_m
     coupled_variables = 'stress_xx h_m_aux'
     expression = 'stress_xx * h_m_aux'
-    execute_on = timestep_end
-  [../]
-  [./stress_xx]
-    type = RankTwoAux
-    variable = stress_xx
-    rank_two_tensor = stress
-    index_j = 0
-    index_i = 0
     execute_on = timestep_end
   [../]
 []
@@ -1534,7 +1047,8 @@
     growth_factor = 1.2
     optimal_iterations = 20
   [../]
- 
+  
+  
 []
 
 [Preconditioning]
@@ -1558,6 +1072,10 @@
      variable = eta_pv1
      function = bc_func
    [../]
+   [temperature]
+    type = ElementAverageValue
+    variable = temperature
+  []
   [./Energy_total]
     type = ElementAverageValue
     variable = Energy
@@ -1582,10 +1100,6 @@
   type = ElementIntegralVariablePostprocessor
   variable = vonmises_h_pv3
   [../]
-  [./num_vonmises_pv4]
-  type = ElementIntegralVariablePostprocessor
-  variable = vonmises_h_pv4
-  [../]
   [./num_vonmises_m]  
    type = ElementIntegralVariablePostprocessor
    variable = vonmises_h_m   
@@ -1601,10 +1115,6 @@
   [./num_pv3] 
   type = ElementIntegralVariablePostprocessor 
   variable = stress_xx_h_pv3 
-  [../]
-  [./num_pv4] 
-  type = ElementIntegralVariablePostprocessor 
-  variable = stress_xx_h_pv4 
   [../]
   [./num_m]  
    type = ElementIntegralVariablePostprocessor 
@@ -1624,92 +1134,40 @@
   type = ElementIntegralVariablePostprocessor 
   variable = h_pv3_aux 
   [../]
-  [./den_pv4] 
-  type = ElementIntegralVariablePostprocessor 
-  variable = h_pv4_aux 
-  [../]
   [./den_m]   
    type = ElementIntegralVariablePostprocessor 
    variable = h_m_aux   
    [../]
+    
   [./eta_pv1]
-    type = ElementIntegralVariablePostprocessor
+    type = ElementIntegralVariablePostprocessor_new1
     variable = eta_pv1
+    low_threshold = 0.5
+    high_threshold = 0.95
   [../]
    [./eta_pv2]
-    type = ElementIntegralVariablePostprocessor
+    type = ElementIntegralVariablePostprocessor_new1
     variable = eta_pv2
+    low_threshold = 0.5
+    high_threshold = 0.95
   [../]
   [./eta_pv3]
-    type = ElementIntegralVariablePostprocessor
+    type = ElementIntegralVariablePostprocessor_new1
     variable = eta_pv3
+    low_threshold = 0.5
+    high_threshold = 0.95
   [../]
-  [./eta_pv4]
-    type = ElementIntegralVariablePostprocessor
-    variable = eta_pv4
-  [../]
-   [./A_total]   
-  type=ElementIntegralVariablePostprocessor 
-  variable=one       
-  [../]
-  [./A_g]       
-  type=ElementIntegralVariablePostprocessor 
-  variable=g_aux     
-  [../]
-  
-  [./den_g_pv1] 
-  type=ElementIntegralVariablePostprocessor 
-  variable=h_g_pv1   
-  [../]
-  [./den_g_pv2] 
-  type=ElementIntegralVariablePostprocessor 
-  variable=h_g_pv2   
-  [../]
-  [./den_g_pv3] 
-  type=ElementIntegralVariablePostprocessor 
-  variable=h_g_pv3   
-  [../]
-  [./den_g_pv4]
-  type=ElementIntegralVariablePostprocessor
-  variable=h_g_pv4
+   # Average value over the domain (should equal the function value each step)
+  [./misfit_c_avg]
+    type     = ElementAverageValue
+    variable = misfit_c_mat
   [../]
 
-   # fractions in GB band and in whole domain
-  [./frac_g_pv1] 
-  type=ParsedPostprocessor 
-  pp_names='den_g_pv1 A_g'      
-  expression='den_g_pv1/max(A_g,1e-16)'     
+
+  # Time for plotting against the ramp
+  [./time_pp]
+    type = TimePostprocessor
   [../]
-  [./frac_g_pv2] 
-  type=ParsedPostprocessor 
-  pp_names='den_g_pv2 A_g'     
-   expression='den_g_pv2/max(A_g,1e-16)'     
-   [../]
-  [./frac_g_pv3] 
-  type=ParsedPostprocessor 
-  pp_names='den_g_pv3 A_g'      
-  expression='den_g_pv3/max(A_g,1e-16)'     
-  [../]
-  [./frac_pv1]   
-  type=ParsedPostprocessor 
-  pp_names='den_pv1 A_total'     
-  expression='den_pv1/max(A_total,1e-16)'   
-  [../]
-  [./frac_pv2]   
-  type=ParsedPostprocessor 
-  pp_names='den_pv2 A_total'     
-  expression='den_pv2/max(A_total,1e-16)'   
-  [../]
-  [./frac_pv3]   
-  type=ParsedPostprocessor 
-  pp_names='den_pv3 A_total'     
-  expression='den_pv3/max(A_total,1e-16)'  
-   [../]
-  [./frac_pv4]   
-  type=ParsedPostprocessor 
-  pp_names='den_pv4 A_total'     
-  expression='den_pv4/max(A_total,1e-16)'  
-   [../]
 []
 
 [Outputs]
