@@ -1,7 +1,7 @@
 # This test is for the multicomponent In718 alloy
 
 [Mesh]
-  [phasem_gr0]
+   [phasem_gr0]
     type = GeneratedMeshGenerator
     dim = 2
     nx = 175
@@ -83,6 +83,21 @@
 
 
 [AuxVariables]
+   # Smooth GB band weight (dimensionless)
+  [./gb_mask]
+    family = MONOMIAL
+    order  = CONSTANT
+  [../]
+
+  # Weighted fields (for integrals/averages)
+  [./c2_gb_w]
+    family = MONOMIAL
+    order  = CONSTANT
+  [../]
+  [./dc2_gb_w]
+    family = MONOMIAL
+    order  = CONSTANT
+  [../]
   [./h_g_pv1] 
   family=MONOMIAL 
   order=CONSTANT 
@@ -155,26 +170,7 @@
     order = CONSTANT
     family = MONOMIAL
   [../]
-  [./stress_xx_h_pv1] 
-    family = MONOMIAL 
-    order = CONSTANT 
-  [../]
-  [./stress_xx_h_pv2]
-    family = MONOMIAL
-    order = CONSTANT
-  [../]
-  [./stress_xx_h_pv3]
-    family = MONOMIAL
-    order = CONSTANT
-  [../]
-  [./stress_xx_h_pv4]
-    family = MONOMIAL
-    order = CONSTANT
-  [../]
-  [./stress_xx_h_m]
-    family = MONOMIAL
-    order = CONSTANT
-  [../]
+  
   [./Energy]
     order = CONSTANT
     family = MONOMIAL
@@ -240,20 +236,7 @@
     bound_type = lower
     bound_value = -1
   [../]
-  [./eta_pv4_upper_bound]
-    type = ConstantBounds
-    variable = bounds_dummy
-    bounded_variable = eta_pv4
-    bound_type = upper
-    bound_value = 1
-  [../]
-  [./eta_pv4_lower_bound]
-    type = ConstantBounds
-    variable = bounds_dummy
-    bounded_variable = eta_pv4
-    bound_type = lower
-    bound_value = -1
-  [../]
+ 
 []
 
 
@@ -363,64 +346,128 @@
     symbol_names = alpha
     symbol_values = 16
   [../]
+  
    [./gb_scale_fn]
     type = ParsedFunction
     expression = '1 + (gb_factor - 1)*0.5*(tanh((w/2 - abs(x - x0))/delta) + 1)'
     symbol_names = 'x0          w     delta   gb_factor'
     symbol_values = '350.0     30.0     1     20'
   [../]
-   # Smooth step: ~1 for x < 4 sim units (~20 nm), ~0 elsewhere
-  [./eta4_plate_fn]
-    type  = ParsedFunction
-    # width parameter (0.4) ~ 2 nm in sim units (2/5)
-    value = '0.5*(1 - tanh((x - 4.0)/0.4))'
-  [../]
 
+   # Smooth switch: ~0 before 3 h, ~1 after 3 h
+  # Convert simulation time -> hours with t/6630.57
+  #[./gate_3h]
+   # type  = ParsedFunction
+   # value = '0.5*(1 + tanh((t/6630.57 - 3.0)/1.0))'
+  #[../]
+
+  # (Optional) smooth tiny δ seed at the GB if you want to guarantee nucleation there
+  [./eta4_tiny_gb_fn]
+    type  = ParsedFunction
+    value = '0.02*exp(-pow((x - 350)/1.0, 2))'            # ~5 nm half-width, amplitude 0.02
+  [../] 
+# ---- Nb (c2) enrichment at the grain boundary (x = 350 sim units) ----
+  # Baseline values from Wang: x_Al ≈ 0.024, x_Nb ≈ 0.038 (adjust if your alloy differs).
+  # dC_nb is the peak enrichment (keep modest to preserve mass balance).
+  [./c2_gb_enrich_fn]
+    type  = ParsedFunction
+    value = '0.038 + 0.006*exp(-pow((x - 350)/5.0, 2))'   # center at GB, ~25 nm half-width
+  [../]
 []
 
 [ICs]
   [./eta_pv1]
     variable = eta_pv1
     type = RandomIC
-    min = -0.6
-    max = 0.6
+    min = 0
+    max = 0.1
     seed = 324
   [../]
   [./eta_pv2]
     variable = eta_pv2
     type = RandomIC
-    min = -0.6
-    max = 0.6
+    min = 0
+    max = 0.1
     seed = 230	
   [../]
   [./eta_pv3]
     variable = eta_pv3
     type = RandomIC
-    min = -0.6
-    max = 0.6
+    min = 0
+    max = 0.1
     seed = 307	
   [../]
-[./eta4_plate_ic]
-    type     = FunctionIC
-    variable = eta_pv4            # your δ order parameter name
-    function = eta4_plate_fn
-  [../]
  
-  [./c1]
-    variable = c1
-    type = RandomIC
-    min = 0.010	
-    max = 0.030
-    seed = 403	
-  [../]
-  [./c2]
-    variable = c2
-    type = RandomIC
-    min = 0.032	
-    max = 0.044
-    seed = 89	
+  [./eta_pv4_zero]
+    type=FunctionIC
+    variable = eta_pv4
+    function = eta4_tiny_gb_fn
   [../]
 
+    [./c1_global_ic]
+    type     = ConstantIC
+    variable = c1
+    value    = 0.024            # adjust to your alloy if different
+  [../]
+  [./c2_global_ic]
+    type     = FunctionIC
+    variable = c2
+    function = c2_gb_enrich_fn
+  [../]
+ # ---------- KKS per-phase compositions ----------
+  # Initialize all per-phase c2 fields from the same GB-enriched profile
+  [./c2m_ic]
+    type=FunctionIC
+    variable=c2m
+    function=c2_gb_enrich_fn
+  [../]
+  [./c2pv1_ic]
+    type=FunctionIC
+    variable=c2pv1
+    function=c2_gb_enrich_fn
+  [../]
+  [./c2pv2_ic]
+    type=FunctionIC
+    variable=c2pv2
+    function=c2_gb_enrich_fn
+  [../]
+  [./c2pv3_ic]
+    type=FunctionIC
+    variable=c2pv3
+    function=c2_gb_enrich_fn
+  [../]
+  [./c2pv4_ic]
+    type=FunctionIC
+    variable=c2pv4
+    function=c2_gb_enrich_fn
+  [../]
+
+  # Al-like per-phase (c1*): match the global baseline for a consistent start
+  [./c1m_ic]
+    type=ConstantIC
+    variable=c1m
+    value=0.024
+  [../]
+  [./c1pv1_ic]
+    type=ConstantIC
+    variable=c1pv1
+    value=0.024
+  [../]
+  [./c1pv2_ic]
+    type=ConstantIC
+    variable=c1pv2
+    value=0.024
+  [../]
+  [./c1pv3_ic]
+    type=ConstantIC
+    variable=c1pv3
+    value=0.024
+  [../]
+  [./c1pv4_ic]
+    type=ConstantIC
+    variable=c1pv4
+    value=0.024
+  [../]
 []
 
 
@@ -508,12 +555,17 @@
     sum_materials = 'fc_pv3 fe_pv3'
     coupled_variables = 'c1pv3 c2pv3'
   [../]
-  [./f4]
-    type = DerivativeParsedMaterial
-    property_name = fc_pv4
-    coupled_variables = 'c1pv4 c2pv4'
-    expression = '50.0*((c1pv4-0.000727)^2+2*(c2pv4-0.196)^2)'
-  [../]
+   # --- δ chemical free energy (gated ON at ~3 h) ---
+  # Lowered prefactor (35 < 50) makes δ thermodynamically more favorable than γ″,
+  # matching that δ is the equilibrium phase. 'gate_3h' keeps it ~0 before 3 h.
+  [./fc_pv4]
+  type = DerivativeParsedMaterial
+  property_name     = fc_pv4
+  coupled_variables = 'c1pv4 c2pv4'
+  # pick centers near your actual compositions (example below)
+  expression        = '35*((c1pv4 - 0.020)^2 + 2*(c2pv4 - 0.060)^2)'
+[../]
+
   # Elastic energy of the phase 4
   [./elastic_free_energy_pv4]
     type = ElasticEnergyMaterial
@@ -523,11 +575,11 @@
   [../]
     # Total free energy of the phase 4
   [./Total_energy_pv4]
-    type = DerivativeSumMaterial
-    property_name = Fpv4
-    sum_materials = 'fc_pv4 fe_pv4'
-    coupled_variables = 'c1pv4 c2pv4'
-  [../]
+  type = DerivativeSumMaterial
+  property_name  = Fpv4
+  sum_materials  = 'fc_pv4 fe_pv4'
+  coupled_variables = 'c1pv4 c2pv4'
+[../]
 
   # Switching functions for each phase
   # hm(eta_pv1, eta_pv2, eta_m)
@@ -636,9 +688,14 @@
   # constant properties
   [./constants]
     type = GenericConstantMaterial
-    prop_names  = 'L    kappa  D  misfit     W'
-    prop_values = '0.3  0.01   1    1        0.01'
+    prop_names  = 'L    kappa kappa_pv4 D  misfit     W'
+    prop_values = '0.3  0.01    0.008   1    1        0.01'
   [../]
+  #[./gate_3h_prop]
+   # type        = GenericFunctionMaterial
+  #  prop_names  = 'gate_3h'
+  #  prop_values = 'gate_3h'
+  #[../]
 
   #Mechanical properties
   [./Stiffness_phasem_g0]
@@ -721,7 +778,7 @@
     euler_angle_3 = 0
     block = 1
   [../]
-  [./Stiffness_phasepv4]
+  [./Stiffness_phasepv4_g0]
     type = ComputeElasticityTensor
     C_ijkl = '290.6 187 160.7 290.6 187 309.6 114.2 114.2 119.2'
     base_name = phasepv4
@@ -901,8 +958,8 @@
     type = ComputeRotatedEigenstrain
     base_name = phasepv4
     eigen_base = '0.005320 0.01332 0.02378 0 0 0'
-    Euler_angles = '5.176036589 1.150261992 2.456873451'
-    prefactor = misfit
+    Euler_angles = '0 0 0'
+    prefactor = 1
     eigenstrain_name = eigenstrainpv4
   [../]
   
@@ -1079,7 +1136,7 @@
   [./ACInterfacepv4]
     type = ACInterface
     variable = eta_pv4
-    kappa_name = kappa
+    kappa_name = kappa_pv4
   [../]
 
 # Kernels for constraint equation |eta_pv1| + |eta_pv2| + eta_m = 1
@@ -1306,6 +1363,27 @@
 []
 
 [AuxKernels]
+[./c2_gb_enrich_fn]
+    type      = FunctionAux
+    variable  = gb_mask
+    function  = c2_gb_enrich_fn
+  [../]
+
+  # 2) Weighted c2 for integration/averaging over GB band
+  [./c2_times_mask]
+    type               = ParsedAux
+    variable           = c2_gb_w
+    coupled_variables  = 'c2 gb_mask'
+    expression         = 'c2 * gb_mask'
+  [../]
+
+  # 3) Weighted ∆c2 relative to a baseline (set baseline to your far-field Nb, e.g. 0.038)
+  [./dc2_times_mask]
+    type               = ParsedAux
+    variable           = dc2_gb_w
+    coupled_variables  = 'c2 gb_mask'
+    expression         = '(c2 - 0.038) * gb_mask'
+  [../]
   [./gb_scale_eval]
     type     = FunctionAux
     variable = gb_scale_aux
@@ -1441,41 +1519,7 @@
       expression = 'vonmises * h_m_aux'
       execute_on = timestep_end
     [../]
-  [./sxx_times_h_pv1]
-    type = ParsedAux
-    variable = stress_xx_h_pv1
-    coupled_variables = 'stress_xx h_pv1_aux'
-    expression = 'stress_xx * h_pv1_aux'
-    execute_on = timestep_end
-  [../]
-  [./sxx_times_h_pv2]
-    type = ParsedAux
-    variable = stress_xx_h_pv2
-    coupled_variables = 'stress_xx h_pv2_aux'
-    expression = 'stress_xx * h_pv2_aux'
-    execute_on = timestep_end
-  [../]
-  [./sxx_times_h_pv3]
-    type = ParsedAux
-    variable = stress_xx_h_pv3
-    coupled_variables = 'stress_xx h_pv3_aux'
-    expression = 'stress_xx * h_pv3_aux'
-    execute_on = timestep_end
-  [../]
-  [./sxx_times_h_pv4]
-    type = ParsedAux
-    variable = stress_xx_h_pv4
-    coupled_variables = 'stress_xx h_pv4_aux'
-    expression = 'stress_xx * h_pv4_aux'
-    execute_on = timestep_end
-  [../]
-  [./sxx_times_h_m]
-    type = ParsedAux
-    variable = stress_xx_h_m
-    coupled_variables = 'stress_xx h_m_aux'
-    expression = 'stress_xx * h_m_aux'
-    execute_on = timestep_end
-  [../]
+  
   [./stress_xx]
     type = RankTwoAux
     variable = stress_xx
@@ -1563,26 +1607,7 @@
    type = ElementIntegralVariablePostprocessor
    variable = vonmises_h_m   
    [../]
-  [./num_pv1] 
-  type = ElementIntegralVariablePostprocessor 
-  variable = stress_xx_h_pv1 
-  [../]
-  [./num_pv2] 
-  type = ElementIntegralVariablePostprocessor 
-  variable = stress_xx_h_pv2 
-  [../]
-  [./num_pv3] 
-  type = ElementIntegralVariablePostprocessor 
-  variable = stress_xx_h_pv3 
-  [../]
-  [./num_pv4] 
-  type = ElementIntegralVariablePostprocessor 
-  variable = stress_xx_h_pv4 
-  [../]
-  [./num_m]  
-   type = ElementIntegralVariablePostprocessor 
-   variable = stress_xx_h_m   
-   [../]
+  
 
   # Denominators: ∫ h dV  (phase volumes)
   [./den_pv1] 
@@ -1608,18 +1633,22 @@
   [./eta_pv1]
     type = ElementIntegralVariablePostprocessor
     variable = eta_pv1
+    use_absolute_value = true
   [../]
    [./eta_pv2]
     type = ElementIntegralVariablePostprocessor
     variable = eta_pv2
+    use_absolute_value = true
   [../]
   [./eta_pv3]
     type = ElementIntegralVariablePostprocessor
     variable = eta_pv3
+    use_absolute_value = true
   [../]
   [./eta_pv4]
     type = ElementIntegralVariablePostprocessor
     variable = eta_pv4
+    use_absolute_value = true
   [../]
    [./A_total]   
   type=ElementIntegralVariablePostprocessor 
@@ -1629,7 +1658,23 @@
   type=ElementIntegralVariablePostprocessor 
   variable=g_aux     
   [../]
-  
+    # Average hpv in whole domain
+    [./af_pv1] 
+      type = ElementAverageMaterialProperty 
+      mat_prop = hpv1 
+    [../]
+    [./af_pv2] 
+      type = ElementAverageMaterialProperty 
+      mat_prop = hpv2 
+    [../]
+    [./af_pv3] 
+      type = ElementAverageMaterialProperty 
+      mat_prop = hpv3 
+    [../]
+  [./af_pv4]
+    type = ElementAverageMaterialProperty
+    mat_prop = hpv4
+  [../]
   [./den_g_pv1] 
   type=ElementIntegralVariablePostprocessor 
   variable=h_g_pv1   
@@ -1646,7 +1691,10 @@
   type=ElementIntegralVariablePostprocessor
   variable=h_g_pv4
   [../]
-
+[./int_c2_func]
+    type      = FunctionElementIntegral
+    function  = c2_gb_enrich_fn
+  [../]
    # fractions in GB band and in whole domain
   [./frac_g_pv1] 
   type=ParsedPostprocessor 

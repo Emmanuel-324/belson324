@@ -130,6 +130,19 @@
     order = FIRST
     family = LAGRANGE
   []
+   # New clamped auxiliary variables
+  [./eta_pv1_clamped]
+    family = MONOMIAL
+    order = CONSTANT
+  [../]
+  [./eta_pv2_clamped]
+    family = MONOMIAL
+    order = CONSTANT
+  [../]
+  [./eta_pv3_clamped]
+    family = MONOMIAL
+    order = CONSTANT
+  [../]
 []
 
 [Bounds]
@@ -269,21 +282,19 @@
     symbol_names = alpha
     symbol_values = 16
   [../]
-   [./misfit_c_fn]
+  [./misfit_c_fn]
     type  = ParsedFunction
-    value = 'max(0,
-             0.0008021165212002061*(1 - exp(-pow((t/6630.57)/971.593444453216, 0.1699762344312056))))'
+  # ε_c(t_h) = L / (1 + exp(-(t_h - t0)/k)), with L=0.0286, t0≈-2.22 h, k≈2.89 h
+  # t_h = t/6630.57 converts simulation seconds to hours
+    value = '0.0286 / (1 + exp(-((t/6630.57 - (-2.22))/2.89)))'
   [../]
 
-  # --- γ″ a-axis eigenstrain ε_a(t) in FRACTION units ---
-  # Quadratic was given in percent; divide coefficients by 100
   [./misfit_a_fn]
-    type  = ParsedFunction
-    value = 'max(0,
-             (-0.01186976276826582/100.0)*pow(t/6630.57,2)
-             + (0.1285646769555854/100.0)*(t/6630.57)
-             + (-0.10140175573460311/100.0))'
-  [../]
+  type  = ParsedFunction
+  # ε_a(t_h) = A * ( (t_h/τ)^p ) * exp(-(t_h/τ))
+  # Choose p=2, τ=2.75 h → peak at t≈5.5 h; scale A for peak ≈0.0065
+  value = '(0.0120) * pow(( (t/6630.57)/2.75 ), 2.0) * exp(-( (t/6630.57)/2.75 ))'
+ [../]
 []
 
 [ICs]
@@ -1056,6 +1067,28 @@
     expression = 'stress_xx * h_m_aux'
     execute_on = timestep_end
   [../]
+    # New clamped auxiliary kernels
+  [./clamp_eta_pv1]
+    type = ParsedAux
+    variable = eta_pv1_clamped
+    coupled_variables = 'eta_pv1'
+    expression = 'max(-1, min(1, eta_pv1))'
+    execute_on = timestep_end
+  [../]
+  [./clamp_eta_pv2]
+    type = ParsedAux
+    variable = eta_pv2_clamped
+    coupled_variables = 'eta_pv2'
+    expression = 'max(-1, min(1, eta_pv2))'
+    execute_on = timestep_end
+  [../]
+  [./clamp_eta_pv3]
+    type = ParsedAux
+    variable = eta_pv3_clamped
+    coupled_variables = 'eta_pv3'
+    expression = 'max(-1, min(1, eta_pv3))'
+    execute_on = timestep_end
+  [../]
 []
 
 [Executioner]
@@ -1174,14 +1207,45 @@
   [./eta_pv1]
     type = ElementIntegralVariablePostprocessor
     variable = eta_pv1
+    use_absolute_value = true
   [../]
    [./eta_pv2]
     type = ElementIntegralVariablePostprocessor
     variable = eta_pv2
+    use_absolute_value = true
   [../]
   [./eta_pv3]
     type = ElementIntegralVariablePostprocessor
     variable = eta_pv3
+    use_absolute_value = true
+  [../]
+    # Modified: Integrate clamped eta_pvX (instead of raw eta_pvX with absolute value)
+  [./eta_pv1_clamped]
+    type = ElementIntegralVariablePostprocessor
+    variable = eta_pv1_clamped
+    use_absolute_value = true
+  [../]
+  [./eta_pv2_clamped]
+    type = ElementIntegralVariablePostprocessor
+    variable = eta_pv2_clamped
+    use_absolute_value = true
+  [../]
+  [./eta_pv3_clamped]
+    type = ElementIntegralVariablePostprocessor
+    variable = eta_pv3_clamped
+    use_absolute_value = true
+  [../]
+  [./af_pv1]
+    type = ElementAverageMaterialProperty
+    mat_prop = hpv1
+  [../]
+  [./af_pv2]
+    type = ElementAverageMaterialProperty
+    mat_prop = hpv2
+  [../]
+  [./af_pv3]
+    type = ElementAverageMaterialProperty
+    mat_prop = hpv3
   [../]
    # Average value over the domain (should equal the function value each step)
   [./misfit_c_avg]

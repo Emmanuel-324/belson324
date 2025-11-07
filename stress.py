@@ -3,7 +3,7 @@ from pathlib import Path
 import numpy as np
 
 # ---- SET THIS ----
-file_path = Path(r"/home/emmanuel324/projects/belson324/KKS_large_largescale/10-13-25/EigenA1_a/EigenA1_a_table.csv")  # or .xlsx
+file_path = Path(r"/home/emmanuel324/projects/belson324/KKS_large_largescale/10-24-25/Stress_free_Aging/NW_SF2/NW_SF2_table.csv")  # or .xlsx
 
 # ------------------
 

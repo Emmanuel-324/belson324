@@ -1,0 +1,30 @@
+#!/bin/bash
+#SBATCH -A amcorrosion
+#SBATCH -p normal_q
+#SBATCH -t 02:00:00
+#SBATCH -N 1
+#SBATCH --cpus-per-task=4
+#SBATCH --mem=8G
+#SBATCH -J particle_stats
+#SBATCH -o %x_%j.out
+#SBATCH -e %x_%j.err
+
+set -euo pipefail
+cd "$SLURM_SUBMIT_DIR"
+
+EXO_FILE="/home/emmanuel324/projects/belson324/KKS_large_largescale/10-24-25/Stress_free_Aging/NW_SF1/NW_SF1_out.e"
+OUT_XLSX="particle_stats.xlsx"
+THRESHOLD=0.5
+
+PY="/home/emmanuel324/mambaforge3/bin/python"
+
+export OMP_NUM_THREADS=${SLURM_CPUS_PER_TASK}
+export OPENBLAS_NUM_THREADS=${SLURM_CPUS_PER_TASK}
+export MKL_NUM_THREADS=${SLURM_CPUS_PER_TASK}
+export NUMEXPR_NUM_THREADS=${SLURM_CPUS_PER_TASK}
+export VTK_SMP_MAX_THREADS=${SLURM_CPUS_PER_TASK}
+
+"$PY" particle_stats.py \
+  --exo "$EXO_FILE" \
+  --out "$OUT_XLSX" \
+  --thr $THRESHOLD

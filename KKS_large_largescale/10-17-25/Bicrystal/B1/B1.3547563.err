@@ -1,0 +1,548 @@
+Resetting modules to system default. Reseting $MODULEPATH back to system default. All extra directories will be removed from $MODULEPATH.
+
+[31m
+*** ERROR ***
+/home/emmanuel324/projects/belson324/KKS_large_largescale/10-17-25/Bicrystal/B1/B1.i:1632.3:
+The following error occurred in the TimeStepper 'IterationAdaptiveDT' of type IterationAdaptiveDT.
+
+Solve failed and timestep already at dtmin, cannot continue![39m
+
+Abort(1) on node 18 (rank 18 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 18
+
+[31m
+*** ERROR ***
+/home/emmanuel324/projects/belson324/KKS_large_largescale/10-17-25/Bicrystal/B1/B1.i:1632.3:
+The following error occurred in the TimeStepper 'IterationAdaptiveDT' of type IterationAdaptiveDT.
+
+Solve failed and timestep already at dtmin, cannot continue![39m
+
+Abort(1) on node 22 (rank 22 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 22
+
+[31m
+*** ERROR ***
+/home/emmanuel324/projects/belson324/KKS_large_largescale/10-17-25/Bicrystal/B1/B1.i:1632.3:
+The following error occurred in the TimeStepper 'IterationAdaptiveDT' of type IterationAdaptiveDT.
+
+Solve failed and timestep already at dtmin, cannot continue![39m
+
+Abort(1) on node 52 (rank 52 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 52
+
+[31m
+*** ERROR ***
+/home/emmanuel324/projects/belson324/KKS_large_largescale/10-17-25/Bicrystal/B1/B1.i:1632.3:
+The following error occurred in the TimeStepper 'IterationAdaptiveDT' of type IterationAdaptiveDT.
+
+Solve failed and timestep already at dtmin, cannot continue![39m
+
+Abort(1) on node 53 (rank 53 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 53
+
+[31m
+*** ERROR ***
+/home/emmanuel324/projects/belson324/KKS_large_largescale/10-17-25/Bicrystal/B1/B1.i:1632.3:
+The following error occurred in the TimeStepper 'IterationAdaptiveDT' of type IterationAdaptiveDT.
+
+Solve failed and timestep already at dtmin, cannot continue![39m
+
+Abort(1) on node 54 (rank 54 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 54
+
+[31m
+*** ERROR ***
+/home/emmanuel324/projects/belson324/KKS_large_largescale/10-17-25/Bicrystal/B1/B1.i:1632.3:
+The following error occurred in the TimeStepper 'IterationAdaptiveDT' of type IterationAdaptiveDT.
+
+Solve failed and timestep already at dtmin, cannot continue![39m
+
+Abort(1) on node 55 (rank 55 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 55
+
+[31m
+*** ERROR ***
+/home/emmanuel324/projects/belson324/KKS_large_largescale/10-17-25/Bicrystal/B1/B1.i:1632.3:
+The following error occurred in the TimeStepper 'IterationAdaptiveDT' of type IterationAdaptiveDT.
+
+Solve failed and timestep already at dtmin, cannot continue![39m
+
+Abort(1) on node 0 (rank 0 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 0
+
+[31m
+*** ERROR ***
+/home/emmanuel324/projects/belson324/KKS_large_largescale/10-17-25/Bicrystal/B1/B1.i:1632.3:
+The following error occurred in the TimeStepper 'IterationAdaptiveDT' of type IterationAdaptiveDT.
+
+Solve failed and timestep already at dtmin, cannot continue![39m
+
+Abort(1) on node 1 (rank 1 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 1
+
+[31m
+*** ERROR ***
+/home/emmanuel324/projects/belson324/KKS_large_largescale/10-17-25/Bicrystal/B1/B1.i:1632.3:
+The following error occurred in the TimeStepper 'IterationAdaptiveDT' of type IterationAdaptiveDT.
+
+Solve failed and timestep already at dtmin, cannot continue![39m
+
+Abort(1) on node 2 (rank 2 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 2
+
+[31m
+*** ERROR ***
+/home/emmanuel324/projects/belson324/KKS_large_largescale/10-17-25/Bicrystal/B1/B1.i:1632.3:
+The following error occurred in the TimeStepper 'IterationAdaptiveDT' of type IterationAdaptiveDT.
+
+Solve failed and timestep already at dtmin, cannot continue![39m
+
+Abort(1) on node 3 (rank 3 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 3
+
+[31m
+*** ERROR ***
+/home/emmanuel324/projects/belson324/KKS_large_largescale/10-17-25/Bicrystal/B1/B1.i:1632.3:
+The following error occurred in the TimeStepper 'IterationAdaptiveDT' of type IterationAdaptiveDT.
+
+Solve failed and timestep already at dtmin, cannot continue![39m
+
+Abort(1) on node 4 (rank 4 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 4
+
+[31m
+*** ERROR ***
+/home/emmanuel324/projects/belson324/KKS_large_largescale/10-17-25/Bicrystal/B1/B1.i:1632.3:
+The following error occurred in the TimeStepper 'IterationAdaptiveDT' of type IterationAdaptiveDT.
+
+Solve failed and timestep already at dtmin, cannot continue![39m
+
+Abort(1) on node 5 (rank 5 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 5
+
+[31m
+*** ERROR ***
+/home/emmanuel324/projects/belson324/KKS_large_largescale/10-17-25/Bicrystal/B1/B1.i:1632.3:
+The following error occurred in the TimeStepper 'IterationAdaptiveDT' of type IterationAdaptiveDT.
+
+Solve failed and timestep already at dtmin, cannot continue![39m
+
+Abort(1) on node 6 (rank 6 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 6
+
+[31m
+*** ERROR ***
+/home/emmanuel324/projects/belson324/KKS_large_largescale/10-17-25/Bicrystal/B1/B1.i:1632.3:
+The following error occurred in the TimeStepper 'IterationAdaptiveDT' of type IterationAdaptiveDT.
+
+Solve failed and timestep already at dtmin, cannot continue![39m
+
+Abort(1) on node 7 (rank 7 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 7
+
+[31m
+*** ERROR ***
+/home/emmanuel324/projects/belson324/KKS_large_largescale/10-17-25/Bicrystal/B1/B1.i:1632.3:
+The following error occurred in the TimeStepper 'IterationAdaptiveDT' of type IterationAdaptiveDT.
+
+Solve failed and timestep already at dtmin, cannot continue![39m
+
+Abort(1) on node 8 (rank 8 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 8
+
+[31m
+*** ERROR ***
+/home/emmanuel324/projects/belson324/KKS_large_largescale/10-17-25/Bicrystal/B1/B1.i:1632.3:
+The following error occurred in the TimeStepper 'IterationAdaptiveDT' of type IterationAdaptiveDT.
+
+Solve failed and timestep already at dtmin, cannot continue![39m
+
+Abort(1) on node 9 (rank 9 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 9
+
+[31m
+*** ERROR ***
+/home/emmanuel324/projects/belson324/KKS_large_largescale/10-17-25/Bicrystal/B1/B1.i:1632.3:
+The following error occurred in the TimeStepper 'IterationAdaptiveDT' of type IterationAdaptiveDT.
+
+Solve failed and timestep already at dtmin, cannot continue![39m
+
+Abort(1) on node 10 (rank 10 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 10
+
+[31m
+*** ERROR ***
+/home/emmanuel324/projects/belson324/KKS_large_largescale/10-17-25/Bicrystal/B1/B1.i:1632.3:
+The following error occurred in the TimeStepper 'IterationAdaptiveDT' of type IterationAdaptiveDT.
+
+Solve failed and timestep already at dtmin, cannot continue![39m
+
+Abort(1) on node 11 (rank 11 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 11
+
+[31m
+*** ERROR ***
+/home/emmanuel324/projects/belson324/KKS_large_largescale/10-17-25/Bicrystal/B1/B1.i:1632.3:
+The following error occurred in the TimeStepper 'IterationAdaptiveDT' of type IterationAdaptiveDT.
+
+Solve failed and timestep already at dtmin, cannot continue![39m
+
+Abort(1) on node 12 (rank 12 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 12
+
+[31m
+*** ERROR ***
+/home/emmanuel324/projects/belson324/KKS_large_largescale/10-17-25/Bicrystal/B1/B1.i:1632.3:
+The following error occurred in the TimeStepper 'IterationAdaptiveDT' of type IterationAdaptiveDT.
+
+Solve failed and timestep already at dtmin, cannot continue![39m
+
+Abort(1) on node 13 (rank 13 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 13
+
+[31m
+*** ERROR ***
+/home/emmanuel324/projects/belson324/KKS_large_largescale/10-17-25/Bicrystal/B1/B1.i:1632.3:
+The following error occurred in the TimeStepper 'IterationAdaptiveDT' of type IterationAdaptiveDT.
+
+Solve failed and timestep already at dtmin, cannot continue![39m
+
+Abort(1) on node 14 (rank 14 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 14
+
+[31m
+*** ERROR ***
+/home/emmanuel324/projects/belson324/KKS_large_largescale/10-17-25/Bicrystal/B1/B1.i:1632.3:
+The following error occurred in the TimeStepper 'IterationAdaptiveDT' of type IterationAdaptiveDT.
+
+Solve failed and timestep already at dtmin, cannot continue![39m
+
+Abort(1) on node 15 (rank 15 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 15
+
+[31m
+*** ERROR ***
+/home/emmanuel324/projects/belson324/KKS_large_largescale/10-17-25/Bicrystal/B1/B1.i:1632.3:
+The following error occurred in the TimeStepper 'IterationAdaptiveDT' of type IterationAdaptiveDT.
+
+Solve failed and timestep already at dtmin, cannot continue![39m
+
+Abort(1) on node 16 (rank 16 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 16
+
+[31m
+*** ERROR ***
+/home/emmanuel324/projects/belson324/KKS_large_largescale/10-17-25/Bicrystal/B1/B1.i:1632.3:
+The following error occurred in the TimeStepper 'IterationAdaptiveDT' of type IterationAdaptiveDT.
+
+Solve failed and timestep already at dtmin, cannot continue![39m
+
+Abort(1) on node 17 (rank 17 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 17
+
+[31m
+*** ERROR ***
+/home/emmanuel324/projects/belson324/KKS_large_largescale/10-17-25/Bicrystal/B1/B1.i:1632.3:
+The following error occurred in the TimeStepper 'IterationAdaptiveDT' of type IterationAdaptiveDT.
+
+Solve failed and timestep already at dtmin, cannot continue![39m
+
+Abort(1) on node 19 (rank 19 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 19
+
+[31m
+*** ERROR ***
+/home/emmanuel324/projects/belson324/KKS_large_largescale/10-17-25/Bicrystal/B1/B1.i:1632.3:
+The following error occurred in the TimeStepper 'IterationAdaptiveDT' of type IterationAdaptiveDT.
+
+Solve failed and timestep already at dtmin, cannot continue![39m
+
+Abort(1) on node 20 (rank 20 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 20
+
+[31m
+*** ERROR ***
+/home/emmanuel324/projects/belson324/KKS_large_largescale/10-17-25/Bicrystal/B1/B1.i:1632.3:
+The following error occurred in the TimeStepper 'IterationAdaptiveDT' of type IterationAdaptiveDT.
+
+Solve failed and timestep already at dtmin, cannot continue![39m
+
+Abort(1) on node 21 (rank 21 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 21
+
+[31m
+*** ERROR ***
+/home/emmanuel324/projects/belson324/KKS_large_largescale/10-17-25/Bicrystal/B1/B1.i:1632.3:
+The following error occurred in the TimeStepper 'IterationAdaptiveDT' of type IterationAdaptiveDT.
+
+Solve failed and timestep already at dtmin, cannot continue![39m
+
+Abort(1) on node 23 (rank 23 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 23
+
+[31m
+*** ERROR ***
+/home/emmanuel324/projects/belson324/KKS_large_largescale/10-17-25/Bicrystal/B1/B1.i:1632.3:
+The following error occurred in the TimeStepper 'IterationAdaptiveDT' of type IterationAdaptiveDT.
+
+Solve failed and timestep already at dtmin, cannot continue![39m
+
+Abort(1) on node 24 (rank 24 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 24
+
+[31m
+*** ERROR ***
+/home/emmanuel324/projects/belson324/KKS_large_largescale/10-17-25/Bicrystal/B1/B1.i:1632.3:
+The following error occurred in the TimeStepper 'IterationAdaptiveDT' of type IterationAdaptiveDT.
+
+Solve failed and timestep already at dtmin, cannot continue![39m
+
+Abort(1) on node 25 (rank 25 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 25
+
+[31m
+*** ERROR ***
+/home/emmanuel324/projects/belson324/KKS_large_largescale/10-17-25/Bicrystal/B1/B1.i:1632.3:
+The following error occurred in the TimeStepper 'IterationAdaptiveDT' of type IterationAdaptiveDT.
+
+Solve failed and timestep already at dtmin, cannot continue![39m
+
+Abort(1) on node 26 (rank 26 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 26
+
+[31m
+*** ERROR ***
+/home/emmanuel324/projects/belson324/KKS_large_largescale/10-17-25/Bicrystal/B1/B1.i:1632.3:
+The following error occurred in the TimeStepper 'IterationAdaptiveDT' of type IterationAdaptiveDT.
+
+Solve failed and timestep already at dtmin, cannot continue![39m
+
+Abort(1) on node 27 (rank 27 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 27
+
+[31m
+*** ERROR ***
+/home/emmanuel324/projects/belson324/KKS_large_largescale/10-17-25/Bicrystal/B1/B1.i:1632.3:
+The following error occurred in the TimeStepper 'IterationAdaptiveDT' of type IterationAdaptiveDT.
+
+Solve failed and timestep already at dtmin, cannot continue![39m
+
+Abort(1) on node 28 (rank 28 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 28
+
+[31m
+*** ERROR ***
+/home/emmanuel324/projects/belson324/KKS_large_largescale/10-17-25/Bicrystal/B1/B1.i:1632.3:
+The following error occurred in the TimeStepper 'IterationAdaptiveDT' of type IterationAdaptiveDT.
+
+Solve failed and timestep already at dtmin, cannot continue![39m
+
+Abort(1) on node 29 (rank 29 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 29
+
+[31m
+*** ERROR ***
+/home/emmanuel324/projects/belson324/KKS_large_largescale/10-17-25/Bicrystal/B1/B1.i:1632.3:
+The following error occurred in the TimeStepper 'IterationAdaptiveDT' of type IterationAdaptiveDT.
+
+Solve failed and timestep already at dtmin, cannot continue![39m
+
+Abort(1) on node 30 (rank 30 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 30
+
+[31m
+*** ERROR ***
+/home/emmanuel324/projects/belson324/KKS_large_largescale/10-17-25/Bicrystal/B1/B1.i:1632.3:
+The following error occurred in the TimeStepper 'IterationAdaptiveDT' of type IterationAdaptiveDT.
+
+Solve failed and timestep already at dtmin, cannot continue![39m
+
+Abort(1) on node 31 (rank 31 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 31
+
+[31m
+*** ERROR ***
+/home/emmanuel324/projects/belson324/KKS_large_largescale/10-17-25/Bicrystal/B1/B1.i:1632.3:
+The following error occurred in the TimeStepper 'IterationAdaptiveDT' of type IterationAdaptiveDT.
+
+Solve failed and timestep already at dtmin, cannot continue![39m
+
+Abort(1) on node 32 (rank 32 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 32
+
+[31m
+*** ERROR ***
+/home/emmanuel324/projects/belson324/KKS_large_largescale/10-17-25/Bicrystal/B1/B1.i:1632.3:
+The following error occurred in the TimeStepper 'IterationAdaptiveDT' of type IterationAdaptiveDT.
+
+Solve failed and timestep already at dtmin, cannot continue![39m
+
+Abort(1) on node 33 (rank 33 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 33
+
+[31m
+*** ERROR ***
+/home/emmanuel324/projects/belson324/KKS_large_largescale/10-17-25/Bicrystal/B1/B1.i:1632.3:
+The following error occurred in the TimeStepper 'IterationAdaptiveDT' of type IterationAdaptiveDT.
+
+Solve failed and timestep already at dtmin, cannot continue![39m
+
+Abort(1) on node 34 (rank 34 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 34
+
+[31m
+*** ERROR ***
+/home/emmanuel324/projects/belson324/KKS_large_largescale/10-17-25/Bicrystal/B1/B1.i:1632.3:
+The following error occurred in the TimeStepper 'IterationAdaptiveDT' of type IterationAdaptiveDT.
+
+Solve failed and timestep already at dtmin, cannot continue![39m
+
+Abort(1) on node 35 (rank 35 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 35
+
+[31m
+*** ERROR ***
+/home/emmanuel324/projects/belson324/KKS_large_largescale/10-17-25/Bicrystal/B1/B1.i:1632.3:
+The following error occurred in the TimeStepper 'IterationAdaptiveDT' of type IterationAdaptiveDT.
+
+Solve failed and timestep already at dtmin, cannot continue![39m
+
+Abort(1) on node 36 (rank 36 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 36
+
+[31m
+*** ERROR ***
+/home/emmanuel324/projects/belson324/KKS_large_largescale/10-17-25/Bicrystal/B1/B1.i:1632.3:
+The following error occurred in the TimeStepper 'IterationAdaptiveDT' of type IterationAdaptiveDT.
+
+Solve failed and timestep already at dtmin, cannot continue![39m
+
+Abort(1) on node 37 (rank 37 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 37
+
+[31m
+*** ERROR ***
+/home/emmanuel324/projects/belson324/KKS_large_largescale/10-17-25/Bicrystal/B1/B1.i:1632.3:
+The following error occurred in the TimeStepper 'IterationAdaptiveDT' of type IterationAdaptiveDT.
+
+Solve failed and timestep already at dtmin, cannot continue![39m
+
+Abort(1) on node 38 (rank 38 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 38
+
+[31m
+*** ERROR ***
+/home/emmanuel324/projects/belson324/KKS_large_largescale/10-17-25/Bicrystal/B1/B1.i:1632.3:
+The following error occurred in the TimeStepper 'IterationAdaptiveDT' of type IterationAdaptiveDT.
+
+Solve failed and timestep already at dtmin, cannot continue![39m
+
+Abort(1) on node 39 (rank 39 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 39
+
+[31m
+*** ERROR ***
+/home/emmanuel324/projects/belson324/KKS_large_largescale/10-17-25/Bicrystal/B1/B1.i:1632.3:
+The following error occurred in the TimeStepper 'IterationAdaptiveDT' of type IterationAdaptiveDT.
+
+Solve failed and timestep already at dtmin, cannot continue![39m
+
+Abort(1) on node 40 (rank 40 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 40
+
+[31m
+*** ERROR ***
+/home/emmanuel324/projects/belson324/KKS_large_largescale/10-17-25/Bicrystal/B1/B1.i:1632.3:
+The following error occurred in the TimeStepper 'IterationAdaptiveDT' of type IterationAdaptiveDT.
+
+Solve failed and timestep already at dtmin, cannot continue![39m
+
+Abort(1) on node 41 (rank 41 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 41
+
+[31m
+*** ERROR ***
+/home/emmanuel324/projects/belson324/KKS_large_largescale/10-17-25/Bicrystal/B1/B1.i:1632.3:
+The following error occurred in the TimeStepper 'IterationAdaptiveDT' of type IterationAdaptiveDT.
+
+Solve failed and timestep already at dtmin, cannot continue![39m
+
+Abort(1) on node 42 (rank 42 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 42
+
+[31m
+*** ERROR ***
+/home/emmanuel324/projects/belson324/KKS_large_largescale/10-17-25/Bicrystal/B1/B1.i:1632.3:
+The following error occurred in the TimeStepper 'IterationAdaptiveDT' of type IterationAdaptiveDT.
+
+Solve failed and timestep already at dtmin, cannot continue![39m
+
+Abort(1) on node 43 (rank 43 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 43
+
+[31m
+*** ERROR ***
+/home/emmanuel324/projects/belson324/KKS_large_largescale/10-17-25/Bicrystal/B1/B1.i:1632.3:
+The following error occurred in the TimeStepper 'IterationAdaptiveDT' of type IterationAdaptiveDT.
+
+Solve failed and timestep already at dtmin, cannot continue![39m
+
+Abort(1) on node 44 (rank 44 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 44
+
+[31m
+*** ERROR ***
+/home/emmanuel324/projects/belson324/KKS_large_largescale/10-17-25/Bicrystal/B1/B1.i:1632.3:
+The following error occurred in the TimeStepper 'IterationAdaptiveDT' of type IterationAdaptiveDT.
+
+Solve failed and timestep already at dtmin, cannot continue![39m
+
+Abort(1) on node 45 (rank 45 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 45
+
+[31m
+*** ERROR ***
+/home/emmanuel324/projects/belson324/KKS_large_largescale/10-17-25/Bicrystal/B1/B1.i:1632.3:
+The following error occurred in the TimeStepper 'IterationAdaptiveDT' of type IterationAdaptiveDT.
+
+Solve failed and timestep already at dtmin, cannot continue![39m
+
+Abort(1) on node 46 (rank 46 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 46
+
+[31m
+*** ERROR ***
+/home/emmanuel324/projects/belson324/KKS_large_largescale/10-17-25/Bicrystal/B1/B1.i:1632.3:
+The following error occurred in the TimeStepper 'IterationAdaptiveDT' of type IterationAdaptiveDT.
+
+Solve failed and timestep already at dtmin, cannot continue![39m
+
+Abort(1) on node 47 (rank 47 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 47
+
+[31m
+*** ERROR ***
+/home/emmanuel324/projects/belson324/KKS_large_largescale/10-17-25/Bicrystal/B1/B1.i:1632.3:
+The following error occurred in the TimeStepper 'IterationAdaptiveDT' of type IterationAdaptiveDT.
+
+Solve failed and timestep already at dtmin, cannot continue![39m
+
+Abort(1) on node 48 (rank 48 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 48
+
+[31m
+*** ERROR ***
+/home/emmanuel324/projects/belson324/KKS_large_largescale/10-17-25/Bicrystal/B1/B1.i:1632.3:
+The following error occurred in the TimeStepper 'IterationAdaptiveDT' of type IterationAdaptiveDT.
+
+Solve failed and timestep already at dtmin, cannot continue![39m
+
+Abort(1) on node 49 (rank 49 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 49
+
+[31m
+*** ERROR ***
+/home/emmanuel324/projects/belson324/KKS_large_largescale/10-17-25/Bicrystal/B1/B1.i:1632.3:
+The following error occurred in the TimeStepper 'IterationAdaptiveDT' of type IterationAdaptiveDT.
+
+Solve failed and timestep already at dtmin, cannot continue![39m
+
+Abort(1) on node 50 (rank 50 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 50
+
+[31m
+*** ERROR ***
+/home/emmanuel324/projects/belson324/KKS_large_largescale/10-17-25/Bicrystal/B1/B1.i:1632.3:
+The following error occurred in the TimeStepper 'IterationAdaptiveDT' of type IterationAdaptiveDT.
+
+Solve failed and timestep already at dtmin, cannot continue![39m
+
+Abort(1) on node 51 (rank 51 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 51
+
+[31m
+*** ERROR ***
+/home/emmanuel324/projects/belson324/KKS_large_largescale/10-17-25/Bicrystal/B1/B1.i:1632.3:
+The following error occurred in the TimeStepper 'IterationAdaptiveDT' of type IterationAdaptiveDT.
+
+Solve failed and timestep already at dtmin, cannot continue![39m
+
+Abort(1) on node 56 (rank 56 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 56
+
+[31m
+*** ERROR ***
+/home/emmanuel324/projects/belson324/KKS_large_largescale/10-17-25/Bicrystal/B1/B1.i:1632.3:
+The following error occurred in the TimeStepper 'IterationAdaptiveDT' of type IterationAdaptiveDT.
+
+Solve failed and timestep already at dtmin, cannot continue![39m
+
+Abort(1) on node 57 (rank 57 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 57
+
+[31m
+*** ERROR ***
+/home/emmanuel324/projects/belson324/KKS_large_largescale/10-17-25/Bicrystal/B1/B1.i:1632.3:
+The following error occurred in the TimeStepper 'IterationAdaptiveDT' of type IterationAdaptiveDT.
+
+Solve failed and timestep already at dtmin, cannot continue![39m
+
+Abort(1) on node 58 (rank 58 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 58
+
+[31m
+*** ERROR ***
+/home/emmanuel324/projects/belson324/KKS_large_largescale/10-17-25/Bicrystal/B1/B1.i:1632.3:
+The following error occurred in the TimeStepper 'IterationAdaptiveDT' of type IterationAdaptiveDT.
+
+Solve failed and timestep already at dtmin, cannot continue![39m
+
+Abort(1) on node 59 (rank 59 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 59
+slurmstepd: error: *** STEP 3547563.0 ON tc058 CANCELLED AT 2025-10-23T08:34:01 ***
+srun: Job step aborted: Waiting up to 62 seconds for job step to finish.
+srun: error: tc058: tasks 0-4,6,8-15,17,19,24-32,34,36-46,48,50,56-59: Aborted
+srun: error: tc058: task 47: Aborted
+srun: error: tc058: tasks 5,7,18,21-23,33,35,49,51,54-55: Aborted (core dumped)
+srun: error: tc058: tasks 16,20: Aborted (core dumped)
+srun: error: tc058: tasks 52-53: Aborted (core dumped)

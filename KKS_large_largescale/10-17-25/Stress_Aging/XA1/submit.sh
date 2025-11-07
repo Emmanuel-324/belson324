@@ -3,7 +3,7 @@
 #SBATCH --output=XA1.%j.out 
 #SBATCH --error=XA1.%j.err       
 #SBATCH --nodes=1                                                              
-#SBATCH --ntasks-per-node=50
+#SBATCH --ntasks-per-node=64
 #SBATCH --cpus-per-task=2
 #SBATCH --account=amcorrosion                                                  
 #SBATCH --partition=normal_q                                                   
@@ -27,7 +27,7 @@ export PATH="$CONDA_PREFIX/bin:$PATH"
 # Go to job submission directory
 cd "${SLURM_SUBMIT_DIR}"
 
-srun --export=ALL --mpi=pmi2 -n 50 /home/emmanuel324/projects/belson324/belson324-opt  -i  XA1.i
+srun --export=ALL --mpi=pmi2 -n 64 /home/emmanuel324/projects/belson324/belson324-opt  -i  XA1.i
 
 
 
