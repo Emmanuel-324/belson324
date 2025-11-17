@@ -648,8 +648,8 @@
   # constant properties
   [./constants]
     type = GenericConstantMaterial
-    prop_names  = 'L    kappa  D   misfit    W'
-    prop_values = '0.3   0.01  1     1      0.01'
+    prop_names  = 'L     kappa     D  misfit   W'
+    prop_values = '0.3   0.01      1    1     0.01'
   [../]
   #[./gate_3h_prop]
    # type        = GenericFunctionMaterial
@@ -739,7 +739,7 @@
     block = 1
   [../]
    # per-block stiffness for pv4
-[./Stiffness_phasepv4_g0]
+[./Stiffness_phasepv4]
   type = ComputeElasticityTensor
   C_ijkl = '290.6 187 160.7 290.6 187 309.6 114.2 114.2 119.2'
   base_name = phasepv4
@@ -747,20 +747,8 @@
   euler_angle_1 = 5.176036589
   euler_angle_2 = 1.150261992
   euler_angle_3 = 2.456873451
-  block = 0
 [../]
 
-[./Stiffness_phasepv4_g1]
-  type = ComputeElasticityTensor
-  C_ijkl = '290.6 187 160.7 290.6 187 309.6 114.2 114.2 119.2'
-  base_name = phasepv4
-  fill_method = symmetric9
-  euler_angle_1 = 5.176036589
-  euler_angle_2 = 1.150261992
-  euler_angle_3 = 2.456873451
-  block = 1
-[../]
-  
 
   [./stress_phasepv1_g0]
     type = ComputeLinearElasticStress
@@ -792,17 +780,11 @@
     base_name = phasepv3
     block = 1
   [../]
-   [./stress_phasepv4_g0]
+   [./stress_phasepv4]
     type = ComputeLinearElasticStress
     base_name = phasepv4
-    block = 0
   [../]
-  [./stress_phasepv4_g1]
-    type = ComputeLinearElasticStress
-    base_name = phasepv4
-    block = 1
-  [../]
-
+ 
   [./stress_phasem_g0]
     type = ComputeLinearElasticStress
     base_name = phasem
@@ -868,21 +850,12 @@
     eigenstrain_names = eigenstrainpv3
     block = 1
   [../]
-  [./strain_phasepv4_g0]
+  [./strain_phasepv4]
     type = ComputeSmallStrain
     displacements = 'disp_x disp_y'
     base_name = phasepv4
     eigenstrain_names = eigenstrainpv4
-    block = 0
   [../]
-  [./strain_phasepv4_g1]
-    type = ComputeSmallStrain
-    displacements = 'disp_x disp_y'
-    base_name = phasepv4
-    eigenstrain_names = eigenstrainpv4
-    block = 1
-  [../]
-
 
 
   [./eigen_strainpv1_g0]
@@ -936,30 +909,21 @@
     base_name = phasepv3
     eigen_base = '0.0067 0.028 0 0 0 0'
     Euler_angles = '45 0 0'
-    prefactor = misfit
+    prefactor = 0
     eigenstrain_name = eigenstrainpv3
     block = 1
   [../]
   # per-block eigenstrain (mirrors stiffness blocks)
-[./eigen_strainpv4_g0]
+[./eigen_strainpv4]
   type = ComputeRotatedEigenstrain
   base_name = phasepv4
   eigen_base = '0.005320 0.01332 0.02378 0 0 0'
   Euler_angles = '5.176036589 1.150261992 2.456873451'
   prefactor = 0
   eigenstrain_name = eigenstrainpv4
-  block = 0
 [../]
 
-[./eigen_strainpv4_g1]
-  type = ComputeRotatedEigenstrain
-  base_name = phasepv4
-  eigen_base = '0.005320 0.01332 0.02378 0 0 0'
-  Euler_angles = '5.176036589 1.150261992 2.456873451'
-  prefactor = 0
-  eigenstrain_name = eigenstrainpv4
-  block = 1
-[../]
+
   
 
 

@@ -648,8 +648,8 @@
   # constant properties
   [./constants]
     type = GenericConstantMaterial
-    prop_names  = 'L    kappa  D   misfit    W'
-    prop_values = '0.3   0.01  1     1      0.01'
+    prop_names  = 'L   L_eta_pv4  kappa kappa_pv4 D  misfit     W'
+    prop_values = '0.3  0.1        0.01    0.02   1    1        0.01'
   [../]
   #[./gate_3h_prop]
    # type        = GenericFunctionMaterial
@@ -946,7 +946,7 @@
   base_name = phasepv4
   eigen_base = '0.005320 0.01332 0.02378 0 0 0'
   Euler_angles = '5.176036589 1.150261992 2.456873451'
-  prefactor = 0
+  prefactor = 1
   eigenstrain_name = eigenstrainpv4
   block = 0
 [../]
@@ -956,7 +956,7 @@
   base_name = phasepv4
   eigen_base = '0.005320 0.01332 0.02378 0 0 0'
   Euler_angles = '5.176036589 1.150261992 2.456873451'
-  prefactor = 0
+  prefactor = 1
   eigenstrain_name = eigenstrainpv4
   block = 1
 [../]
@@ -1111,6 +1111,7 @@
     gi_name   = gpv4
     eta_i     = eta_pv4
     wi        = 0.01
+    mob_name = L_eta_pv4
     coupled_variables      = 'c1pv1 c1pv2 c1pv3 c1pv4 c1m c2pv1 c2pv2 c2pv3 c2pv4 c2m eta_pv1 eta_pv2 eta_pv3 eta_m'
   [../]
   [./ACBulkCpv4_c1]
@@ -1120,6 +1121,7 @@
     hj_names  = 'hpv1 hpv2 hpv3 hpv4 hm'
     cj_names  = 'c1pv1 c1pv2 c1pv3 c1pv4 c1m'
     eta_i     = eta_pv4
+    mob_name = L_eta_pv4
     coupled_variables      = 'c2pv1 c2pv2 c2pv3 c2pv4 c2m eta_pv1 eta_pv2 eta_pv3 eta_m'
   [../]
   [./ACBulkCpv4_c2]
@@ -1129,12 +1131,13 @@
     hj_names  = 'hpv1 hpv2 hpv3 hpv4 hm'
     cj_names  = 'c2pv1 c2pv2 c2pv3 c2pv4 c2m'
     eta_i     = eta_pv4
+    mob_name = L_eta_pv4
     coupled_variables      = 'c1pv1 c1pv2 c1pv3 c1pv4 c1m eta_pv1 eta_pv2 eta_pv3 eta_m'
   [../]
   [./ACInterfacepv4]
     type = ACInterface
     variable = eta_pv4
-    kappa_name = kappa
+    kappa_name = kappa_pv4
   [../]
 
 # Kernels for constraint equation |eta_pv1| + |eta_pv2| + eta_m = 1

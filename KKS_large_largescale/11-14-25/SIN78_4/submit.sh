@@ -1,9 +1,9 @@
 #!/bin/bash                                                                     
-#SBATCH --job-name=BiC_1.i                                            
-#SBATCH --output=BiC_1.%j.out 
-#SBATCH --error=BiC_1.%j.err       
+#SBATCH --job-name=SIN78_4.i                                            
+#SBATCH --output=SIN78_4.%j.out 
+#SBATCH --error=SIN78_4.%j.err       
 #SBATCH --nodes=1                                                              
-#SBATCH --ntasks-per-node=35
+#SBATCH --ntasks-per-node=30
 #SBATCH --cpus-per-task=2
 #SBATCH --account=amcorrosion                                                  
 #SBATCH --partition=normal_q                                                   
@@ -19,6 +19,7 @@
 module reset
 module load EasyBuild/5.0.0
 module load Miniforge3/24.11.3-0
+module load OpenMPI/4.1.6-GCC-13.2.0
 source activate /home/emmanuel324/mambaforge3/envs/moose 
 
 export PATH="$CONDA_PREFIX/bin:$PATH"
@@ -26,7 +27,7 @@ export PATH="$CONDA_PREFIX/bin:$PATH"
 # Go to job submission directory
 cd "${SLURM_SUBMIT_DIR}"
 
-srun --export=ALL --mpi=pmi2 -n 35 /home/emmanuel324/projects/belson324/belson324-opt  -i  BiC_1.i
+srun --export=ALL --mpi=pmi2 -n 30 /home/emmanuel324/projects/belson324/belson324-opt  -i  SIN78_4.i
 
 
 

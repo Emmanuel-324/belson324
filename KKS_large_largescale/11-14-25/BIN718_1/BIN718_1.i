@@ -194,59 +194,59 @@
 []
 
 [Bounds]
-  [./eta_pv1_upper_bound]
+  [./eta_gp_upper_bound]
     type = ConstantBounds
     variable = bounds_dummy
-    bounded_variable = eta_pv1
+    bounded_variable = eta_gp
     bound_type = upper
     bound_value = 1
   [../]
-  [./eta_pv1_lower_bound]
+  [./eta_gp_lower_bound]
     type = ConstantBounds
     variable = bounds_dummy
-    bounded_variable = eta_pv1
+    bounded_variable = eta_gp
     bound_type = lower
     bound_value = -1
   [../]
-  [./eta_pv2_upper_bound]
+  [./eta_gpp1_upper_bound]
     type = ConstantBounds
     variable = bounds_dummy
-    bounded_variable = eta_pv2
+    bounded_variable = eta_gpp1
     bound_type = upper
     bound_value = 1
   [../]
-  [./eta_pv2_lower_bound]
+  [./eta_gpp1_lower_bound]
     type = ConstantBounds
     variable = bounds_dummy
-    bounded_variable = eta_pv2
+    bounded_variable = eta_gpp1
     bound_type = lower
     bound_value = -1
   [../]
-  [./eta_pv3_upper_bound]
+  [./eta_gpp2_upper_bound]
     type = ConstantBounds
     variable = bounds_dummy
-    bounded_variable = eta_pv3
+    bounded_variable = eta_gpp2
     bound_type = upper
     bound_value = 1
   [../]
-  [./eta_pv3_lower_bound]
+  [./eta_gpp2_lower_bound]
     type = ConstantBounds
     variable = bounds_dummy
-    bounded_variable = eta_pv3
+    bounded_variable = eta_gpp2
     bound_type = lower
     bound_value = -1
   [../]
-  [./eta_pv4_upper_bound]
+  [./eta_d_upper_bound]
     type = ConstantBounds
     variable = bounds_dummy
-    bounded_variable = eta_pv4
+    bounded_variable = eta_d
     bound_type = upper
     bound_value = 1
   [../]
-  [./eta_pv4_lower_bound]
+  [./eta_d_lower_bound]
     type = ConstantBounds
     variable = bounds_dummy
-    bounded_variable = eta_pv4
+    bounded_variable = eta_d
     bound_type = lower
     bound_value = -1
   [../]
@@ -269,23 +269,23 @@
     order = FIRST
     family = LAGRANGE
   [../]
-# phase concentration c1 in pv1
-  [./c1pv1]
+# phase concentration c1 in gp
+  [./c1gp]
     order = FIRST
     family = LAGRANGE
   [../]
-  # phase concentration c1 in pv2
-  [./c1pv2]
+  # phase concentration c1 in gpp1
+  [./c1gpp1]
     order = FIRST
     family = LAGRANGE
   [../]
- # phase concentration c1 in pv3
- [./c1pv3]
+ # phase concentration c1 in gpp2
+ [./c1gpp2]
   order = FIRST
   family = LAGRANGE
 [../]
-  # phase concentration c1 in pv4
-  [./c1pv4]
+  # phase concentration c1 in d
+  [./c1d]
     order = FIRST
     family = LAGRANGE
   [../]
@@ -295,23 +295,23 @@
     order = FIRST
     family = LAGRANGE
   [../]
-  # phase concentration c2 in pv1
-  [./c2pv1]
+  # phase concentration c2 in gp
+  [./c2gp]
     order = FIRST
     family = LAGRANGE
   [../]
-  # phase concentration c2 in pv2
-  [./c2pv2]
+  # phase concentration c2 in gpp1
+  [./c2gpp1]
     order = FIRST
     family = LAGRANGE
   [../]
- # phase concentration c2 in pv3
- [./c2pv3]
+ # phase concentration c2 in gpp2
+ [./c2gpp2]
   order = FIRST
   family = LAGRANGE
 [../]
-  # phase concentration c2 in pv4
-  [./c2pv4]
+  # phase concentration c2 in d
+  [./c2d]
     order = FIRST
     family = LAGRANGE
   [../]
@@ -322,22 +322,22 @@
     family = LAGRANGE
   [../]
   # order parameter pv1
-  [./eta_pv1]
+  [./eta_gp]
     order = FIRST
     family = LAGRANGE
   [../]
   # order parameter pv2
-  [./eta_pv2]
+  [./eta_gpp1]
     order = FIRST
     family = LAGRANGE
   [../]
 # order parameter pv3
-[./eta_pv3]
+[./eta_gpp2]
   order = FIRST
   family = LAGRANGE
 [../]
   # order parameter pv4
-  [./eta_pv4]
+  [./eta_d]
     order = FIRST
     family = LAGRANGE
   [../]
@@ -386,31 +386,31 @@
 []
 
 [ICs]
-   [./eta_pv1]
-    variable = eta_pv1
+   [./eta_gp]
+    variable = eta_gp
     type = RandomIC
     min = -0.6
     max = 0.6
     seed = 324
   [../]
-  [./eta_pv2]
-    variable = eta_pv2
+  [./eta_gpp1]
+    variable = eta_gpp1
     type = RandomIC
     min = -0.6
     max = 0.6
     seed = 230	
   [../]
-  [./eta_pv3]
-    variable = eta_pv3
+  [./eta_gpp2]
+    variable = eta_gpp2
     type = RandomIC
     min = -0.6
     max = 0.6
     seed = 307	
   [../]
   # thin delta plate centered on the GB (spans both sides a little)
-[./eta_pv4_gb_plate_ic]
+[./eta_d_gb_plate_ic]
     type     = FunctionIC
-    variable = eta_pv4
+    variable = eta_d
     function = '0.8 * 0.5*(tanh((x - 340.0)/1.0) - tanh((x - 360.0)/1.0))'
   [../]
   [./c1]
@@ -431,150 +431,175 @@
 
 
 [Materials]
-  [./fm]
+ # ------------------------------------------------------------------
+  # 1.  Chemical free energy of the matrix (γ)  
+  # ------------------------------------------------------------------
+  [./fc_gamma]
     type = DerivativeParsedMaterial
-    property_name = fc_m
-    coupled_variables = 'c1m c2m'
-    expression = '50.0*((c1m-0.0161)^2+2*(c2m-0.00723)^2)'
+    property_name = fc_gamma
+    coupled_variables = 'c1m c2m'               # c1m = Al, c2m = Nb  (γ-phase)
+    constant_names = 'Vm_inv C_Al C_Nb xeq_g_Al xeq_g_Nb'
+    constant_expressions = '1e5 4.0e5 9.5e5 0.0161 0.00723'
+    expression = 'Vm_inv*(C_Al*(c1m-xeq_g_Al)^2 + C_Nb*(c2m-xeq_g_Nb)^2)'
+    derivative_order = 2
   [../]
   # Elastic energy of the phase 0
   [./elastic_free_energy_m]
     type = ElasticEnergyMaterial
     base_name = phasem
-    property_name = fe_m
+    property_name = fe_gamma
     coupled_variables = ' '
   [../]
   # Total free energy of the phase 0
   [./Total_energy_m]
     type = DerivativeSumMaterial
-    property_name = Fm
-    sum_materials = 'fc_m fe_m'
+    property_name = F_gamma
+    sum_materials = 'fc_gamma fe_gamma'
     coupled_variables = 'c1m c2m'
   [../]
-
-  [./fc_pv1]
+# ------------------------------------------------------------------
+  # 2.  Chemical free energy of γ' (L1₂)  
+  # ------------------------------------------------------------------
+  [./fc_gp]
     type = DerivativeParsedMaterial
-    property_name = fc_pv1
-    coupled_variables = 'c1pv1 c2pv1'
-    expression = '50.0*((c1pv1-0.000727)^2+2*(c2pv1-0.196)^2)'
+    property_name = fc_gp
+    coupled_variables = 'c1gp c2gp'             # γ'-phase concentrations
+    constant_names = 'Vm_inv C_Al C_Nb xeq_gp_Al xeq_gp_Nb'
+    constant_expressions = '1e5 4.0e5 9.5e5 0.187 0.0157'
+    expression = 'Vm_inv*(C_Al*(c1gp-xeq_gp_Al)^2 + C_Nb*(c2gp-xeq_gp_Nb)^2)'
+    derivative_order = 2
   [../]
   # Elastic energy of the phase 1
-  [./elastic_free_energy_pv1]
+  [./elastic_free_energy_gp]
     type = ElasticEnergyMaterial
-    base_name = phasepv1
-    property_name = fe_pv1
+    base_name = phasegp
+    property_name = fe_gp
     coupled_variables = ' '
   [../]
   # Total free energy of the phase 1
-  [./Total_energy_pv1]
+  [./Total_energy_gp]
     type = DerivativeSumMaterial
-    property_name = Fpv1
-    sum_materials = 'fc_pv1 fe_pv1'
-    coupled_variables = 'c1pv1 c2pv1'
+    property_name = F_gp
+    sum_materials = 'fc_gp fe_gp'
+    coupled_variables = 'c1gp c2gp'
   [../]
-
-  [./f2]
+# ------------------------------------------------------------------
+  # 3.  γ'' variant 1 (metastable) = δ + Δf   
+  # ------------------------------------------------------------------
+ [./fc_gpp1]
     type = DerivativeParsedMaterial
-    property_name = fc_pv2
-    coupled_variables = 'c1pv2 c2pv2'
-    expression = '50.0*((c1pv2-0.187)^2+2*(c2pv2-0.0157)^2)'
-  [../]
+    property_name = fc_gpp1
+    coupled_variables = 'c1gpp1 c2gpp1'      # Al and Nb in γ'' phase
+    constant_names = 'Vm_inv C_Al C_Nb xeq_d_Al xeq_d_Nb Delta_f'
+    constant_expressions = '1e5 4.0e5 9.5e5 7.27e-4 0.196 1548.5'
+    expression = ' Vm_inv * (C_Al*(c1gpp1 - xeq_d_Al)^2 + C_Nb*(c2gpp1 - xeq_d_Nb)^2) + Vm_inv * Delta_f'
+    derivative_order = 2
+  [../] 
   # Elastic energy of the phase 2
-  [./elastic_free_energy_pv2]
+  [./elastic_free_energy_gpp1]
     type = ElasticEnergyMaterial
-    base_name = phasepv2
-    property_name = fe_pv2
+    base_name = phasegpp1
+    property_name = fe_gpp1
     coupled_variables = ' '
   [../]
   # Total free energy of the phase 2
-  [./Total_energy_pv2]
+  [./Total_energy_gpp1]
     type = DerivativeSumMaterial
-    property_name = Fpv2
-    sum_materials = 'fc_pv2 fe_pv2'
-    coupled_variables = 'c1pv2 c2pv2'
+    property_name = F_gpp1
+    sum_materials = 'fc_gpp1 fe_gpp1'
+    coupled_variables = 'c1gpp1 c2gpp1'
   [../]
-
-  [./f3]
+ 
+# ------------------------------------------------------------------
+  # 4.  γ'' variant 2 (metastable) = δ + Δf   
+  # ------------------------------------------------------------------
+ [./fc_gpp2]
     type = DerivativeParsedMaterial
-    property_name = fc_pv3
-    coupled_variables = 'c1pv3 c2pv3'
-    expression = '50.0*((c1pv3-0.000727)^2+2*(c2pv3-0.196)^2)'
-  [../]
-    # Elastic energy of the phase 3
-  [./elastic_free_energy_pv3]
+    property_name = fc_gpp2
+    coupled_variables = 'c1gpp2 c2gpp2'      # Al and Nb in γ'' phase
+    constant_names = 'Vm_inv C_Al C_Nb xeq_d_Al xeq_d_Nb Delta_f'
+    constant_expressions = '1e5 4.0e5 9.5e5 7.27e-4 0.196 1548.5'
+    expression = ' Vm_inv * (C_Al*(c1gpp2 - xeq_d_Al)^2 + C_Nb*(c2gpp2 - xeq_d_Nb)^2) + Vm_inv * Delta_f'
+    derivative_order = 2
+  [../] 
+  # Elastic energy of the phase 2
+  [./elastic_free_energy_gpp2]
     type = ElasticEnergyMaterial
-    base_name = phasepv3
-    property_name = fe_pv3
+    base_name = phasegpp2
+    property_name = fe_gpp2
     coupled_variables = ' '
   [../]
-    # Total free energy of the phase 3
-  [./Total_energy_pv3]
+  # Total free energy of the phase 2
+  [./Total_energy_gpp2]
     type = DerivativeSumMaterial
-    property_name = Fpv3
-    sum_materials = 'fc_pv3 fe_pv3'
-    coupled_variables = 'c1pv3 c2pv3'
+    property_name = F_gpp2
+    sum_materials = 'fc_gpp2 fe_gpp2'
+    coupled_variables = 'c1gpp1 c2gpp1'
   [../]
-   # --- δ chemical free energy (gated ON at ~3 h) ---
-  # Lowered prefactor (35 < 50) makes δ thermodynamically more favorable than γ″,
-  # matching that δ is the equilibrium phase. 'gate_3h' keeps it ~0 before 3 h.
-[./fc_pv4]
-  type = DerivativeParsedMaterial
-  property_name     = fc_pv4
-  coupled_variables = 'c1pv4 c2pv4'
-  expression = '50.0*((c1pv4-0.000727)^2+2*(c2pv4-0.196)^2)'
-[../]
+# ------------------------------------------------------------------
+  # 5.  Chemical free energy of δ (D0ₐ)  
+  # ------------------------------------------------------------------  
+[./fc_d]
+    type = DerivativeParsedMaterial
+    property_name = fc_d
+    coupled_variables = 'c1d c2d'               # δ-phase concentrations
+    constant_names = 'Vm_inv C_Al C_Nb xeq_d_Al xeq_d_Nb'
+    constant_expressions = '1e5 4.0e5 9.5e5 7.27e-4 0.196'
+    expression = 'Vm_inv*(C_Al*(c1d-xeq_d_Al)^2 + C_Nb*(c2d-xeq_d_Nb)^2)'
+    derivative_order = 2
+  [../]
 
 
 
   # Elastic energy of the phase 4
   [./elastic_free_energy_pv4]
     type = ElasticEnergyMaterial
-    base_name = phasepv4
-    property_name = fe_pv4
+    base_name = phased
+    property_name = fe_d
     coupled_variables = ' '
   [../]
     # Total free energy of the phase 4
   [./Total_energy_pv4]
   type = DerivativeSumMaterial
-  property_name  = Fpv4
-  sum_materials  = 'fc_pv4 fe_pv4'
-  coupled_variables = 'c1pv4 c2pv4'
+  property_name  = F_d
+  sum_materials  = 'fc_d fe_d'
+  coupled_variables = 'c1d c2d'
 [../]
 
   # Switching functions for each phase
-  # hm(eta_pv1, eta_pv2, eta_m)
+  # hm(eta_gp, eta_gpp1, eta_m)
   [./hm]
     type = SwitchingFunctionMultiPhaseMaterial
     phase_etas = eta_m
-    all_etas = 'eta_pv1 eta_pv2 eta_pv3 eta_pv4 eta_m'
+    all_etas = 'eta_gp eta_gpp1 eta_gpp2 eta_d eta_m'
     h_name = hm
   [../]
-  # hpv1(eta_pv1, eta_pv2, eta_m)
-  [./hpv1]
+  # hgp(eta_gp, eta_gpp1, eta_m)
+  [./hgp]
     type = SwitchingFunctionMultiPhaseMaterial
-    phase_etas = eta_pv1
-    all_etas = 'eta_pv1 eta_pv2 eta_pv3 eta_pv4 eta_m'
-    h_name = hpv1
+    phase_etas = eta_gp
+    all_etas = 'eta_gp eta_gpp1 eta_gpp2 eta_d eta_m'
+    h_name = hgp
   [../]
-  # hpv2(eta_pv1, eta_pv2, eta_m)
-  [./hpv2]
+  # hgpp1(eta_gp, eta_gpp1, eta_m)
+  [./hgpp1]
     type = SwitchingFunctionMultiPhaseMaterial
-    phase_etas = eta_pv2
-    all_etas = 'eta_pv1 eta_pv2 eta_pv3 eta_pv4 eta_m'
-    h_name = hpv2
+    phase_etas = eta_gpp1
+    all_etas = 'eta_gp eta_gpp1 eta_gpp2 eta_d eta_m'
+    h_name = hgpp1
   [../]
-[./hpv3]
+[./hgpp2]
     type = SwitchingFunctionMultiPhaseMaterial
-    phase_etas = eta_pv3
-    all_etas = 'eta_pv1 eta_pv2 eta_pv3 eta_pv4 eta_m'
-    h_name = hpv3
+    phase_etas = eta_gpp2
+    all_etas = 'eta_gp eta_gpp1 eta_gpp2 eta_d eta_m'
+    h_name = hgpp2
 [../]
-  # hpv4(eta_pv1, eta_pv2, eta_m)
-  [./hpv4]
+  # hd(eta_gp, eta_gpp1, eta_m)
+  [./hd]
     type = SwitchingFunctionMultiPhaseMaterial
-    phase_etas = eta_pv4
-    all_etas = 'eta_pv1 eta_pv2 eta_pv3 eta_pv4 eta_m'
-    h_name = hpv4
+    phase_etas = eta_d
+    all_etas = 'eta_gp eta_gpp1 eta_gpp2 eta_d eta_m'
+    h_name = hd
   [../]
   # Coefficients for diffusion equation
   [./Dhm]
@@ -584,33 +609,33 @@
     expression = gb_scale_aux*(D*hm)
     property_name = Dhm
   [../]
-  [./Dhpv1]
+  [./Dhgp]
     type = DerivativeParsedMaterial
     coupled_variables = 'gb_scale_aux'
-    material_property_names = 'D hpv1'
-    expression = gb_scale_aux*(D*hpv1)
-    property_name = Dhpv1
+    material_property_names = 'D hgp'
+    expression = gb_scale_aux*(D*hgp)
+    property_name = Dhgp
   [../]
-  [./Dhpv2]
+  [./Dhgpp1]
     type = DerivativeParsedMaterial
     coupled_variables = 'gb_scale_aux'
-    material_property_names = 'D hpv2'
-    expression = gb_scale_aux*(D*hpv2)
-    property_name = Dhpv2
+    material_property_names = 'D hgpp1'
+    expression = gb_scale_aux*(D*hgpp1)
+    property_name = Dhgpp1
   [../]
-  [./Dhpv3]
+  [./Dhgpp2]
     type = DerivativeParsedMaterial
     coupled_variables = 'gb_scale_aux'
-    material_property_names = 'D hpv3'
-    expression = gb_scale_aux*(D*hpv3)
-    property_name = Dhpv3
+    material_property_names = 'D hgpp2'
+    expression = gb_scale_aux*(D*hgpp2)
+    property_name = Dhgpp2
   [../]
-  [./Dhpv4]
+  [./Dhd]
     type = DerivativeParsedMaterial
     coupled_variables = 'gb_scale_aux'
-    material_property_names = 'D hpv4'
-    expression = gb_scale_aux*(D*hpv4)
-    property_name = Dhpv4
+    material_property_names = 'D hd'
+    expression = gb_scale_aux*(D*hd)
+    property_name = Dhd
   [../]
 
 # Barrier functions for each phase
@@ -623,25 +648,25 @@
   [./gpv1]
     type = BarrierFunctionMaterial_abs
     g_order = SIMPLE
-    eta = eta_pv1
+    eta = eta_gp
     function_name = gpv1
   [../]
   [./gpv2]
     type = BarrierFunctionMaterial_abs
     g_order = SIMPLE
-    eta = eta_pv2
+    eta = eta_gpp1
     function_name = gpv2
   [../]
   [./gpv3]
     type = BarrierFunctionMaterial_abs
     g_order = SIMPLE
-    eta = eta_pv3
+    eta = eta_gpp2
     function_name = gpv3
   [../]
   [./gpv4]
     type = BarrierFunctionMaterial_abs
     g_order = SIMPLE
-    eta = eta_pv4
+    eta = eta_d
     function_name = gpv4
   [../]
 
@@ -678,9 +703,29 @@
     euler_angle_3  = 0
     block = 1
   [../]
-  [./Stiffness_phasepv1_g0]
+  [./Stiffness_phasegp_g0]
   type = ComputeElasticityTensor
-  base_name   = phasepv1
+  C_ijkl = '243 154.8 154.8 243 154.8 243 132.3 132.3 132.3'
+  base_name = phasegp
+  fill_method = symmetric9
+  euler_angle_1 = 0
+  euler_angle_2 = 0
+  euler_angle_3 = 0
+  block = 0
+  [../]
+  [./Stiffness_phasegp_g1]
+    type = ComputeElasticityTensor
+    C_ijkl = '243 154.8 154.8 243 154.8 243 132.3 132.3 132.3'
+    base_name = phasegp
+    fill_method = symmetric9
+    euler_angle_1 = 45
+    euler_angle_2 = 0
+    euler_angle_3 = 0
+    block = 1
+  [../]
+  [./Stiffness_phasegpp1_g0]
+  type = ComputeElasticityTensor
+  base_name   = phasegpp1
   C_ijkl      = '290.6 187 160.7 290.6 187 309.6 114.2 114.2 119.2'
   fill_method = symmetric9
   euler_angle_1 = 0
@@ -688,9 +733,9 @@
   euler_angle_3 = 0
   block = 0
 [../]
-[./Stiffness_phasepv1_g1]
+[./Stiffness_phasegpp1_g1]
   type = ComputeElasticityTensor
-  base_name   = phasepv1
+  base_name   = phasegpp1
   C_ijkl      = '290.6 187 160.7 290.6 187 309.6 114.2 114.2 119.2'
   fill_method = symmetric9
   euler_angle_1 = 45
@@ -698,40 +743,21 @@
   euler_angle_3 = 0
   block = 1
 [../]
-[./Stiffness_phasepv2_g0]
-  type = ComputeElasticityTensor
-  C_ijkl = '243 154.8 154.8 243 154.8 243 132.3 132.3 132.3'
-  base_name = phasepv2
-  fill_method = symmetric9
-  euler_angle_1 = 0
-  euler_angle_2 = 0
-  euler_angle_3 = 0
-  block = 0
-  [../]
-  [./Stiffness_phasepv2_g1]
-    type = ComputeElasticityTensor
-    C_ijkl = '243 154.8 154.8 243 154.8 243 132.3 132.3 132.3'
-    base_name = phasepv2
-    fill_method = symmetric9
-    euler_angle_1 = 45
-    euler_angle_2 = 0
-    euler_angle_3 = 0
-    block = 1
-  [../]
-  [./Stiffness_phasepv3_g0]
+
+  [./Stiffness_phasegpp2_g0]
     type = ComputeElasticityTensor
     C_ijkl = '290.6 187 160.7 290.6 187 309.6 114.2 114.2 119.2'
-    base_name = phasepv3
+    base_name = phasegpp2
     fill_method = symmetric9
     euler_angle_1 = 0
     euler_angle_2 = 0
     euler_angle_3 = 0
     block = 0
   [../]
-  [./Stiffness_phasepv3_g1]
+  [./Stiffness_phasegpp2_g1]
     type = ComputeElasticityTensor
     C_ijkl = '290.6 187 160.7 290.6 187 309.6 114.2 114.2 119.2'
-    base_name = phasepv3
+    base_name = phasegpp2
     fill_method = symmetric9
     euler_angle_1 = 45
     euler_angle_2 = 0
@@ -739,10 +765,10 @@
     block = 1
   [../]
    # per-block stiffness for pv4
-[./Stiffness_phasepv4_g0]
+[./Stiffness_phased_g0]
   type = ComputeElasticityTensor
   C_ijkl = '290.6 187 160.7 290.6 187 309.6 114.2 114.2 119.2'
-  base_name = phasepv4
+  base_name = phased
   fill_method = symmetric9
   euler_angle_1 = 5.176036589
   euler_angle_2 = 1.150261992
@@ -750,10 +776,10 @@
   block = 0
 [../]
 
-[./Stiffness_phasepv4_g1]
+[./Stiffness_phased_g1]
   type = ComputeElasticityTensor
   C_ijkl = '290.6 187 160.7 290.6 187 309.6 114.2 114.2 119.2'
-  base_name = phasepv4
+  base_name = phased
   fill_method = symmetric9
   euler_angle_1 = 5.176036589
   euler_angle_2 = 1.150261992
@@ -761,45 +787,45 @@
   block = 1
 [../]
   
-
-  [./stress_phasepv1_g0]
+[./stress_phasegp_g0]
     type = ComputeLinearElasticStress
-    base_name = phasepv1 
+    base_name = phasegp
     block = 0
   [../]
-  [./stress_phasepv1_g1]
+  [./stress_phasegp_g1]
     type = ComputeLinearElasticStress
-    base_name = phasepv1
+    base_name = phasegp
     block = 1
   [../]
-  [./stress_phasepv2_g0]
+  [./stress_phasegpp1_g0]
     type = ComputeLinearElasticStress
-    base_name = phasepv2
+    base_name = phasegpp1 
     block = 0
   [../]
-  [./stress_phasepv2_g1]
+  [./stress_phasegpp1_g1]
     type = ComputeLinearElasticStress
-    base_name = phasepv2
+    base_name = phasegpp1
     block = 1
   [../]
-  [./stress_phasepv3_g0]
+  
+  [./stress_phasegpp2_g0]
     type = ComputeLinearElasticStress
-    base_name = phasepv3
+    base_name = phasegpp2
     block = 0
   [../]
-  [./stress_phasepv3_g1]
+  [./stress_phasegpp2_g1]
     type = ComputeLinearElasticStress
-    base_name = phasepv3
+    base_name = phasegpp2
     block = 1
   [../]
-   [./stress_phasepv4_g0]
+   [./stress_phased_g0]
     type = ComputeLinearElasticStress
-    base_name = phasepv4
+    base_name = phased
     block = 0
   [../]
-  [./stress_phasepv4_g1]
+  [./stress_phased_g1]
     type = ComputeLinearElasticStress
-    base_name = phasepv4
+    base_name = phased
     block = 1
   [../]
 
@@ -826,68 +852,86 @@
     base_name = phasem
     block = 1
   [../]
-  [./strain_phasepv1_g0]
+    [./strain_phasegp_g0]
     type = ComputeSmallStrain
     displacements = 'disp_x disp_y'
-    base_name = phasepv1
-    eigenstrain_names = eigenstrainpv1
-    block = 0
-  [../]
-  [./strain_phasepv1_g1]
-    type = ComputeSmallStrain
-    displacements = 'disp_x disp_y'
-    base_name = phasepv1
-    eigenstrain_names = eigenstrainpv1
-    block = 1
-  [../]
-  [./strain_phasepv2_g0]
-    type = ComputeSmallStrain
-    displacements = 'disp_x disp_y'
-    base_name = phasepv2
+    base_name = phasegp
     eigenstrain_names = eigenstrainpv2
     block = 0
   [../]
-  [./strain_phasepv2_g1]
+  [./strain_phasegp_g1]
     type = ComputeSmallStrain
     displacements = 'disp_x disp_y'
-    base_name = phasepv2
+    base_name = phasegp
     eigenstrain_names = eigenstrainpv2
     block = 1
   [../]
-  [./strain_phasepv3_g0]
+  [./strain_phasegpp1_g0]
     type = ComputeSmallStrain
     displacements = 'disp_x disp_y'
-    base_name = phasepv3
+    base_name = phasegpp1
+    eigenstrain_names = eigenstrainpv1
+    block = 0
+  [../]
+  [./strain_phasegpp1_g1]
+    type = ComputeSmallStrain
+    displacements = 'disp_x disp_y'
+    base_name = phasegpp1
+    eigenstrain_names = eigenstrainpv1
+    block = 1
+  [../]
+  
+  [./strain_phasegpp2_g0]
+    type = ComputeSmallStrain
+    displacements = 'disp_x disp_y'
+    base_name = phasegpp2
     eigenstrain_names = eigenstrainpv3
     block = 0
   [../]
-  [./strain_phasepv3_g1]
+  [./strain_phasegpp2_g1]
     type = ComputeSmallStrain
     displacements = 'disp_x disp_y'
-    base_name = phasepv3
+    base_name = phasegpp2
     eigenstrain_names = eigenstrainpv3
     block = 1
   [../]
-  [./strain_phasepv4_g0]
+  [./strain_phased_g0]
     type = ComputeSmallStrain
     displacements = 'disp_x disp_y'
-    base_name = phasepv4
+    base_name = phased
     eigenstrain_names = eigenstrainpv4
     block = 0
   [../]
-  [./strain_phasepv4_g1]
+  [./strain_phased_g1]
     type = ComputeSmallStrain
     displacements = 'disp_x disp_y'
-    base_name = phasepv4
+    base_name = phased
     eigenstrain_names = eigenstrainpv4
     block = 1
   [../]
 
 
-
+[./eigen_straingp_g0]
+    type = ComputeRotatedEigenstrain
+    base_name = phasegp
+    eigen_base = '-0.003 -0.003 0 0 0 0'
+    Euler_angles = '0 0 0'
+    prefactor = misfit
+    eigenstrain_name = eigenstrainpv2
+    block = 0
+  [../]
+   [./eigen_straingp_g1]
+    type = ComputeRotatedEigenstrain
+    base_name = phasegp
+    eigen_base = '-0.003 -0.003 0 0 0 0'
+    Euler_angles = '45 0 0'
+    prefactor = misfit
+    eigenstrain_name = eigenstrainpv2
+    block = 1
+  [../]
   [./eigen_strainpv1_g0]
     type = ComputeRotatedEigenstrain
-    base_name = phasepv1
+    base_name = phasegpp1
     eigen_base = '0.028 0.0067 0 0 0 0'
     Euler_angles = '0 0 0'
     prefactor = misfit
@@ -896,35 +940,16 @@
   [../]
   [./eigen_strainpv1_g1]
     type = ComputeRotatedEigenstrain
-    base_name = phasepv1
+    base_name = phasegpp1
     eigen_base = '0.028 0.0067 0 0 0 0'
     Euler_angles = '45 0 0'
     prefactor = misfit
     eigenstrain_name = eigenstrainpv1
     block = 1
   [../]
-
-  [./eigen_strainpv2_g0]
-    type = ComputeRotatedEigenstrain
-    base_name = phasepv2
-    eigen_base = '-0.003 -0.003 0 0 0 0'
-    Euler_angles = '0 0 0'
-    prefactor = misfit
-    eigenstrain_name = eigenstrainpv2
-    block = 0
-  [../]
-   [./eigen_strainpv2_g1]
-    type = ComputeRotatedEigenstrain
-    base_name = phasepv2
-    eigen_base = '-0.003 -0.003 0 0 0 0'
-    Euler_angles = '45 0 0'
-    prefactor = misfit
-    eigenstrain_name = eigenstrainpv2
-    block = 1
-  [../]
   [./eigen_strainpv3_g0]
     type = ComputeRotatedEigenstrain
-    base_name = phasepv3
+    base_name = phasegpp2
     eigen_base = '0.0067 0.028 0 0 0 0'
     Euler_angles = '0 0 0'
     prefactor = misfit
@@ -933,7 +958,7 @@
   [../]
   [./eigen_strainpv3_g1]
     type = ComputeRotatedEigenstrain
-    base_name = phasepv3
+    base_name = phasegpp2
     eigen_base = '0.0067 0.028 0 0 0 0'
     Euler_angles = '45 0 0'
     prefactor = misfit
@@ -943,7 +968,7 @@
   # per-block eigenstrain (mirrors stiffness blocks)
 [./eigen_strainpv4_g0]
   type = ComputeRotatedEigenstrain
-  base_name = phasepv4
+  base_name = phased
   eigen_base = '0.005320 0.01332 0.02378 0 0 0'
   Euler_angles = '5.176036589 1.150261992 2.456873451'
   prefactor = 0
@@ -953,7 +978,7 @@
 
 [./eigen_strainpv4_g1]
   type = ComputeRotatedEigenstrain
-  base_name = phasepv4
+  base_name = phased
   eigen_base = '0.005320 0.01332 0.02378 0 0 0'
   Euler_angles = '5.176036589 1.150261992 2.456873451'
   prefactor = 0
@@ -966,8 +991,8 @@
   # Generate the global stress from the phase stresses
   [./global_stress]
     type = MultiPhaseStressMaterial
-    phase_base = 'phasepv1 phasepv2 phasepv3 phasepv4 phasem'
-    h          = 'hpv1     hpv2   hpv3   hpv4   hm'
+    phase_base = 'phasegp phasegpp1 phasegpp2 phased phasem'
+    h          = 'hgp     hgpp1   hgpp2   hd   hm'
   [../]
 
   [./global_strain]
@@ -981,191 +1006,191 @@
     displacements = 'disp_x disp_y'
   [../]
   
-  # Kernels for Allen-Cahn equation for eta_pv1
-  [./deta_pv1_dt]
+  # Kernels for Allen-Cahn equation for eta_gp
+  [./deta_gp_dt]
     type = TimeDerivative
-    variable = eta_pv1
+    variable = eta_gp
   [../]
-  [./ACBulkFpv1]
+  [./ACBulkF_gp]
     type = KKSMultiACBulkF
-    variable  = eta_pv1
-    Fj_names  = 'Fpv1 Fpv2 Fpv3 Fpv4 Fm'
-    hj_names  = 'hpv1 hpv2 hpv3 hpv4 hm'
+    variable  = eta_gp
+    Fj_names  = 'F_gp F_gpp1 F_gpp2 F_d F_gamma'
+    hj_names  = 'hgp hgpp1 hgpp2 hd hm'
     gi_name   = gpv1
-    eta_i     = eta_pv1
+    eta_i     = eta_gp
     wi        = 0.01
-    coupled_variables      = 'c1pv1 c1pv2 c1pv3 c1pv4 c1m c2pv1 c2pv2 c2pv3 c2pv4 c2m eta_pv2 eta_pv3 eta_pv4 eta_m'
+    coupled_variables      = 'c1gp c1gpp1 c1gpp2 c1d c1m c2gp c2gpp1 c2gpp2 c2d c2m eta_gpp1 eta_gpp2 eta_d eta_m'
   [../]
   [./ACBulkCpv1_c1]
     type = KKSMultiACBulkC
-    variable  = eta_pv1
-    Fj_names  = 'Fpv1 Fpv2 Fpv3 Fpv4 Fm'
-    hj_names  = 'hpv1 hpv2 hpv3 hpv4 hm'
-    cj_names  = 'c1pv1 c1pv2 c1pv3 c1pv4 c1m'
-    eta_i     = eta_pv1
-    coupled_variables      = 'c2pv1 c2pv2 c2pv3 c2pv4 c2m eta_pv2 eta_pv3 eta_pv4 eta_m'
+    variable  = eta_gp
+    Fj_names  = 'F_gp F_gpp1 F_gpp2 F_d F_gamma'
+    hj_names  = 'hgp hgpp1 hgpp2 hd hm'
+    cj_names  = 'c1gp c1gpp1 c1gpp2 c1d c1m'
+    eta_i     = eta_gp
+    coupled_variables      = 'c2gp c2gpp1 c2gpp2 c2d c2m eta_gpp1 eta_gpp2 eta_d eta_m'
   [../]
   [./ACBulkCpv1_c2]
     type = KKSMultiACBulkC
-    variable  = eta_pv1
-    Fj_names  = 'Fpv1 Fpv2 Fpv3 Fpv4 Fm'
-    hj_names  = 'hpv1 hpv2 hpv3 hpv4 hm'
-    cj_names  = 'c2pv1 c2pv2 c2pv3 c2pv4 c2m'
-    eta_i     = eta_pv1
-    coupled_variables      = 'c1pv1 c1pv2 c1pv3 c1pv4 c1m  eta_pv2 eta_pv3 eta_pv4 eta_m'
+    variable  = eta_gp
+    Fj_names  = 'F_gp F_gpp1 F_gpp2 F_d F_gamma'
+    hj_names  = 'hgp hgpp1 hgpp2 hd hm'
+    cj_names  = 'c2gp c2gpp1 c2gpp2 c2d c2m'
+    eta_i     = eta_gp
+    coupled_variables      = 'c1gp c1gpp1 c1gpp2 c1d c1m  eta_gpp1 eta_gpp2 eta_d eta_m'
   [../]
   [./ACInterfacepv1]
     type = ACInterface
-    variable = eta_pv1
+    variable = eta_gp
     kappa_name = kappa
   [../]
 
-  # Kernels for Allen-Cahn equation for eta_pv2
-  [./deta_pv2_dt]
+  # Kernels for Allen-Cahn equation for eta_gpp1
+  [./deta_gpp1_dt]
     type = TimeDerivative
-    variable = eta_pv2
+    variable = eta_gpp1
   [../]
-  [./ACBulkFpv2]
+  [./ACBulkF_gpp1]
     type = KKSMultiACBulkF
-    variable  = eta_pv2
-    Fj_names  = 'Fpv1 Fpv2 Fpv3 Fpv4 Fm'
-    hj_names  = 'hpv1 hpv2 hpv3 hpv4 hm'
+    variable  = eta_gpp1
+    Fj_names  = 'F_gp F_gpp1 F_gpp2 F_d F_gamma'
+    hj_names  = 'hgp hgpp1 hgpp2 hd hm'
     gi_name   = gpv2
-    eta_i     = eta_pv2
+    eta_i     = eta_gpp1
     wi        = 0.01
-    coupled_variables      = 'c1pv1 c1pv2 c1pv3 c1pv4 c1m c2pv1 c2pv2 c2pv3 c2pv4 c2m eta_pv1 eta_pv3 eta_pv4 eta_m'
+    coupled_variables      = 'c1gp c1gpp1 c1gpp2 c1d c1m c2gp c2gpp1 c2gpp2 c2d c2m eta_gp eta_gpp2 eta_d eta_m'
   [../]
   [./ACBulkCpv2_c1]
     type = KKSMultiACBulkC
-    variable  = eta_pv2
-    Fj_names  = 'Fpv1 Fpv2 Fpv3 Fpv4 Fm'
-    hj_names  = 'hpv1 hpv2 hpv3 hpv4 hm'
-    cj_names  = 'c1pv1 c1pv2 c1pv3 c1pv4 c1m'
-    eta_i     = eta_pv2
-    coupled_variables      = 'c2pv1 c2pv2 c2pv3 c2pv4 c2m eta_pv1 eta_pv3 eta_pv4 eta_m'
+    variable  = eta_gpp1
+    Fj_names  = 'F_gp F_gpp1 F_gpp2 F_d F_gamma'
+    hj_names  = 'hgp hgpp1 hgpp2 hd hm'
+    cj_names  = 'c1gp c1gpp1 c1gpp2 c1d c1m'
+    eta_i     = eta_gpp1
+    coupled_variables      = 'c2gp c2gpp1 c2gpp2 c2d c2m eta_gp eta_gpp2 eta_d eta_m'
   [../]
   [./ACBulkCpv2_c2]
     type = KKSMultiACBulkC
-    variable  = eta_pv2
-    Fj_names  = 'Fpv1 Fpv2 Fpv3 Fpv4 Fm'
-    hj_names  = 'hpv1 hpv2 hpv3 hpv4 hm'
-    cj_names  = 'c2pv1 c2pv2 c2pv3 c2pv4 c2m'
-    eta_i     = eta_pv2
-    coupled_variables      = 'c1pv1 c1pv2 c1pv3 c1pv4 c1m eta_pv1 eta_pv3 eta_pv4 eta_m'
+    variable  = eta_gpp1
+    Fj_names  = 'F_gp F_gpp1 F_gpp2 F_d F_gamma'
+    hj_names  = 'hgp hgpp1 hgpp2 hd hm'
+    cj_names  = 'c2gp c2gpp1 c2gpp2 c2d c2m'
+    eta_i     = eta_gpp1
+    coupled_variables      = 'c1gp c1gpp1 c1gpp2 c1d c1m eta_gp eta_gpp2 eta_d eta_m'
   [../]
   [./ACInterfacepv2]
     type = ACInterface
-    variable = eta_pv2
+    variable = eta_gpp1
     kappa_name = kappa
   [../]
 
-  # Kernels for Allen-Cahn equation for eta_pv3
-  [./deta_pv3_dt]
+  # Kernels for Allen-Cahn equation for eta_gpp2
+  [./deta_gpp2_dt]
     type = TimeDerivative
-    variable = eta_pv3
+    variable = eta_gpp2
   [../]
-  [./ACBulkFpv3]
+  [./ACBulkF_gpp2]
     type = KKSMultiACBulkF
-    variable  = eta_pv3
-    Fj_names  = 'Fpv1 Fpv2 Fpv3 Fpv4 Fm'
-    hj_names  = 'hpv1 hpv2 hpv3 hpv4 hm'
+    variable  = eta_gpp2
+    Fj_names  = 'F_gp F_gpp1 F_gpp2 F_d F_gamma'
+    hj_names  = 'hgp hgpp1 hgpp2 hd hm'
     gi_name   = gpv3
-    eta_i     = eta_pv3
+    eta_i     = eta_gpp2
     wi        = 0.01
-    coupled_variables      = 'c1pv1 c1pv2 c1pv3 c1pv4 c1m c2pv1 c2pv2 c2pv3 c2pv4 c2m eta_pv1 eta_pv2 eta_pv4 eta_m'
+    coupled_variables      = 'c1gp c1gpp1 c1gpp2 c1d c1m c2gp c2gpp1 c2gpp2 c2d c2m eta_gp eta_gpp1 eta_d eta_m'
   [../]
   [./ACBulkCpv3_c1]
     type = KKSMultiACBulkC
-    variable  = eta_pv3
-    Fj_names  = 'Fpv1 Fpv2 Fpv3 Fpv4 Fm'
-    hj_names  = 'hpv1 hpv2 hpv3 hpv4 hm'
-    cj_names  = 'c1pv1 c1pv2 c1pv3 c1pv4 c1m'
-    eta_i     = eta_pv3
-    coupled_variables      = 'c2pv1 c2pv2 c2pv3 c2pv4 c2m eta_pv1 eta_pv2 eta_pv4 eta_m'
+    variable  = eta_gpp2
+    Fj_names  = 'F_gp F_gpp1 F_gpp2 F_d F_gamma'
+    hj_names  = 'hgp hgpp1 hgpp2 hd hm'
+    cj_names  = 'c1gp c1gpp1 c1gpp2 c1d c1m'
+    eta_i     = eta_gpp2
+    coupled_variables      = 'c2gp c2gpp1 c2gpp2 c2d c2m eta_gp eta_gpp1 eta_d eta_m'
   [../]
   [./ACBulkCpv3_c2]
     type = KKSMultiACBulkC
-    variable  = eta_pv3
-    Fj_names  = 'Fpv1 Fpv2 Fpv3 Fpv4 Fm'
-    hj_names  = 'hpv1 hpv2 hpv3 hpv4 hm'
-    cj_names  = 'c2pv1 c2pv2 c2pv3 c2pv4 c2m'
-    eta_i     = eta_pv3
-    coupled_variables      = 'c1pv1 c1pv2 c1pv3 c1pv4 c1m eta_pv1 eta_pv2 eta_pv4 eta_m'
+    variable  = eta_gpp2
+    Fj_names  = 'F_gp F_gpp1 F_gpp2 F_d F_gamma'
+    hj_names  = 'hgp hgpp1 hgpp2 hd hm'
+    cj_names  = 'c2gp c2gpp1 c2gpp2 c2d c2m'
+    eta_i     = eta_gpp2
+    coupled_variables      = 'c1gp c1gpp1 c1gpp2 c1d c1m eta_gp eta_gpp1 eta_d eta_m'
   [../]
   [./ACInterfacepv3]
     type = ACInterface
-    variable = eta_pv3
+    variable = eta_gpp2
     kappa_name = kappa
   [../]
  
-# Kernels for Allen-Cahn equation for eta_pv4
-  [./deta_pv4_dt]
+# Kernels for Allen-Cahn equation for eta_d
+  [./deta_d_dt]
     type = TimeDerivative
-    variable = eta_pv4
+    variable = eta_d
   [../]
-  [./ACBulkFpv4]
+  [./ACBulkF_d]
     type = KKSMultiACBulkF
-    variable  = eta_pv4
-    Fj_names  = 'Fpv1 Fpv2 Fpv3 Fpv4 Fm'
-    hj_names  = 'hpv1 hpv2 hpv3 hpv4 hm'
+    variable  = eta_d
+    Fj_names  = 'F_gp F_gpp1 F_gpp2 F_d F_gamma'
+    hj_names  = 'hgp hgpp1 hgpp2 hd hm'
     gi_name   = gpv4
-    eta_i     = eta_pv4
+    eta_i     = eta_d
     wi        = 0.01
-    coupled_variables      = 'c1pv1 c1pv2 c1pv3 c1pv4 c1m c2pv1 c2pv2 c2pv3 c2pv4 c2m eta_pv1 eta_pv2 eta_pv3 eta_m'
+    coupled_variables      = 'c1gp c1gpp1 c1gpp2 c1d c1m c2gp c2gpp1 c2gpp2 c2d c2m eta_gp eta_gpp1 eta_gpp2 eta_m'
   [../]
   [./ACBulkCpv4_c1]
     type = KKSMultiACBulkC
-    variable  = eta_pv4
-    Fj_names  = 'Fpv1 Fpv2 Fpv3 Fpv4 Fm'
-    hj_names  = 'hpv1 hpv2 hpv3 hpv4 hm'
-    cj_names  = 'c1pv1 c1pv2 c1pv3 c1pv4 c1m'
-    eta_i     = eta_pv4
-    coupled_variables      = 'c2pv1 c2pv2 c2pv3 c2pv4 c2m eta_pv1 eta_pv2 eta_pv3 eta_m'
+    variable  = eta_d
+    Fj_names  = 'F_gp F_gpp1 F_gpp2 F_d F_gamma'
+    hj_names  = 'hgp hgpp1 hgpp2 hd hm'
+    cj_names  = 'c1gp c1gpp1 c1gpp2 c1d c1m'
+    eta_i     = eta_d
+    coupled_variables      = 'c2gp c2gpp1 c2gpp2 c2d c2m eta_gp eta_gpp1 eta_gpp2 eta_m'
   [../]
   [./ACBulkCpv4_c2]
     type = KKSMultiACBulkC
-    variable  = eta_pv4
-    Fj_names  = 'Fpv1 Fpv2 Fpv3 Fpv4 Fm'
-    hj_names  = 'hpv1 hpv2 hpv3 hpv4 hm'
-    cj_names  = 'c2pv1 c2pv2 c2pv3 c2pv4 c2m'
-    eta_i     = eta_pv4
-    coupled_variables      = 'c1pv1 c1pv2 c1pv3 c1pv4 c1m eta_pv1 eta_pv2 eta_pv3 eta_m'
+    variable  = eta_d
+    Fj_names  = 'F_gp F_gpp1 F_gpp2 F_d F_gamma'
+    hj_names  = 'hgp hgpp1 hgpp2 hd hm'
+    cj_names  = 'c2gp c2gpp1 c2gpp2 c2d c2m'
+    eta_i     = eta_d
+    coupled_variables      = 'c1gp c1gpp1 c1gpp2 c1d c1m eta_gp eta_gpp1 eta_gpp2 eta_m'
   [../]
   [./ACInterfacepv4]
     type = ACInterface
-    variable = eta_pv4
+    variable = eta_d
     kappa_name = kappa
   [../]
 
-# Kernels for constraint equation |eta_pv1| + |eta_pv2| + eta_m = 1
+# Kernels for constraint equation |eta_gp| + |eta_gpp1| + eta_m = 1
   # eta3 is the nonlinear variable for the constraint equation
   [./eta_mreaction]
     type = MatReaction
     variable = eta_m
     reaction_rate = 1
  [../]
-  [./eta_pv1reaction]
+  [./eta_gpreaction]
     type = MatReaction_abscouple
     variable = eta_m
-    v = eta_pv1
+    v = eta_gp
     reaction_rate = 1
   [../]
-  [./eta_pv2reaction]
+  [./eta_gpp1reaction]
     type = MatReaction_abscouple
     variable = eta_m
-    v = eta_pv2
+    v = eta_gpp1
     reaction_rate = 1
   [../]
-  [./eta_pv3reaction]
+  [./eta_gpp2reaction]
     type = MatReaction_abscouple
     variable = eta_m
-    v = eta_pv3
+    v = eta_gpp2
     reaction_rate = 1
   [../]
-  [./eta_pv4reaction]
+  [./eta_dreaction]
     type = MatReaction_abscouple
     variable = eta_m
-    v = eta_pv4
+    v = eta_d
     reaction_rate = 1
   [../]
   [./on]
@@ -1185,29 +1210,29 @@
     diffusivity = Dhm
     v = c1m
   [../]
-  [./diff_c1pv1]
+  [./diff_c1gp]
     type = MatDiffusion
     variable = c1
-    diffusivity = Dhpv1
-    v = c1pv1
+    diffusivity = Dhgp
+    v = c1gp
   [../]
-  [./diff_c1pv2]
+  [./diff_c1gpp1]
     type = MatDiffusion
     variable = c1
-    diffusivity = Dhpv2
-    v = c1pv2
+    diffusivity = Dhgpp1
+    v = c1gpp1
   [../]
-  [./diff_c1pv3]
+  [./diff_c1gpp2]
     type = MatDiffusion
     variable = c1
-    diffusivity = Dhpv3
-    v = c1pv3
+    diffusivity = Dhgpp2
+    v = c1gpp2
   [../]
-  [./diff_c1pv4]
+  [./diff_c1d]
     type = MatDiffusion
     variable = c1
-    diffusivity = Dhpv4
-    v = c1pv4
+    diffusivity = Dhd
+    v = c1d
   [../]
 
 
@@ -1222,138 +1247,138 @@
     diffusivity = Dhm
     v = c2m
   [../]
-  [./diff_c2pv1]
+  [./diff_c2gp]
     type = MatDiffusion
     variable = c2
-    diffusivity = Dhpv1
-    v = c2pv1
+    diffusivity = Dhgp
+    v = c2gp
   [../]
-  [./diff_c2pv2]
+  [./diff_c2gpp1]
     type = MatDiffusion
     variable = c2
-    diffusivity = Dhpv2
-    v = c2pv2
+    diffusivity = Dhgpp1
+    v = c2gpp1
   [../]
-  [./diff_c2pv3]
+  [./diff_c2gpp2]
     type = MatDiffusion
     variable = c2
-    diffusivity = Dhpv3
-    v = c2pv3
+    diffusivity = Dhgpp2
+    v = c2gpp2
   [../]   
-  [./diff_c2pv4]
+  [./diff_c2d]
     type = MatDiffusion
     variable = c2
-    diffusivity = Dhpv4
-    v = c2pv4
+    diffusivity = Dhd
+    v = c2d
   [../]
 
   # Phase concentration constraints
    [./chempot1m_pv1]
     type = KKSPhaseChemicalPotential
     variable = c1m
-    cb       = c1pv1
-    fa_name  = Fm
-    fb_name  = Fpv1
+    cb       = c1gp
+    fa_name  = F_gamma
+    fb_name  = F_gp
     args_a   = c2m
-    args_b   = c2pv1
+    args_b   = c2gp
   [../]
  [./chempot1m_pv2]
     type = KKSPhaseChemicalPotential
-    variable = c1pv1
-    cb       = c1pv2
-    fa_name  = Fpv1
-    fb_name  = Fpv2
-    args_a   = c2pv1
-    args_b   = c2pv2
+    variable = c1gp
+    cb       = c1gpp1
+    fa_name  = F_gp
+    fb_name  = F_gpp1
+    args_a   = c2gp
+    args_b   = c2gpp1
   [../]
   [./chempot1m_pv3]
     type = KKSPhaseChemicalPotential
-    variable = c1pv2
-    cb       = c1pv3
-    fa_name  = Fpv2
-    fb_name  = Fpv3
-    args_a   = c2pv2
-    args_b   = c2pv3
+    variable = c1gpp1
+    cb       = c1gpp2
+    fa_name  = F_gpp1
+    fb_name  = F_gpp2
+    args_a   = c2gpp1
+    args_b   = c2gpp2
   [../]
   [./chempot1m_pv4]
     type = KKSPhaseChemicalPotential
-    variable = c1pv3
-    cb       = c1pv4
-    fa_name  = Fpv3
-    fb_name  = Fpv4
-    args_a   = c2pv3
-    args_b   = c2pv4
+    variable = c1gpp2
+    cb       = c1d
+    fa_name  = F_gpp2
+    fb_name  = F_d
+    args_a   = c2gpp2
+    args_b   = c2d
   [../]
   [./chempot2m_pv1]
     type = KKSPhaseChemicalPotential
     variable = c2m
-    cb       = c2pv1
-    fa_name  = Fm
-    fb_name  = Fpv1
+    cb       = c2gp
+    fa_name  = F_gamma
+    fb_name  = F_gp
     args_a   = c1m
-    args_b   = c1pv1
+    args_b   = c1gp
   [../]
   [./chempot2m_pv2]
     type = KKSPhaseChemicalPotential
-    variable = c2pv1
-    cb       = c2pv2
-    fa_name  = Fpv1
-    fb_name  = Fpv2
-    args_a   = c1pv1
-    args_b   = c1pv2
+    variable = c2gp
+    cb       = c2gpp1
+    fa_name  = F_gp
+    fb_name  = F_gpp1
+    args_a   = c1gp
+    args_b   = c1gpp1
   [../]
   [./chempot2m_pv3]
     type = KKSPhaseChemicalPotential
-    variable = c2pv2
-    cb       = c2pv3
-    fa_name  = Fpv2
-    fb_name  = Fpv3
-    args_a   = c1pv2
-    args_b   = c1pv3
+    variable = c2gpp1
+    cb       = c2gpp2
+    fa_name  = F_gpp1
+    fb_name  = F_gpp2
+    args_a   = c1gpp1
+    args_b   = c1gpp2
   [../]
   [./chempot2m_pv4]
     type = KKSPhaseChemicalPotential
-    variable = c2pv3
-    cb       = c2pv4
-    fa_name  = Fpv3
-    fb_name  = Fpv4
-    args_a   = c1pv3
-    args_b   = c1pv4
+    variable = c2gpp2
+    cb       = c2d
+    fa_name  = F_gpp2
+    fb_name  = F_d
+    args_a   = c1gpp2
+    args_b   = c1d
   [../]
     
-  [./phaseconcentration_c1pv3]
+  [./phaseconcentration_c1gpp2]
     type = KKSMultiPhaseConcentration
-    variable = c1pv3
-    cj = 'c1m c1pv1 c1pv2 c1pv3 c1pv4'
-    hj_names = 'hm hpv1 hpv2 hpv3 hpv4'
-    etas = 'eta_m eta_pv1 eta_pv2 eta_pv3 eta_pv4'
+    variable = c1gpp2
+    cj = 'c1m c1gp c1gpp1 c1gpp2 c1d'
+    hj_names = 'hm hgp hgpp1 hgpp2 hd'
+    etas = 'eta_m eta_gp eta_gpp1 eta_gpp2 eta_d'
     c = c1
   [../]
 
-  [./phaseconcentration_c1pv4]
+  [./phaseconcentration_c1d]
     type = KKSMultiPhaseConcentration
-    variable = c1pv4
-    cj = 'c1m c1pv1 c1pv2 c1pv3 c1pv4'
-    hj_names = 'hm hpv1 hpv2 hpv3 hpv4'
-    etas = 'eta_m eta_pv1 eta_pv2 eta_pv3 eta_pv4'
+    variable = c1d
+    cj = 'c1m c1gp c1gpp1 c1gpp2 c1d'
+    hj_names = 'hm hgp hgpp1 hgpp2 hd'
+    etas = 'eta_m eta_gp eta_gpp1 eta_gpp2 eta_d'
     c = c1
   [../]
 
-  [./phaseconcentration_c2pv3]
+  [./phaseconcentration_c2gpp2]
     type = KKSMultiPhaseConcentration
-    variable = c2pv3
-    cj = 'c2m c2pv1 c2pv2 c2pv3 c2pv4'
-    hj_names = 'hm hpv1 hpv2 hpv3 hpv4'
-    etas = 'eta_m eta_pv1 eta_pv2 eta_pv3 eta_pv4'
+    variable = c2gpp2
+    cj = 'c2m c2gp c2gpp1 c2gpp2 c2d'
+    hj_names = 'hm hgp hgpp1 hgpp2 hd'
+    etas = 'eta_m eta_gp eta_gpp1 eta_gpp2 eta_d'
     c = c2
   [../]
     
-  [./phaseconcentration_c2pv4]
+  [./phaseconcentration_c2d]
     type = KKSMultiPhaseConcentration
-    variable = c2pv4
-    cj = 'c2m c2pv1 c2pv2 c2pv3 c2pv4'
-    hj_names = 'hm hpv1 hpv2 hpv3 hpv4'
-    etas = 'eta_m eta_pv1 eta_pv2 eta_pv3 eta_pv4'
+    variable = c2d
+    cj = 'c2m c2gp c2gpp1 c2gpp2 c2d'
+    hj_names = 'hm hgp hgpp1 hgpp2 hd'
+    etas = 'eta_m eta_gp eta_gpp1 eta_gpp2 eta_d'
     c = c2
   [../]
   
@@ -1432,12 +1457,12 @@
   []
   [./Energy_total]
     type = KKSMultiFreeEnergy
-    Fj_names = 'Fpv1 Fpv2 Fpv3 Fpv4 Fm'
-    hj_names = 'hpv1 hpv2 hpv3 hpv4 hm'
+    Fj_names = 'F_gp F_gpp1 F_gpp2 F_d F_gamma'
+    hj_names = 'hgp hgpp1 hgpp2 hd hm'
     gj_names = 'gpv1 gpv2 gpv3 gpv4 gm'
     variable = Energy
     w = 1
-    interfacial_vars =  'eta_pv1  eta_pv2  eta_pv3  eta_pv4  eta_m'
+    interfacial_vars =  'eta_gp  eta_gpp1  eta_gpp2  eta_d  eta_m'
     kappa_names =       'kappa kappa kappa kappa kappa'
   [../]
    [./vonmises]
@@ -1450,25 +1475,25 @@
    [./copy_h_pv1] 
   type = MaterialRealAux
   variable = h_pv1_aux 
-  property = hpv1 
+  property = hgp 
   execute_on = timestep_end 
   [../]
   [./copy_h_pv2] 
   type = MaterialRealAux 
   variable = h_pv2_aux 
-  property = hpv2 
+  property = hgpp1 
   execute_on = timestep_end 
   [../]
   [./copy_h_pv3] 
   type = MaterialRealAux 
   variable = h_pv3_aux 
-  property = hpv3 
+  property = hgpp2 
   execute_on = timestep_end 
   [../]
   [./copy_h_pv4]
   type = MaterialRealAux
   variable = h_pv4_aux
-  property = hpv4
+  property = hd
   execute_on = timestep_end
   [../]
   [./copy_h_m]
@@ -1566,7 +1591,7 @@
    [../]
    [./h1_error]
      type = ElementH1Error
-     variable = eta_pv1
+     variable = eta_gp
      function = bc_func
    [../]
   [./Energy_total]
@@ -1605,19 +1630,19 @@
  # Average hpv in whole domain
     [./af_pv1] 
       type = ElementAverageMaterialProperty 
-      mat_prop = hpv1 
+      mat_prop = hgp 
     [../]
     [./af_pv2] 
       type = ElementAverageMaterialProperty 
-      mat_prop = hpv2 
+      mat_prop = hgpp1 
     [../]
     [./af_pv3] 
       type = ElementAverageMaterialProperty 
-      mat_prop = hpv3 
+      mat_prop = hgpp2 
     [../]
   [./af_pv4]
     type = ElementAverageMaterialProperty
-    mat_prop = hpv4
+    mat_prop = hd
   [../]
   # Denominators: ∫ h dV  (phase volumes)
   [./den_pv1] 
@@ -1640,24 +1665,24 @@
    type = ElementIntegralVariablePostprocessor 
    variable = h_m_aux   
    [../]
-  [./eta_pv1]
+  [./eta_gp]
     type = ElementIntegralVariablePostprocessor
-    variable = eta_pv1
+    variable = eta_gp
     use_absolute_value = true
   [../]
-   [./eta_pv2]
+   [./eta_gpp1]
     type = ElementIntegralVariablePostprocessor
-    variable = eta_pv2
+    variable = eta_gpp1
     use_absolute_value = true
   [../]
-  [./eta_pv3]
+  [./eta_gpp2]
     type = ElementIntegralVariablePostprocessor
-    variable = eta_pv3
+    variable = eta_gpp2
     use_absolute_value = true
   [../]
-  [./eta_pv4]
+  [./eta_d]
     type = ElementIntegralVariablePostprocessor
-    variable = eta_pv4
+    variable = eta_d
     use_absolute_value = true
   [../]
    [./A_total]   

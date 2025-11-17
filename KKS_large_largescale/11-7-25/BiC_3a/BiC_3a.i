@@ -521,7 +521,7 @@
   type = DerivativeParsedMaterial
   property_name     = fc_pv4
   coupled_variables = 'c1pv4 c2pv4'
-  expression = '50.0*((c1pv4-0.000727)^2+2*(c2pv4-0.196)^2)'
+  expression = '80.0*((c1pv4-0.000727)^2+2*(c2pv4-0.196)^2)'
 [../]
 
 
@@ -648,8 +648,8 @@
   # constant properties
   [./constants]
     type = GenericConstantMaterial
-    prop_names  = 'L    kappa  D   misfit    W'
-    prop_values = '0.3   0.01  1     1      0.01'
+    prop_names  = 'L     kappa     D  misfit   W'
+    prop_values = '0.3   0.01      1    1     0.01'
   [../]
   #[./gate_3h_prop]
    # type        = GenericFunctionMaterial
@@ -936,7 +936,7 @@
     base_name = phasepv3
     eigen_base = '0.0067 0.028 0 0 0 0'
     Euler_angles = '45 0 0'
-    prefactor = misfit
+    prefactor = 0
     eigenstrain_name = eigenstrainpv3
     block = 1
   [../]
@@ -956,7 +956,6 @@
   base_name = phasepv4
   eigen_base = '0.005320 0.01332 0.02378 0 0 0'
   Euler_angles = '5.176036589 1.150261992 2.456873451'
-  prefactor = 0
   eigenstrain_name = eigenstrainpv4
   block = 1
 [../]

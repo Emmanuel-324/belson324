@@ -1,9 +1,9 @@
 #!/bin/bash                                                                     
-#SBATCH --job-name=BiC_1.i                                            
-#SBATCH --output=BiC_1.%j.out 
-#SBATCH --error=BiC_1.%j.err       
+#SBATCH --job-name=BIN718_2.i                                            
+#SBATCH --output=BIN718_2.%j.out 
+#SBATCH --error=BIN718_2.%j.err       
 #SBATCH --nodes=1                                                              
-#SBATCH --ntasks-per-node=35
+#SBATCH --ntasks-per-node=34
 #SBATCH --cpus-per-task=2
 #SBATCH --account=amcorrosion                                                  
 #SBATCH --partition=normal_q                                                   
@@ -26,9 +26,7 @@ export PATH="$CONDA_PREFIX/bin:$PATH"
 # Go to job submission directory
 cd "${SLURM_SUBMIT_DIR}"
 
-srun --export=ALL --mpi=pmi2 -n 35 /home/emmanuel324/projects/belson324/belson324-opt  -i  BiC_1.i
-
-
+srun --export=ALL --mpi=pmi2 -n 34 /home/emmanuel324/projects/belson324/belson324-opt  -i  BIN718_2.i
 
 
 

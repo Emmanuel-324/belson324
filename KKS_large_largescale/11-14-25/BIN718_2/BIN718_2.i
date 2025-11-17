@@ -382,11 +382,15 @@
 # ---- Nb (c2) enrichment at the grain boundary (x = 350 sim units) ----
   # Baseline values from Wang: x_Al ≈ 0.024, x_Nb ≈ 0.038 (adjust if your alloy differs).
   # dC_nb is the peak enrichment (keep modest to preserve mass balance).
- 
+  [./c2_gb_enrich_fn]
+  type  = ParsedFunction
+  value = '0.038 + 0.18*exp(-((x - 350)/5.0)^2)'   # peaks ~0.218
+[../]
 []
 
 [ICs]
-   [./eta_pv1]
+  # ---------- Order parameters ----------
+[./eta_pv1]
     variable = eta_pv1
     type = RandomIC
     min = -0.6
@@ -407,26 +411,87 @@
     max = 0.6
     seed = 307	
   [../]
-  # thin delta plate centered on the GB (spans both sides a little)
+
+# thin delta plate centered on the GB (spans both sides a little)
 [./eta_pv4_gb_plate_ic]
-    type     = FunctionIC
-    variable = eta_pv4
-    function = '0.8 * 0.5*(tanh((x - 340.0)/1.0) - tanh((x - 360.0)/1.0))'
-  [../]
-  [./c1]
-    variable = c1
-    type = RandomIC
-    min = 0.010	
-    max = 0.03
-    seed = 403	
-  [../]
-  [./c2]
-    variable = c2
-    type = RandomIC
-    min = 0.032	
-    max = 0.044
-    seed = 89	
-  [../]
+  type     = FunctionIC
+  variable = eta_pv4
+  function = '0.8 * 0.5*(tanh((x - 340.0)/1.0) - tanh((x - 360.0)/1.0))'
+[../]
+
+# ---------- Global concentrations ----------
+[./c1_global_ic]
+  type     = ConstantIC
+  variable = c1
+  value    = 0.024
+[../]
+
+# OPTION: keep a light global GB bump (or use full enrichment if you want exact mass)
+[./c2_global_ic]
+  type     = FunctionIC
+  variable = c2
+  function = '0.038 + 0.02*exp(-((x - 350)/8.0)^2)'
+[../]
+
+# ---------- Per-phase c2 ICs (explicit: gamma-double-prime in bulk = 0.196;
+# delta (pv4) gets the localized enrichment only) ----------
+[./c2m_ic]
+  type     = ConstantIC
+  variable = c2m
+  value    = 0.038
+[../]
+
+[./c2pv1_ic]
+  type     = ConstantIC
+  variable = c2pv1
+  value    = 0.196
+[../]
+
+[./c2pv2_ic]
+  type     = ConstantIC
+  variable = c2pv2
+  value    = 0.0157
+[../]
+
+[./c2pv3_ic]
+  type     = ConstantIC
+  variable = c2pv3
+  value    = 0.196
+[../]
+
+# localized delta enrichment (pv4)
+[./c2pv4_ic]
+  type     = FunctionIC
+  variable = c2pv4
+  function = '(0.038 + 0.18*exp(-((x - 350)/5.0)^2)) * (0.5*(tanh((x - 340.0)/1.0) - tanh((x - 360.0)/1.0)))'
+[../]
+
+# Al-like per-phase (c1*): keep baseline
+[./c1m_ic]
+  type=ConstantIC
+  variable=c1m
+  value=0.024
+[../]
+[./c1pv1_ic]
+  type=ConstantIC
+  variable=c1pv1
+  value=0.024
+[../]
+[./c1pv2_ic]
+  type=ConstantIC
+  variable=c1pv2
+  value=0.024
+[../]
+[./c1pv3_ic]
+  type=ConstantIC
+  variable=c1pv3
+  value=0.024
+[../]
+[./c1pv4_ic]
+  type=ConstantIC
+  variable=c1pv4
+  value=0.024
+[../]
 []
 
 
@@ -521,7 +586,7 @@
   type = DerivativeParsedMaterial
   property_name     = fc_pv4
   coupled_variables = 'c1pv4 c2pv4'
-  expression = '50.0*((c1pv4-0.000727)^2+2*(c2pv4-0.196)^2)'
+  expression = '50*((c1pv4 - 0.020)^2 + 2*(c2pv4 - 0.22)^2)'
 [../]
 
 
@@ -648,8 +713,8 @@
   # constant properties
   [./constants]
     type = GenericConstantMaterial
-    prop_names  = 'L    kappa  D   misfit    W'
-    prop_values = '0.3   0.01  1     1      0.01'
+    prop_names  = 'L   L_eta_pv4  kappa kappa_pv4 D  misfit     W'
+    prop_values = '0.3  0.1        0.01    0.02   1    1        0.01'
   [../]
   #[./gate_3h_prop]
    # type        = GenericFunctionMaterial
@@ -738,28 +803,15 @@
     euler_angle_3 = 0
     block = 1
   [../]
-   # per-block stiffness for pv4
-[./Stiffness_phasepv4_g0]
-  type = ComputeElasticityTensor
-  C_ijkl = '290.6 187 160.7 290.6 187 309.6 114.2 114.2 119.2'
-  base_name = phasepv4
-  fill_method = symmetric9
-  euler_angle_1 = 5.176036589
-  euler_angle_2 = 1.150261992
-  euler_angle_3 = 2.456873451
-  block = 0
-[../]
-
-[./Stiffness_phasepv4_g1]
-  type = ComputeElasticityTensor
-  C_ijkl = '290.6 187 160.7 290.6 187 309.6 114.2 114.2 119.2'
-  base_name = phasepv4
-  fill_method = symmetric9
-  euler_angle_1 = 5.176036589
-  euler_angle_2 = 1.150261992
-  euler_angle_3 = 2.456873451
-  block = 1
-[../]
+  [./Stiffness_phasepv4]
+    type = ComputeElasticityTensor
+    C_ijkl = '290.6 187 160.7 290.6 187 309.6 114.2 114.2 119.2'
+    base_name = phasepv4
+    fill_method = symmetric9
+    euler_angle_1 = 0
+    euler_angle_2 = 0
+    euler_angle_3 = 0
+  [../]
   
 
   [./stress_phasepv1_g0]
@@ -792,15 +844,9 @@
     base_name = phasepv3
     block = 1
   [../]
-   [./stress_phasepv4_g0]
+  [./stress_phasepv4_g0]
     type = ComputeLinearElasticStress
     base_name = phasepv4
-    block = 0
-  [../]
-  [./stress_phasepv4_g1]
-    type = ComputeLinearElasticStress
-    base_name = phasepv4
-    block = 1
   [../]
 
   [./stress_phasem_g0]
@@ -873,15 +919,8 @@
     displacements = 'disp_x disp_y'
     base_name = phasepv4
     eigenstrain_names = eigenstrainpv4
-    block = 0
   [../]
-  [./strain_phasepv4_g1]
-    type = ComputeSmallStrain
-    displacements = 'disp_x disp_y'
-    base_name = phasepv4
-    eigenstrain_names = eigenstrainpv4
-    block = 1
-  [../]
+ 
 
 
 
@@ -940,26 +979,14 @@
     eigenstrain_name = eigenstrainpv3
     block = 1
   [../]
-  # per-block eigenstrain (mirrors stiffness blocks)
-[./eigen_strainpv4_g0]
-  type = ComputeRotatedEigenstrain
-  base_name = phasepv4
-  eigen_base = '0.005320 0.01332 0.02378 0 0 0'
-  Euler_angles = '5.176036589 1.150261992 2.456873451'
-  prefactor = 0
-  eigenstrain_name = eigenstrainpv4
-  block = 0
-[../]
-
-[./eigen_strainpv4_g1]
-  type = ComputeRotatedEigenstrain
-  base_name = phasepv4
-  eigen_base = '0.005320 0.01332 0.02378 0 0 0'
-  Euler_angles = '5.176036589 1.150261992 2.456873451'
-  prefactor = 0
-  eigenstrain_name = eigenstrainpv4
-  block = 1
-[../]
+  [./eigen_strainpv4]
+    type = ComputeRotatedEigenstrain
+    base_name = phasepv4
+    eigen_base = '0.005320 0.01332 0.02378 0 0 0'
+    Euler_angles = '0 0 0'
+    prefactor = 0
+    eigenstrain_name = eigenstrainpv4
+  [../]
   
 
 
@@ -1111,6 +1138,7 @@
     gi_name   = gpv4
     eta_i     = eta_pv4
     wi        = 0.01
+    mob_name = L_eta_pv4
     coupled_variables      = 'c1pv1 c1pv2 c1pv3 c1pv4 c1m c2pv1 c2pv2 c2pv3 c2pv4 c2m eta_pv1 eta_pv2 eta_pv3 eta_m'
   [../]
   [./ACBulkCpv4_c1]
@@ -1120,6 +1148,7 @@
     hj_names  = 'hpv1 hpv2 hpv3 hpv4 hm'
     cj_names  = 'c1pv1 c1pv2 c1pv3 c1pv4 c1m'
     eta_i     = eta_pv4
+    mob_name = L_eta_pv4
     coupled_variables      = 'c2pv1 c2pv2 c2pv3 c2pv4 c2m eta_pv1 eta_pv2 eta_pv3 eta_m'
   [../]
   [./ACBulkCpv4_c2]
@@ -1129,12 +1158,13 @@
     hj_names  = 'hpv1 hpv2 hpv3 hpv4 hm'
     cj_names  = 'c2pv1 c2pv2 c2pv3 c2pv4 c2m'
     eta_i     = eta_pv4
+    mob_name = L_eta_pv4
     coupled_variables      = 'c1pv1 c1pv2 c1pv3 c1pv4 c1m eta_pv1 eta_pv2 eta_pv3 eta_m'
   [../]
   [./ACInterfacepv4]
     type = ACInterface
     variable = eta_pv4
-    kappa_name = kappa
+    kappa_name = kappa_pv4
   [../]
 
 # Kernels for constraint equation |eta_pv1| + |eta_pv2| + eta_m = 1
@@ -1361,7 +1391,11 @@
 []
 
 [AuxKernels]
-
+[./c2_gb_enrich_fn]
+    type      = FunctionAux
+    variable  = gb_mask
+    function  = c2_gb_enrich_fn
+  [../]
 
   # 2) Weighted c2 for integration/averaging over GB band
   [./c2_times_mask]
@@ -1685,7 +1719,10 @@
   type=ElementIntegralVariablePostprocessor
   variable=h_g_pv4
   [../]
-
+[./int_c2_func]
+    type      = FunctionElementIntegral
+    function  = c2_gb_enrich_fn
+  [../]
    # fractions in GB band and in whole domain
   [./frac_g_pv1] 
   type=ParsedPostprocessor 

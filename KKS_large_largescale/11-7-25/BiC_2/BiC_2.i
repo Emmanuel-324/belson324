@@ -420,13 +420,12 @@
     max = 0.03
     seed = 403	
   [../]
-  [./c2]
-    variable = c2
-    type = RandomIC
-    min = 0.032	
-    max = 0.044
-    seed = 89	
+  [./c2_gb_initial]
+  type = FunctionIC
+  variable = c2
+  function  = '0.038 + 0.18*exp(-((x - 350)/5.0)^2)'
   [../]
+
 []
 
 

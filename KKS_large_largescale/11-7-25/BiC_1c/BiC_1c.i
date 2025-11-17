@@ -521,7 +521,7 @@
   type = DerivativeParsedMaterial
   property_name     = fc_pv4
   coupled_variables = 'c1pv4 c2pv4'
-  expression = '50.0*((c1pv4-0.000727)^2+2*(c2pv4-0.196)^2)'
+  expression = '80.0*((c1pv4-0.000727)^2+2*(c2pv4-0.196)^2)'
 [../]
 
 
@@ -648,8 +648,8 @@
   # constant properties
   [./constants]
     type = GenericConstantMaterial
-    prop_names  = 'L    kappa  D   misfit    W'
-    prop_values = '0.3   0.01  1     1      0.01'
+    prop_names  = 'L   L_eta_pv4  kappa kappa_pv4 D  misfit     W'
+    prop_values = '0.3  0.1        0.01    0.02   1    1        0.01'
   [../]
   #[./gate_3h_prop]
    # type        = GenericFunctionMaterial
