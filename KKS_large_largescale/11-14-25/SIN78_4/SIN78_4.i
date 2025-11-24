@@ -20,7 +20,7 @@
     displacements = 'disp_x disp_y'
     variable = disp_x
     boundary = right
-    factor = 0
+    factor = -0.2
   [../]
   [./all_c1]
     type =  NeumannBC
@@ -270,14 +270,14 @@
     type  = ParsedFunction
   # ε_c(t_h) = L / (1 + exp(-(t_h - t0)/k)), with L=0.0286, t0≈-2.22 h, k≈2.89 h
   # t_h = t/6630.57 converts simulation seconds to hours
-    value = '0.0286 / (1 + exp(-((t/6630.57 - (-2.22))/2.89)))'
+    value = '0.0286 / (1 + exp(-((t/3600.57 - (-2.22))/2.89)))'
   [../]
 
   [./misfit_a_fn]
   type  = ParsedFunction
   # ε_a(t_h) = A * ( (t_h/τ)^p ) * exp(-(t_h/τ))
   # Choose p=2, τ=2.75 h → peak at t≈5.5 h; scale A for peak ≈0.0065
-  value = '(0.0120) * pow(( (t/6630.57)/2.75 ), 2.0) * exp(-( (t/6630.57)/2.75 ))'
+  value = '(0.0120) * pow(( (t/3600.57)/2.75 ), 2.0) * exp(-( (t/3600.57)/2.75 ))'
  [../]
 []
 
@@ -337,9 +337,8 @@
   property_name = fc_gamma
   coupled_variables = 'c1m c2m'               # c1m = Al, c2m = Nb (γ-phase)
   constant_names = 'Vm_norm C_Al_norm C_Nb_norm c1_eq_gamma c2_eq_gamma'
-  constant_expressions = '1.0 0.00268456 0.00637852 0.0161 0.00723'
+  constant_expressions = '1.0 50 50 0.0161 0.00723'
   expression = '( C_Al_norm*(c1m - c1_eq_gamma)^2 + C_Nb_norm*(c2m - c2_eq_gamma)^2 ) / Vm_norm'
-  derivative_order = 2
 [../]
 
 [./elastic_free_energy_m]
@@ -364,9 +363,8 @@
   property_name = fc_gp
   coupled_variables = 'c1gp c2gp'
   constant_names = 'Vm_norm C_Al_norm C_Nb_norm c1_eq_gp c2_eq_gp'
-  constant_expressions = '1.0 0.00268456 0.00637852 0.187 0.0157'
+  constant_expressions = '1.0 50 50 0.187 0.0157'
   expression = '( C_Al_norm*(c1gp - c1_eq_gp)^2 + C_Nb_norm*(c2gp - c2_eq_gp)^2 ) / Vm_norm'
-  derivative_order = 2
 [../]
 
 [./elastic_free_energy_gp]
@@ -392,9 +390,8 @@
   coupled_variables = 'c1gpp1 c2gpp1'
   # Use same normalized C constants and the normalized Delta_f
   constant_names = 'Vm_norm C_Al_norm C_Nb_norm c1_eq_d c2_eq_d Delta_f_norm'
-  constant_expressions = '1.0 0.00268456 0.00637852 7.27e-4 0.196 1.0392617e-5'
+  constant_expressions = '1.0 50 50 7.27e-4 0.196 1.0392617e-5'
   expression = '( C_Al_norm*(c1gpp1 - c1_eq_d)^2 + C_Nb_norm*(c2gpp1 - c2_eq_d)^2 + Delta_f_norm ) / Vm_norm'
-  derivative_order = 2
 [../]
 
 [./elastic_free_energy_gpp1]
@@ -419,9 +416,8 @@
   property_name = fc_gpp2
   coupled_variables = 'c1gpp2 c2gpp2'
   constant_names = 'Vm_norm C_Al_norm C_Nb_norm c1_eq_d c2_eq_d Delta_f_norm'
-  constant_expressions = '1.0 0.00268456 0.00637852 7.27e-4 0.196 1.0392617e-5'
+  constant_expressions = '1.0 50 50 7.27e-4 0.196 1.0392617e-5'
   expression = '( C_Al_norm*(c1gpp2 - c1_eq_d)^2 + C_Nb_norm*(c2gpp2 - c2_eq_d)^2 + Delta_f_norm ) / Vm_norm'
-  derivative_order = 2
 [../]
 
 [./elastic_free_energy_gpp2]
@@ -595,65 +591,65 @@
     type = ComputeSmallStrain
     displacements = 'disp_x disp_y'
     base_name = phasegp
-    eigenstrain_names = eigenstrainpv1
+    eigenstrain_names = eigenstraingp
   [../]
   [./strain_phasegpp1]
     type = ComputeSmallStrain
     displacements = 'disp_x disp_y'
     base_name = phasegpp1
-    eigenstrain_names = 'eigenstrainpv2_c eigenstrainpv2_a'
+    eigenstrain_names = 'eigenstraingpp1_c eigenstraingpp1_a'
   [../]
   [./strain_phasegpp2]
     type = ComputeSmallStrain
     displacements = 'disp_x disp_y'
     base_name = phasegpp2
-    eigenstrain_names = 'eigenstrainpv3_c eigenstrainpv3_a'
+    eigenstrain_names = 'eigenstraingpp2_c eigenstraingpp2_a'
   [../]
-  [./eigen_strainpv1]
+  [./eigen_straingp]
     type = ComputeRotatedEigenstrain
     base_name = phasegp
     eigen_base = '-0.003 -0.003 -0.003 0 0 0'
     Euler_angles = '0 0 0'
     prefactor = misfit
-    eigenstrain_name = eigenstrainpv1
+    eigenstrain_name = eigenstraingp
   [../]
   # pv2: c-part (only the c-axis component)
-[./eigen_strainpv2_c]
+[./eigen_straingpp1_c]
   type = ComputeRotatedEigenstrain
   base_name = phasegpp1
   eigen_base = '1 0 0 0 0 0'   # [εc, 0, 0, 0, 0, 0]
   Euler_angles = '0 0 0'
   prefactor = misfit_c
-  eigenstrain_name = eigenstrainpv2_c
+  eigenstrain_name = eigenstraingpp1_c
 [../]
 
 # pv2: a-part (the two equal a-axis components)
-[./eigen_strainpv2_a]
+[./eigen_straingpp1_a]
   type = ComputeRotatedEigenstrain
   base_name = phasegpp1
   eigen_base = '0 1 1 0 0 0'   # [0, εa, εa, 0, 0, 0]
   Euler_angles = '0 0 0'
   prefactor = misfit_a
-  eigenstrain_name = eigenstrainpv2_a
+  eigenstrain_name = eigenstraingpp1_a
 [../]
   # pv3: c-part
-[./eigen_strainpv3_c]
+[./eigen_straingpp2_c]
   type = ComputeRotatedEigenstrain
   base_name = phasegpp2
   eigen_base = '0 1 0 0 0 0'   # [0, εc, 0, 0, 0, 0]
   Euler_angles = '0 0 0'
   prefactor = misfit_c
-  eigenstrain_name = eigenstrainpv3_c
+  eigenstrain_name = eigenstraingpp2_c
 [../]
 
 # pv3: a-part
-[./eigen_strainpv3_a]
+[./eigen_straingpp2_a]
   type = ComputeRotatedEigenstrain
   base_name = phasegpp2
   eigen_base = '1 0 1 0 0 0'   # [εa, 0, εa, 0, 0, 0]
   Euler_angles = '0 0 0'
   prefactor = misfit_a
-  eigenstrain_name = eigenstrainpv3_a
+  eigenstrain_name = eigenstraingpp2_a
 [../]
 
 
@@ -1016,13 +1012,13 @@
   []
   [./Energy_total]
     type = KKSMultiFreeEnergy
-    Fj_names = 'F_gp F_gpp1 F_gamma'
-    hj_names = 'hgp hgpp1 hm'
-    gj_names = 'gp gpp1 gm'
+    Fj_names = 'F_gp F_gpp1 F_gpp2 F_gamma'
+    hj_names = 'hgp hgpp1 hgpp2 hm'
+    gj_names = 'gp gpp1 gpp2 gm'
     variable = Energy
     w = 1
-    interfacial_vars =  'eta_gp  eta_gpp1  eta_m'
-    kappa_names =       'kappa kappa kappa'
+    interfacial_vars =  'eta_gp  eta_gpp1  eta_gpp2  eta_m'
+    kappa_names =       'kappa kappa kappa kappa'
   [../]
    [./misfit_c_out]
     type     = MaterialRealAux

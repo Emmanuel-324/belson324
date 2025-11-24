@@ -3,13 +3,13 @@
 [Mesh]
   type = GeneratedMesh
   dim = 2
-  nx = 175
-  ny = 175
+  nx = 300
+  ny = 300
 #  nz = 2
   xmin = 0
-  xmax = 350
+  xmax = 640
   ymin = 0
-  ymax = 350
+  ymax = 640
   zmin = 0
   zmax = 0
 #  elem_type = QUAD4
@@ -50,14 +50,6 @@
 
 
 [AuxVariables]
-  [./misfit_c_mat]
-    family = MONOMIAL
-    order = CONSTANT
-  [../]
-  [./misfit_a_mat]
-    family = MONOMIAL
-    order = CONSTANT
-  [../] 
   [./hgp_aux]
      family = MONOMIAL 
      order = CONSTANT 
@@ -266,19 +258,7 @@
     symbol_names = alpha
     symbol_values = 16
   [../]
-  [./misfit_c_fn]
-    type  = ParsedFunction
-  # ε_c(t_h) = L / (1 + exp(-(t_h - t0)/k)), with L=0.0286, t0≈-2.22 h, k≈2.89 h
-  # t_h = t/6630.57 converts simulation seconds to hours
-    value = '0.0286 / (1 + exp(-((t/3600.57 - (-2.22))/2.89)))'
-  [../]
-
-  [./misfit_a_fn]
-  type  = ParsedFunction
-  # ε_a(t_h) = A * ( (t_h/τ)^p ) * exp(-(t_h/τ))
-  # Choose p=2, τ=2.75 h → peak at t≈5.5 h; scale A for peak ≈0.0065
-  value = '(0.0120) * pow(( (t/3600.57)/2.75 ), 2.0) * exp(-( (t/3600.57)/2.75 ))'
- [../]
+  
 []
 
 [ICs]
@@ -336,9 +316,9 @@
   type = DerivativeParsedMaterial
   property_name = fc_gamma
   coupled_variables = 'c1m c2m'               # c1m = Al, c2m = Nb (γ-phase)
-  constant_names = 'Vm_norm C_Al_norm C_Nb_norm c1_eq_gamma c2_eq_gamma'
-  constant_expressions = '1.0 50 50 0.0161 0.00723'
-  expression = '( C_Al_norm*(c1m - c1_eq_gamma)^2 + C_Nb_norm*(c2m - c2_eq_gamma)^2 ) / Vm_norm'
+  constant_names = 'Vm C_Al C_Nb c1_eq_gamma c2_eq_gamma'
+  constant_expressions = '0.0166 249.4 592.8 0.0161 0.00723'
+  expression = '( C_Al*(c1m - c1_eq_gamma)^2 + C_Nb*(c2m - c2_eq_gamma)^2 ) / Vm'
 [../]
 
 [./elastic_free_energy_m]
@@ -362,9 +342,9 @@
   type = DerivativeParsedMaterial
   property_name = fc_gp
   coupled_variables = 'c1gp c2gp'
-  constant_names = 'Vm_norm C_Al_norm C_Nb_norm c1_eq_gp c2_eq_gp'
-  constant_expressions = '1.0 50 50 0.187 0.0157'
-  expression = '( C_Al_norm*(c1gp - c1_eq_gp)^2 + C_Nb_norm*(c2gp - c2_eq_gp)^2 ) / Vm_norm'
+  constant_names = 'Vm C_Al C_Nb c1_eq_gp c2_eq_gp'
+  constant_expressions = '0.0166 249.4 592.8 0.187 0.0157'
+  expression = '( C_Al*(c1gp - c1_eq_gp)^2 + C_Nb*(c2gp - c2_eq_gp)^2 ) / Vm'
 [../]
 
 [./elastic_free_energy_gp]
@@ -389,9 +369,9 @@
   property_name = fc_gpp1
   coupled_variables = 'c1gpp1 c2gpp1'
   # Use same normalized C constants and the normalized Delta_f
-  constant_names = 'Vm_norm C_Al_norm C_Nb_norm c1_eq_d c2_eq_d Delta_f_norm'
-  constant_expressions = '1.0 50 50 7.27e-4 0.196 1.0392617e-5'
-  expression = '( C_Al_norm*(c1gpp1 - c1_eq_d)^2 + C_Nb_norm*(c2gpp1 - c2_eq_d)^2 + Delta_f_norm ) / Vm_norm'
+  constant_names = 'Vm C_Al C_Nb c1_eq_d c2_eq_d Delta_f'
+  constant_expressions = '0.0166 249.4 592.8 7.27e-4 0.196 0.01605'
+  expression = '( C_Al*(c1gpp1 - c1_eq_d)^2 + C_Nb*(c2gpp1 - c2_eq_d)^2 + Delta_f ) / Vm'
 [../]
 
 [./elastic_free_energy_gpp1]
@@ -415,9 +395,9 @@
   type = DerivativeParsedMaterial
   property_name = fc_gpp2
   coupled_variables = 'c1gpp2 c2gpp2'
-  constant_names = 'Vm_norm C_Al_norm C_Nb_norm c1_eq_d c2_eq_d Delta_f_norm'
-  constant_expressions = '1.0 50 50 7.27e-4 0.196 1.0392617e-5'
-  expression = '( C_Al_norm*(c1gpp2 - c1_eq_d)^2 + C_Nb_norm*(c2gpp2 - c2_eq_d)^2 + Delta_f_norm ) / Vm_norm'
+  constant_names = 'Vm C_Al C_Nb c1_eq_d c2_eq_d Delta_f'
+  constant_expressions = '0.0166 249.4 592.8 7.27e-4 0.196 0.01605'
+  expression = '( C_Al*(c1gpp2 - c1_eq_d)^2 + C_Nb*(c2gpp2 - c2_eq_d)^2 + Delta_f ) / Vm'
 [../]
 
 [./elastic_free_energy_gpp2]
@@ -518,19 +498,14 @@
   # constant properties
   [./constants]
     type = GenericConstantMaterial
-    prop_names  = 'L    kappa  D   misfit     W'
-    prop_values = '0.3  0.01   1     1      0.01'
+     prop_names  = 'L        k_gp   k_gpp1  k_gpp2  D   misfit  W_gp  W_gpp1 W_gpp2'
+    prop_values = '0.00465  3.87    7.74   7.74   46     1    0.47    0.93   0.93'
   [../]
-  [./misfit_props]
-    type        = GenericFunctionMaterial
-    prop_names  = 'misfit_c misfit_a'
-    prop_values = 'misfit_c_fn misfit_a_fn'   # <-- function names
-  [../]
-    
-  #Mechanical properties
+ 
+#Mechanical properties
   [./Stiffness_phasem]
     type = ComputeElasticityTensor
-    C_ijkl = '272.1 169 169 272.1 169 272.1 131 131 131' #Ghorbanpour, S., et al., A crystal plasticity model incorporating the effects of     
+    C_ijkl = '1698.5 1054.8 1054.8 1698.5 1054.8 1698.5 818.6 818.6 818.6' #Ghorbanpour, S., et al., A crystal plasticity model incorporating the effects of     
     base_name = phasem
     euler_angle_1 = 0
     euler_angle_2 = 0
@@ -539,7 +514,7 @@
   [../]
    [./Stiffness_phasegp]
     type = ComputeElasticityTensor
-    C_ijkl = '243 154.8 154.8 243 154.8 243 132.3 132.3 132.3'
+    C_ijkl = '1516.7 966.2 966.2 1516.7 966.2 1516.7 825.7 825.7 825.7'
     base_name = phasegp
     euler_angle_1 = 0
     euler_angle_2 = 0
@@ -548,7 +523,7 @@
   [../]
   [./Stiffness_phasegpp1]
     type = ComputeElasticityTensor
-    C_ijkl = '290.6 187 160.7 290.6 187 309.6 114.2 114.2 119.2'#Ghorbanpour, S., et al., A crystal plasticity model incorporating the effects of    
+    C_ijkl = '1814.2 1167.2  1167.2  1814.2 1167.2 1814.2 712.5 712.5 712.5'#Ghorbanpour, S., et al., A crystal plasticity model incorporating the effects of    
     base_name = phasegpp1
     euler_angle_1 = 0
     euler_angle_2 = 0
@@ -557,7 +532,7 @@
   [../]
   [./Stiffness_phasegpp2]
     type = ComputeElasticityTensor
-    C_ijkl = '290.6 187 160.7 290.6 187 309.6 114.2 114.2 119.2'
+    C_ijkl = '1814.2 1167.2  1167.2  1814.2 1167.2 1814.2 712.5 712.5 712.5'
     base_name = phasegpp2
     euler_angle_1 = 0
     euler_angle_2 = 0
@@ -597,13 +572,13 @@
     type = ComputeSmallStrain
     displacements = 'disp_x disp_y'
     base_name = phasegpp1
-    eigenstrain_names = 'eigenstrainpv2_c eigenstrainpv2_a'
+    eigenstrain_names = 'eigenstrainpv2'
   [../]
   [./strain_phasegpp2]
     type = ComputeSmallStrain
     displacements = 'disp_x disp_y'
     base_name = phasegpp2
-    eigenstrain_names = 'eigenstrainpv3_c eigenstrainpv3_a'
+    eigenstrain_names = 'eigenstrainpv3'
   [../]
   [./eigen_strainpv1]
     type = ComputeRotatedEigenstrain
@@ -613,44 +588,22 @@
     prefactor = misfit
     eigenstrain_name = eigenstrainpv1
   [../]
-  # pv2: c-part (only the c-axis component)
-[./eigen_strainpv2_c]
-  type = ComputeRotatedEigenstrain
-  base_name = phasegpp1
-  eigen_base = '1 0 0 0 0 0'   # [εc, 0, 0, 0, 0, 0]
-  Euler_angles = '0 0 0'
-  prefactor = misfit_c
-  eigenstrain_name = eigenstrainpv2_c
-[../]
-
-# pv2: a-part (the two equal a-axis components)
-[./eigen_strainpv2_a]
-  type = ComputeRotatedEigenstrain
-  base_name = phasegpp1
-  eigen_base = '0 1 1 0 0 0'   # [0, εa, εa, 0, 0, 0]
-  Euler_angles = '0 0 0'
-  prefactor = misfit_a
-  eigenstrain_name = eigenstrainpv2_a
-[../]
-  # pv3: c-part
-[./eigen_strainpv3_c]
-  type = ComputeRotatedEigenstrain
-  base_name = phasegpp2
-  eigen_base = '0 1 0 0 0 0'   # [0, εc, 0, 0, 0, 0]
-  Euler_angles = '0 0 0'
-  prefactor = misfit_c
-  eigenstrain_name = eigenstrainpv3_c
-[../]
-
-# pv3: a-part
-[./eigen_strainpv3_a]
-  type = ComputeRotatedEigenstrain
-  base_name = phasegpp2
-  eigen_base = '1 0 1 0 0 0'   # [εa, 0, εa, 0, 0, 0]
-  Euler_angles = '0 0 0'
-  prefactor = misfit_a
-  eigenstrain_name = eigenstrainpv3_a
-[../]
+ [./eigen_strainpv2]
+    type = ComputeRotatedEigenstrain
+    base_name = phasegpp1
+    eigen_base = '0.0286 0.0067 0.0067 0 0 0'
+    Euler_angles = '0 0 0'
+    prefactor = misfit
+    eigenstrain_name = eigenstrainpv2
+  [../]
+ [./eigen_strainpv3]
+    type = ComputeRotatedEigenstrain
+    base_name = phasegpp2
+    eigen_base = '0.0067 0.0286 0.0067 0 0 0'
+    Euler_angles = '0 0 0'
+    prefactor = misfit
+    eigenstrain_name = eigenstrainpv3
+  [../]
 
 
   # Generate the global stress from the phase stresses
@@ -683,7 +636,7 @@
     hj_names  = 'hgp hgpp1 hgpp2 hm'
     gi_name   = gp
     eta_i     = eta_gp
-    wi        = 0.01
+    wi        = 0.47
     coupled_variables      = 'c1gp c1gpp1 c1gpp2 c1m c2gp c2gpp1 c2gpp2 c2m eta_gpp1 eta_gpp2 eta_m'
   [../]
   [./ACBulkCpv1_c1]
@@ -707,7 +660,7 @@
   [./ACInterfacepv1]
     type = ACInterface
     variable = eta_gp
-    kappa_name = kappa
+    kappa_name = k_gp
   [../]
 
   # Kernels for Allen-Cahn equation for eta_gpp1
@@ -722,7 +675,7 @@
     hj_names  = 'hgp hgpp1 hgpp2 hm'
     gi_name   = gpp1
     eta_i     = eta_gpp1
-    wi        = 0.01
+    wi        = 0.93
     coupled_variables      = 'c1gp c1gpp1 c1gpp2 c1m c2gp c2gpp1 c2gpp2 c2m eta_gp eta_gpp2 eta_m'
   [../]
   [./ACBulkCpv2_c1]
@@ -746,7 +699,7 @@
   [./ACInterfacepv2]
     type = ACInterface
     variable = eta_gpp1
-    kappa_name = kappa
+    kappa_name = k_gpp1
   [../]
 
   # Kernels for Allen-Cahn equation for eta_gpp1
@@ -761,7 +714,7 @@
     hj_names  = 'hgp hgpp1 hgpp2 hm'
     gi_name   = gpp2
     eta_i     = eta_gpp2
-    wi        = 0.01
+    wi        = 0.93
     coupled_variables      = 'c1gp c1gpp1 c1gpp2 c1m c2gp c2gpp1 c2gpp2 c2m eta_gp eta_gpp1 eta_m'
   [../]
   [./ACBulkCpv3_c1]
@@ -785,7 +738,7 @@
   [./ACInterfacepv3]
     type = ACInterface
     variable = eta_gpp2
-    kappa_name = kappa
+    kappa_name = k_gpp2
   [../]
 
 # Kernels for constraint equation |eta_gp| + |eta_gpp1| + eta_m = 1
@@ -1012,23 +965,13 @@
   []
   [./Energy_total]
     type = KKSMultiFreeEnergy
-    Fj_names = 'F_gp F_gpp1 F_gpp2 F_gamma'
-    hj_names = 'hgp hgpp1 hgpp2 hm'
-    gj_names = 'gp gpp1 gpp2 gm'
+    Fj_names = 'F_gp F_gpp1 F_gpp2'
+    hj_names = 'hgp hgpp1 hgpp2'
+    gj_names = 'gp gpp1 gpp2'
     variable = Energy
     w = 1
-    interfacial_vars =  'eta_gp  eta_gpp1  eta_gpp2  eta_m'
-    kappa_names =       'kappa kappa kappa kappa'
-  [../]
-   [./misfit_c_out]
-    type     = MaterialRealAux
-    variable = misfit_c_mat
-    property = misfit_c
-  [../]
-  [./misfit_a_out]
-    type     = MaterialRealAux
-    variable = misfit_a_mat
-    property = misfit_a
+    interfacial_vars =  'eta_gp  eta_gpp1  eta_gpp2'
+    kappa_names =       'k_gp     k_gpp1     k_gpp2'
   [../]
   [./stress_xx]
     type = RankTwoAux
@@ -1135,7 +1078,7 @@
   nl_rel_tol = 1.0e-6
   nl_abs_tol = 1.0e-8
 
-  end_time = 100000
+  end_time = 30000
 
   [./TimeStepper]
     type = IterationAdaptiveDT
@@ -1267,16 +1210,7 @@
     type = ElementAverageMaterialProperty
     mat_prop = hgpp2
   [../]
-   # Average value over the domain (should equal the function value each step)
-  [./misfit_c_avg]
-    type     = ElementAverageValue
-    variable = misfit_c_mat
-  [../]
-  [./misfit_a_avg]
-    type     = ElementAverageValue
-    variable = misfit_a_mat
-  [../]
-
+   
 
   # Time for plotting against the ramp
   [./time_pp]

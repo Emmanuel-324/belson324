@@ -392,14 +392,12 @@
   [../]
 
 
- # ---- Delta phase OP: tiny noise everywhere (no strong bias in η itself) ----
-  [./eta_d]
-    variable = eta_d
-    type = RandomIC
-    min = -0.05
-    max =  0.05
-    seed = 456
-  [../]
+[./eta_d]
+  type     = FunctionIC
+  variable = eta_d
+  function = '0.8 * 0.5*(tanh((x - 340.0)/1.0) - tanh((x - 360.0)/1.0))'
+[../]
+
  [./c1]
     variable = c1
     type = RandomIC
@@ -409,22 +407,11 @@
   [../]
   [./c2]
     variable = c2
-    type = FunctionIC
-    function = c2_gb_enrich_fn
+    type = RandomIC
+    min = 0.032	
+    max = 0.044
+    seed = 89	
   [../]
-   # ---- Phase concentrations for δ ----
-  [./c1d]
-    variable = c1d
-    type = ConstantIC
-    value = 7.27e-4   # c1_eq_d
-  [../]
-
-  [./c2d]
-    variable = c2d
-    type = FunctionIC
-    function = c2_gb_enrich_fn   # δ sees the same Nb enrichment at the GB
-  [../]
-
 []
 
 
@@ -671,14 +658,14 @@
   # constant properties
   [./constants]
     type = GenericConstantMaterial
-    prop_names  = 'L_gp L_gpp1 L_gpp2  L_d   kappa kappa_d D  misfit     W'
-    prop_values = '0.3   0.3     0.3   0.05  0.01    0.02   1    1        0.01'
+    prop_names  = 'L    kappa kappa_d D  misfit     W'
+    prop_values = '0.3   0.01    0.02   1    1        0.01'
   [../]
   [./L_eta_d_mat]
     type = DerivativeParsedMaterial
     coupled_variables = 'gb_scale_aux'
-    material_property_names = 'L_d'
-    expression = 'L_d * gb_scale_aux'
+    material_property_names = 'L'
+    expression = 'L * gb_scale_aux'
     property_name = L_eta_d
   [../]
   #[./gate_3h_prop]
@@ -948,9 +935,9 @@
   [./eigen_straind]
     type = ComputeRotatedEigenstrain
     base_name = phased
-    eigen_base = '0.0016 0.0040 0.0071 0 0 0'
+    eigen_base = '0.005320 0.01332 0.02378 0 0 0'
     Euler_angles = '0 0 0'
-    prefactor = misfit
+    prefactor = 0
     eigenstrain_name = eigenstraind
   [../]
   
@@ -973,19 +960,19 @@
   [./TensorMechanics]
     displacements = 'disp_x disp_y'
   [../]
+  
   # Kernels for Allen-Cahn equation for eta_gp
   [./deta_gp_dt]
     type = TimeDerivative
     variable = eta_gp
   [../]
- [./ACBulkFgp]
+  [./ACBulkFgp]
     type = KKSMultiACBulkF
     variable  = eta_gp
     Fj_names  = 'F_gp F_gpp1 F_gpp2 F_d F_gamma'
     hj_names  = 'hgp hgpp1 hgpp2 hd hm'
     gi_name   = gp
     eta_i     = eta_gp
-    mob_name  = L_gp
     wi        = 0.01
     coupled_variables      = 'c1gp c1gpp1 c1gpp2 c1d c1m c2gp c2gpp1 c2gpp2 c2d c2m eta_gpp1 eta_gpp2 eta_d eta_m'
   [../]
@@ -996,7 +983,6 @@
     hj_names  = 'hgp hgpp1 hgpp2 hd hm'
     cj_names  = 'c1gp c1gpp1 c1gpp2 c1d c1m'
     eta_i     = eta_gp
-    mob_name  = L_gp
     coupled_variables      = 'c2gp c2gpp1 c2gpp2 c2d c2m eta_gpp1 eta_gpp2 eta_d eta_m'
   [../]
   [./ACBulkCgp_c2]
@@ -1006,13 +992,11 @@
     hj_names  = 'hgp hgpp1 hgpp2 hd hm'
     cj_names  = 'c2gp c2gpp1 c2gpp2 c2d c2m'
     eta_i     = eta_gp
-    mob_name  = L_gp
     coupled_variables      = 'c1gp c1gpp1 c1gpp2 c1d c1m  eta_gpp1 eta_gpp2 eta_d eta_m'
   [../]
   [./ACInterfacegp]
     type = ACInterface
     variable = eta_gp
-    mob_name = L_gp
     kappa_name = kappa
   [../]
 
@@ -1028,7 +1012,6 @@
     hj_names  = 'hgp hgpp1 hgpp2 hd hm'
     gi_name   = gpp1
     eta_i     = eta_gpp1
-    mob_name  = L_gpp1
     wi        = 0.01
     coupled_variables      = 'c1gp c1gpp1 c1gpp2 c1d c1m c2gp c2gpp1 c2gpp2 c2d c2m eta_gp eta_gpp2 eta_d eta_m'
   [../]
@@ -1039,7 +1022,6 @@
     hj_names  = 'hgp hgpp1 hgpp2 hd hm'
     cj_names  = 'c1gp c1gpp1 c1gpp2 c1d c1m'
     eta_i     = eta_gpp1
-    mob_name  = L_gpp1
     coupled_variables      = 'c2gp c2gpp1 c2gpp2 c2d c2m eta_gp eta_gpp2 eta_d eta_m'
   [../]
   [./ACBulkCgpp1_c2]
@@ -1049,13 +1031,11 @@
     hj_names  = 'hgp hgpp1 hgpp2 hd hm'
     cj_names  = 'c2gp c2gpp1 c2gpp2 c2d c2m'
     eta_i     = eta_gpp1
-    mob_name  = L_gpp1
     coupled_variables      = 'c1gp c1gpp1 c1gpp2 c1d c1m eta_gpp1 eta_gpp2 eta_d eta_m'
   [../]
   [./ACInterfacegpp1]
     type = ACInterface
     variable = eta_gpp1
-    mob_name = L_gpp1
     kappa_name = kappa
   [../]
 
@@ -1071,7 +1051,6 @@
     hj_names  = 'hgp hgpp1 hgpp2 hd hm'
     gi_name   = gpp2
     eta_i     = eta_gpp2
-    mob_name  = L_gpp2
     wi        = 0.01
     coupled_variables      = 'c1gp c1gpp1 c1gpp2 c1d c1m c2gp c2gpp1 c2gpp2 c2d c2m eta_gp eta_gpp1 eta_d eta_m'
   [../]
@@ -1082,7 +1061,6 @@
     hj_names  = 'hgp hgpp1 hgpp2 hd hm'
     cj_names  = 'c1gp c1gpp1 c1gpp2 c1d c1m'
     eta_i     = eta_gpp2
-    mob_name  = L_gpp2
     coupled_variables      = 'c2gp c2gpp1 c2gpp2 c2d c2m eta_gp eta_gpp1 eta_d eta_m'
   [../]
   [./ACBulkCgpp2_c2]
@@ -1092,16 +1070,15 @@
     hj_names  = 'hgp hgpp1 hgpp2 hd hm'
     cj_names  = 'c2gp c2gpp1 c2gpp2 c2d c2m'
     eta_i     = eta_gpp2
-    mob_name  = L_gpp2
     coupled_variables      = 'c1gp c1gpp1 c1gpp2 c1d c1m eta_gp eta_gpp1 eta_d eta_m'
   [../]
   [./ACInterfacegpp2]
     type = ACInterface
     variable = eta_gpp2
-    mob_name = L_gpp2
     kappa_name = kappa
   [../]
-  # Kernels for Allen-Cahn equation for eta_d
+ 
+# Kernels for Allen-Cahn equation for eta_d
   [./deta_d_dt]
     type = TimeDerivative
     variable = eta_d
@@ -1140,9 +1117,9 @@
   [./ACInterfaced]
     type = ACInterface
     variable = eta_d
-    mob_name = L_eta_d
     kappa_name = kappa_d
   [../]
+
 # Kernels for constraint equation |eta_pv1| + |eta_pv2| + eta_m = 1
   # eta3 is the nonlinear variable for the constraint equation
   [./eta_mreaction]

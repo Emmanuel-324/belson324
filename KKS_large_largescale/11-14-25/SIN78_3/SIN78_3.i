@@ -50,14 +50,6 @@
 
 
 [AuxVariables]
-  [./misfit_c_mat]
-    family = MONOMIAL
-    order = CONSTANT
-  [../]
-  [./misfit_a_mat]
-    family = MONOMIAL
-    order = CONSTANT
-  [../] 
   [./hgp_aux]
      family = MONOMIAL 
      order = CONSTANT 
@@ -266,19 +258,7 @@
     symbol_names = alpha
     symbol_values = 16
   [../]
-  [./misfit_c_fn]
-    type  = ParsedFunction
-  # ε_c(t_h) = L / (1 + exp(-(t_h - t0)/k)), with L=0.0286, t0≈-2.22 h, k≈2.89 h
-  # t_h = t/6630.57 converts simulation seconds to hours
-    value = '0.0286 / (1 + exp(-((t/6630.57 - (-2.22))/2.89)))'
-  [../]
-
-  [./misfit_a_fn]
-  type  = ParsedFunction
-  # ε_a(t_h) = A * ( (t_h/τ)^p ) * exp(-(t_h/τ))
-  # Choose p=2, τ=2.75 h → peak at t≈5.5 h; scale A for peak ≈0.0065
-  value = '(0.0120) * pow(( (t/6630.57)/2.75 ), 2.0) * exp(-( (t/6630.57)/2.75 ))'
- [../]
+  
 []
 
 [ICs]
@@ -305,127 +285,135 @@
   [../]
   [./c1]
     variable = c1
-    type = ConstantIC
-    value = 0.022 
+    type = RandomIC
+    min = 0.010	
+    max = 0.03
+    seed = 403	
   [../]
   [./c2]
     variable = c2
-    type = ConstantIC
-    value = 0.038
+    type = RandomIC
+    min = 0.032	
+    max = 0.044
+    seed = 89	
   [../]
 
 []
 
 
 [Materials]
-  # ------------------------------------------------------------------
-  # 1.  Chemical free energy of the matrix (γ)  – Eq. (1)
-  # ------------------------------------------------------------------
-  [./fc_gamma]
-    type = DerivativeParsedMaterial
-    property_name = fc_gamma
-    coupled_variables = 'c1m c2m'               # c1m = Al, c2m = Nb  (γ-phase)
-    constant_names = 'Vm_inv C_Al C_Nb xeq_g_Al xeq_g_Nb'
-    constant_expressions = '1e5 4.0e5 9.5e5 0.0161 0.00723'
-    expression = 'Vm_inv*(C_Al*(c1m-xeq_g_Al)^2 + C_Nb*(c2m-xeq_g_Nb)^2)'
-    derivative_order = 2
-  [../]
-  # Elastic energy of the phase 0
-  [./elastic_free_energy_m]
-    type = ElasticEnergyMaterial
-    base_name = phasem
-    property_name = fe_gamma
-    coupled_variables = ' '
-  [../]
-  # Total free energy of the phase 0
-  [./Total_energy_m]
-    type = DerivativeSumMaterial
-    property_name = F_gamma
-    sum_materials = 'fc_gamma fe_gamma'
-    coupled_variables = 'c1m c2m'
-  [../]
-
-
-  # ------------------------------------------------------------------
-  # 2.  Chemical free energy of γ' (L1₂)  – Eq. (2)
-  # ------------------------------------------------------------------
-  [./fc_gp]
-    type = DerivativeParsedMaterial
-    property_name = fc_gp
-    coupled_variables = 'c1gp c2gp'             # γ'-phase concentrations
-    constant_names = 'Vm_inv C_Al C_Nb xeq_gp_Al xeq_gp_Nb'
-    constant_expressions = '1e5 4.0e5 9.5e5 0.187 0.0157'
-    expression = 'Vm_inv*(C_Al*(c1gp-xeq_gp_Al)^2 + C_Nb*(c2gp-xeq_gp_Nb)^2)'
-    derivative_order = 2
-  [../]
-  # Elastic energy of the phase 1
-  [./elastic_free_energy_gp]
-    type = ElasticEnergyMaterial
-    base_name = phasegp
-    property_name = fe_gp
-    coupled_variables = ' '
-  [../]
-  # Total free energy of the phase 1
-  [./Total_energy_gp]
-    type = DerivativeSumMaterial
-    property_name = F_gp
-    sum_materials = 'fc_gp fe_gp'
-    coupled_variables = 'c1gp c2gp'
-  [../]
+ # ------------------------------------------------------------------
+# Normalized material constants (paper normalization applied)
 # ------------------------------------------------------------------
-  # 3.  γ'' variant 1 (metastable) = δ + Δf   – Eq. (4)
-  # ------------------------------------------------------------------
- [./fc_gpp1]
-    type = DerivativeParsedMaterial
-    property_name = fc_gpp1
-    coupled_variables = 'c1gpp1 c2gpp1'      # Al and Nb in γ'' phase
-    constant_names = 'Vm_inv C_Al C_Nb xeq_d_Al xeq_d_Nb Delta_f'
-    constant_expressions = '1e5 4.0e5 9.5e5 7.27e-4 0.196 0.0'
-    expression = ' Vm_inv * (C_Al*(c1gpp1 - xeq_d_Al)^2 + C_Nb*(c2gpp1 - xeq_d_Nb)^2) + Vm_inv * Delta_f'
-    derivative_order = 2
-  [../] 
-  # Elastic energy of the phase 2
-  [./elastic_free_energy_gpp1]
-    type = ElasticEnergyMaterial
-    base_name = phasegpp1
-    property_name = fe_gpp1
-    coupled_variables = ' '
-  [../]
-  # Total free energy of the phase 2
-  [./Total_energy_gpp1]
-    type = DerivativeSumMaterial
-    property_name = F_gpp1
-    sum_materials = 'fc_gpp1 fe_gpp1'
-    coupled_variables = 'c1gpp1 c2gpp1'
-  [../]
+# Normalization factor used in paper: 1.49e8 J/mol
+# We set Vm_norm = 1.0 so expressions are already in paper-normalized units.
 
 
 # ------------------------------------------------------------------
-  # 4.  γ'' variant 2 (metastable) = δ + Δf   – Eq. (4)
-  # ------------------------------------------------------------------
- [./fc_gpp2]
-    type = DerivativeParsedMaterial
-    property_name = fc_gpp2
-    coupled_variables = 'c1gpp2 c2gpp2'      # Al and Nb in γ'' phase
-    constant_names = 'Vm_inv C_Al C_Nb xeq_d_Al xeq_d_Nb Delta_f'
-    constant_expressions = '1e-5 4.0e5 9.5e5 7.27e-4 0.196 0.0'
-    expression = ' Vm_inv * (C_Al*(c1gpp2 - xeq_d_Al)^2 + C_Nb*(c2gpp2 - xeq_d_Nb)^2) + Vm_inv * Delta_f'
-    derivative_order = 2
-  [../] 
-  # Elastic energy of the phase 2
-  [./elastic_free_energy_gpp2]
-    type = ElasticEnergyMaterial
-    base_name = phasegpp1
-    property_name = fe_gpp2
-    coupled_variables = ' '
-  [../]
-  # Total free energy of the phase 2
-  [./Total_energy_gpp2]
-    type = DerivativeSumMaterial
-    property_name = F_gpp2
-    sum_materials = 'fc_gpp2 fe_gpp2'
-    coupled_variables = 'c1gpp2 c2gpp2'
-  [../]
+# 1. Chemical free energy of matrix (γ) — normalized
+# ------------------------------------------------------------------
+[./fc_gamma]
+  type = DerivativeParsedMaterial
+  property_name = fc_gamma
+  coupled_variables = 'c1m c2m'               # c1m = Al, c2m = Nb (γ-phase)
+  constant_names = 'Vm_norm C_Al_norm C_Nb_norm c1_eq_gamma c2_eq_gamma'
+  constant_expressions = '1.0 50 50 0.0161 0.00723'
+  expression = '( C_Al_norm*(c1m - c1_eq_gamma)^2 + C_Nb_norm*(c2m - c2_eq_gamma)^2 ) / Vm_norm'
+[../]
+
+[./elastic_free_energy_m]
+  type = ElasticEnergyMaterial
+  base_name = phasem
+  property_name = fe_gamma
+  coupled_variables = ' '
+[../]
+
+[./Total_energy_m]
+  type = DerivativeSumMaterial
+  property_name = F_gamma
+  sum_materials = 'fc_gamma fe_gamma'
+  coupled_variables = 'c1m c2m'
+[../]
+
+# ------------------------------------------------------------------
+# 2. Chemical free energy of γ' (L12) — normalized
+# ------------------------------------------------------------------
+[./fc_gp]
+  type = DerivativeParsedMaterial
+  property_name = fc_gp
+  coupled_variables = 'c1gp c2gp'
+  constant_names = 'Vm_norm C_Al_norm C_Nb_norm c1_eq_gp c2_eq_gp'
+  constant_expressions = '1.0 50 50 0.187 0.0157'
+  expression = '( C_Al_norm*(c1gp - c1_eq_gp)^2 + C_Nb_norm*(c2gp - c2_eq_gp)^2 ) / Vm_norm'
+[../]
+
+[./elastic_free_energy_gp]
+  type = ElasticEnergyMaterial
+  base_name = phasegp
+  property_name = fe_gp
+  coupled_variables = ' '
+[../]
+
+[./Total_energy_gp]
+  type = DerivativeSumMaterial
+  property_name = F_gp
+  sum_materials = 'fc_gp fe_gp'
+  coupled_variables = 'c1gp c2gp'
+[../]
+
+# ------------------------------------------------------------------
+# 3. γ'' variant 1 (metastable, "delta") — normalized (Δf included)
+# ------------------------------------------------------------------
+[./fc_gpp1]
+  type = DerivativeParsedMaterial
+  property_name = fc_gpp1
+  coupled_variables = 'c1gpp1 c2gpp1'
+  # Use same normalized C constants and the normalized Delta_f
+  constant_names = 'Vm_norm C_Al_norm C_Nb_norm c1_eq_d c2_eq_d Delta_f_norm'
+  constant_expressions = '1.0 50 50 7.27e-4 0.196 1.0392617e-5'
+  expression = '( C_Al_norm*(c1gpp1 - c1_eq_d)^2 + C_Nb_norm*(c2gpp1 - c2_eq_d)^2 + Delta_f_norm ) / Vm_norm'
+[../]
+
+[./elastic_free_energy_gpp1]
+  type = ElasticEnergyMaterial
+  base_name = phasegpp1
+  property_name = fe_gpp1
+  coupled_variables = ' '
+[../]
+
+[./Total_energy_gpp1]
+  type = DerivativeSumMaterial
+  property_name = F_gpp1
+  sum_materials = 'fc_gpp1 fe_gpp1'
+  coupled_variables = 'c1gpp1 c2gpp1'
+[../]
+
+# ------------------------------------------------------------------
+# 4. γ'' variant 2 (metastable, second delta variant) — normalized
+# ------------------------------------------------------------------
+[./fc_gpp2]
+  type = DerivativeParsedMaterial
+  property_name = fc_gpp2
+  coupled_variables = 'c1gpp2 c2gpp2'
+  constant_names = 'Vm_norm C_Al_norm C_Nb_norm c1_eq_d c2_eq_d Delta_f_norm'
+  constant_expressions = '1.0 50 50 7.27e-4 0.196 1.0392617e-5'
+  expression = '( C_Al_norm*(c1gpp2 - c1_eq_d)^2 + C_Nb_norm*(c2gpp2 - c2_eq_d)^2 + Delta_f_norm ) / Vm_norm'
+[../]
+
+[./elastic_free_energy_gpp2]
+  type = ElasticEnergyMaterial
+  base_name = phasegpp2
+  property_name = fe_gpp2
+  coupled_variables = ' '
+[../]
+
+[./Total_energy_gpp2]
+  type = DerivativeSumMaterial
+  property_name = F_gpp2
+  sum_materials = 'fc_gpp2 fe_gpp2'
+  coupled_variables = 'c1gpp2 c2gpp2'
+[../]
+
 
     # Switching functions for each phase
   # hm(eta_gp, eta_gpp1, eta_m)
@@ -513,13 +501,8 @@
     prop_names  = 'L    kappa  D   misfit     W'
     prop_values = '0.3  0.01   1     1      0.01'
   [../]
-  [./misfit_props]
-    type        = GenericFunctionMaterial
-    prop_names  = 'misfit_c misfit_a'
-    prop_values = 'misfit_c_fn misfit_a_fn'   # <-- function names
-  [../]
-    
-  #Mechanical properties
+ 
+#Mechanical properties
   [./Stiffness_phasem]
     type = ComputeElasticityTensor
     C_ijkl = '272.1 169 169 272.1 169 272.1 131 131 131' #Ghorbanpour, S., et al., A crystal plasticity model incorporating the effects of     
@@ -589,13 +572,13 @@
     type = ComputeSmallStrain
     displacements = 'disp_x disp_y'
     base_name = phasegpp1
-    eigenstrain_names = 'eigenstrainpv2_c eigenstrainpv2_a'
+    eigenstrain_names = 'eigenstrainpv2'
   [../]
   [./strain_phasegpp2]
     type = ComputeSmallStrain
     displacements = 'disp_x disp_y'
     base_name = phasegpp2
-    eigenstrain_names = 'eigenstrainpv3_c eigenstrainpv3_a'
+    eigenstrain_names = 'eigenstrainpv3'
   [../]
   [./eigen_strainpv1]
     type = ComputeRotatedEigenstrain
@@ -605,44 +588,22 @@
     prefactor = misfit
     eigenstrain_name = eigenstrainpv1
   [../]
-  # pv2: c-part (only the c-axis component)
-[./eigen_strainpv2_c]
-  type = ComputeRotatedEigenstrain
-  base_name = phasegpp1
-  eigen_base = '1 0 0 0 0 0'   # [εc, 0, 0, 0, 0, 0]
-  Euler_angles = '0 0 0'
-  prefactor = misfit_c
-  eigenstrain_name = eigenstrainpv2_c
-[../]
-
-# pv2: a-part (the two equal a-axis components)
-[./eigen_strainpv2_a]
-  type = ComputeRotatedEigenstrain
-  base_name = phasegpp1
-  eigen_base = '0 1 1 0 0 0'   # [0, εa, εa, 0, 0, 0]
-  Euler_angles = '0 0 0'
-  prefactor = misfit_a
-  eigenstrain_name = eigenstrainpv2_a
-[../]
-  # pv3: c-part
-[./eigen_strainpv3_c]
-  type = ComputeRotatedEigenstrain
-  base_name = phasegpp2
-  eigen_base = '0 1 0 0 0 0'   # [0, εc, 0, 0, 0, 0]
-  Euler_angles = '0 0 0'
-  prefactor = misfit_c
-  eigenstrain_name = eigenstrainpv3_c
-[../]
-
-# pv3: a-part
-[./eigen_strainpv3_a]
-  type = ComputeRotatedEigenstrain
-  base_name = phasegpp2
-  eigen_base = '1 0 1 0 0 0'   # [εa, 0, εa, 0, 0, 0]
-  Euler_angles = '0 0 0'
-  prefactor = misfit_a
-  eigenstrain_name = eigenstrainpv3_a
-[../]
+ [./eigen_strainpv2]
+    type = ComputeRotatedEigenstrain
+    base_name = phasegpp1
+    eigen_base = '0.0286 0.0067 0.0067 0 0 0'
+    Euler_angles = '0 0 0'
+    prefactor = misfit
+    eigenstrain_name = eigenstrainpv2
+  [../]
+ [./eigen_strainpv3]
+    type = ComputeRotatedEigenstrain
+    base_name = phasegpp2
+    eigen_base = '0.0067 0.0286 0.0067 0 0 0'
+    Euler_angles = '0 0 0'
+    prefactor = misfit
+    eigenstrain_name = eigenstrainpv3
+  [../]
 
 
   # Generate the global stress from the phase stresses
@@ -1004,23 +965,13 @@
   []
   [./Energy_total]
     type = KKSMultiFreeEnergy
-    Fj_names = 'F_gp F_gpp1 F_gamma'
-    hj_names = 'hgp hgpp1 hm'
-    gj_names = 'gp gpp1 gm'
+    Fj_names = 'F_gp F_gpp1 F_gpp2 F_gamma'
+    hj_names = 'hgp hgpp1 hgpp2 hm'
+    gj_names = 'gp gpp1 gpp2 gm'
     variable = Energy
     w = 1
-    interfacial_vars =  'eta_gp  eta_gpp1  eta_m'
-    kappa_names =       'kappa kappa kappa'
-  [../]
-   [./misfit_c_out]
-    type     = MaterialRealAux
-    variable = misfit_c_mat
-    property = misfit_c
-  [../]
-  [./misfit_a_out]
-    type     = MaterialRealAux
-    variable = misfit_a_mat
-    property = misfit_a
+    interfacial_vars =  'eta_gp  eta_gpp1  eta_gpp2  eta_m'
+    kappa_names =       'kappa kappa kappa kappa'
   [../]
   [./stress_xx]
     type = RankTwoAux
@@ -1259,16 +1210,7 @@
     type = ElementAverageMaterialProperty
     mat_prop = hgpp2
   [../]
-   # Average value over the domain (should equal the function value each step)
-  [./misfit_c_avg]
-    type     = ElementAverageValue
-    variable = misfit_c_mat
-  [../]
-  [./misfit_a_avg]
-    type     = ElementAverageValue
-    variable = misfit_a_mat
-  [../]
-
+   
 
   # Time for plotting against the ramp
   [./time_pp]

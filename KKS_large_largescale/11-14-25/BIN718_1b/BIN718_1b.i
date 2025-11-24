@@ -391,15 +391,13 @@
     seed = 307	
   [../]
 
+[./eta_d]
+  type     = FunctionIC
+  variable = eta_d
+  function = '0.8 * 0.5*(tanh((x - 340.0)/1.0) - tanh((x - 360.0)/1.0))'
+[../]
 
- # ---- Delta phase OP: tiny noise everywhere (no strong bias in η itself) ----
-  [./eta_d]
-    variable = eta_d
-    type = RandomIC
-    min = -0.05
-    max =  0.05
-    seed = 456
-  [../]
+
  [./c1]
     variable = c1
     type = RandomIC
@@ -409,21 +407,21 @@
   [../]
   [./c2]
     variable = c2
-    type = FunctionIC
-    function = c2_gb_enrich_fn
+    type = RandomIC
+    min = 0.032	
+    max = 0.044
+    seed = 89	
   [../]
-   # ---- Phase concentrations for δ ----
   [./c1d]
-    variable = c1d
-    type = ConstantIC
-    value = 7.27e-4   # c1_eq_d
-  [../]
-
-  [./c2d]
-    variable = c2d
-    type = FunctionIC
-    function = c2_gb_enrich_fn   # δ sees the same Nb enrichment at the GB
-  [../]
+  variable = c1d
+  type = ConstantIC
+  value = 7.27e-4
+[../]
+[./c2d]
+  variable = c2d
+  type = ConstantIC
+  value = 0.196
+[../]
 
 []
 
@@ -668,7 +666,7 @@
   [../]
   
 
-  # constant properties
+   # constant properties
   [./constants]
     type = GenericConstantMaterial
     prop_names  = 'L_gp L_gpp1 L_gpp2  L_d   kappa kappa_d D  misfit     W'
@@ -768,7 +766,7 @@
     euler_angle_3 = 0
     block = 1
   [../]
-  [./Stiffness_phased]
+  [./Stiffness_phased_g0]
     type = ComputeElasticityTensor
     C_ijkl = '290.6 187 160.7 290.6 187 309.6 114.2 114.2 119.2'
     base_name = phased
@@ -776,8 +774,19 @@
     euler_angle_1 = 0
     euler_angle_2 = 0
     euler_angle_3 = 0
+    block = 0
   [../]
-  
+  [./Stiffness_phased_g1]
+    type = ComputeElasticityTensor
+    C_ijkl = '290.6 187 160.7 290.6 187 309.6 114.2 114.2 119.2'
+    base_name = phased
+    fill_method = symmetric9
+    euler_angle_1 = 45
+    euler_angle_2 = 0
+    euler_angle_3 = 0
+    block = 1
+  [../]
+
 
   [./stress_phasegp_g0]
     type = ComputeLinearElasticStress
@@ -809,9 +818,15 @@
     base_name = phasegpp2
     block = 1
   [../]
-  [./stress_phased]
+  [./stress_phased_g0]
     type = ComputeLinearElasticStress
     base_name = phased
+    block = 0
+  [../]
+  [./stress_phased_g1]
+    type = ComputeLinearElasticStress
+    base_name = phased
+    block = 1
   [../]
 
 
@@ -880,11 +895,19 @@
     eigenstrain_names = eigenstraingpp2
     block = 1
   [../]
-  [./strain_phased]
+  [./strain_phased_g0]
     type = ComputeSmallStrain
     displacements = 'disp_x disp_y'
     base_name = phased
     eigenstrain_names = eigenstraind
+    block = 0
+  [../]
+  [./strain_phased_g1]
+    type = ComputeSmallStrain
+    displacements = 'disp_x disp_y'
+    base_name = phased
+    eigenstrain_names = eigenstraind
+    block = 1
   [../]
  
 
@@ -945,13 +968,23 @@
     eigenstrain_name = eigenstraingpp2
     block = 1
   [../]
-  [./eigen_straind]
+  [./eigen_straind_g0]
     type = ComputeRotatedEigenstrain
     base_name = phased
-    eigen_base = '0.0016 0.0040 0.0071 0 0 0'
+    eigen_base = '0.005320 0.01332 0.02378 0 0 0'
     Euler_angles = '0 0 0'
-    prefactor = misfit
+    prefactor = 0
     eigenstrain_name = eigenstraind
+    block = 0
+  [../]
+  [./eigen_straind_g1]
+    type = ComputeRotatedEigenstrain
+    base_name = phased
+    eigen_base = '0.005320 0.01332 0.02378 0 0 0'
+    Euler_angles = '45 0 0'
+    prefactor = 0
+    eigenstrain_name = eigenstraind
+    block = 1
   [../]
   
 
@@ -973,12 +1006,12 @@
   [./TensorMechanics]
     displacements = 'disp_x disp_y'
   [../]
-  # Kernels for Allen-Cahn equation for eta_gp
+   # Kernels for Allen-Cahn equation for eta_gp
   [./deta_gp_dt]
     type = TimeDerivative
     variable = eta_gp
   [../]
- [./ACBulkFgp]
+  [./ACBulkFgp]
     type = KKSMultiACBulkF
     variable  = eta_gp
     Fj_names  = 'F_gp F_gpp1 F_gpp2 F_d F_gamma'
@@ -1143,6 +1176,7 @@
     mob_name = L_eta_d
     kappa_name = kappa_d
   [../]
+
 # Kernels for constraint equation |eta_pv1| + |eta_pv2| + eta_m = 1
   # eta3 is the nonlinear variable for the constraint equation
   [./eta_mreaction]
