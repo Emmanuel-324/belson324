@@ -3,13 +3,13 @@
 [Mesh]
   type = GeneratedMesh
   dim = 2
-  nx = 300
-  ny = 300
+  nx = 200
+  ny = 200
 #  nz = 2
   xmin = 0
-  xmax = 640
+  xmax = 500
   ymin = 0
-  ymax = 640
+  ymax = 500
   zmin = 0
   zmax = 0
 #  elem_type = QUAD4
@@ -50,14 +50,6 @@
 
 
 [AuxVariables]
-  [./misfit_c_mat]
-    family = MONOMIAL
-    order = CONSTANT
-  [../]
-  [./misfit_a_mat]
-    family = MONOMIAL
-    order = CONSTANT
-  [../] 
   [./hgp_aux]
      family = MONOMIAL 
      order = CONSTANT 
@@ -266,18 +258,7 @@
     symbol_names = alpha
     symbol_values = 16
   [../]
-  [./misfit_c_fn]
-    type  = ParsedFunction
-  # ε_c(t_h) = ε_c0 / (1 + exp(-((t_h/τ - t0)/k)))
-    value = '0.0286 / (1 + exp(-((t/3600.57 - (-2.22))/2.89)))'
-  [../]
-
-  [./misfit_a_fn]
-  type  = ParsedFunction
-  # ε_a(t_h) = A * ( (t_h/τ)^p ) * exp(-(t_h/τ))
-  # Choose p=2, τ=2.75 h → peak at t≈5.5 h; scale A for peak ≈0.0065
-  value = '(0.0120) * pow(( (t/3600.57)/2.75 ), 2.0) * exp(-( (t/3600.57)/2.75 ))'
- [../]
+  
 []
 
 [ICs]
@@ -517,16 +498,11 @@
   # constant properties
   [./constants]
     type = GenericConstantMaterial
-    prop_names  = 'L        k_gp   k_gpp1  k_gpp2  D   misfit  W_gp  W_gpp1 W_gpp2'
+     prop_names  = 'L        k_gp   k_gpp1  k_gpp2  D   misfit  W_gp  W_gpp1 W_gpp2'
     prop_values = '0.00465  3.87    7.74   7.74   46     1    0.47    0.93   0.93'
   [../]
-  [./misfit_props]
-    type        = GenericFunctionMaterial
-    prop_names  = 'misfit_c misfit_a'
-    prop_values = 'misfit_c_fn misfit_a_fn'   # <-- function names
-  [../]
-    
-  #Mechanical properties
+ 
+#Mechanical properties
   [./Stiffness_phasem]
     type = ComputeElasticityTensor
     C_ijkl = '1698.5 1054.8 1054.8 1698.5 1054.8 1698.5 818.6 818.6 818.6' #Ghorbanpour, S., et al., A crystal plasticity model incorporating the effects of     
@@ -556,7 +532,7 @@
   [../]
   [./Stiffness_phasegpp2]
     type = ComputeElasticityTensor
-    C_ijkl =  '1814.2 1167.2  1167.2  1814.2 1167.2 1814.2 712.5 712.5 712.5'
+    C_ijkl = '1814.2 1167.2  1167.2  1814.2 1167.2 1814.2 712.5 712.5 712.5'
     base_name = phasegpp2
     euler_angle_1 = 0
     euler_angle_2 = 0
@@ -596,13 +572,13 @@
     type = ComputeSmallStrain
     displacements = 'disp_x disp_y'
     base_name = phasegpp1
-    eigenstrain_names = 'eigenstrainpv2_c eigenstrainpv2_a'
+    eigenstrain_names = 'eigenstrainpv2'
   [../]
   [./strain_phasegpp2]
     type = ComputeSmallStrain
     displacements = 'disp_x disp_y'
     base_name = phasegpp2
-    eigenstrain_names = 'eigenstrainpv3_c eigenstrainpv3_a'
+    eigenstrain_names = 'eigenstrainpv3'
   [../]
   [./eigen_strainpv1]
     type = ComputeRotatedEigenstrain
@@ -612,44 +588,22 @@
     prefactor = misfit
     eigenstrain_name = eigenstrainpv1
   [../]
-  # pv2: c-part (only the c-axis component)
-[./eigen_straingpp1_c]
-  type = ComputeRotatedEigenstrain
-  base_name = phasegpp1
-  eigen_base = '1 0 0 0 0 0'   # [εc, 0, 0, 0, 0, 0]
-  Euler_angles = '0 0 0'
-  prefactor = misfit_c
-  eigenstrain_name = eigenstrainpv2_c
-[../]
-
-# pv2: a-part (the two equal a-axis components)
-[./eigen_straingpp1_a]
-  type = ComputeRotatedEigenstrain
-  base_name = phasegpp1
-  eigen_base = '0 1 1 0 0 0'   # [0, εa, εa, 0, 0, 0]
-  Euler_angles = '0 0 0'
-  prefactor = misfit_a
-  eigenstrain_name = eigenstrainpv2_a
-[../]
-  # pv3: c-part
-[./eigen_straingpp2_c]
-  type = ComputeRotatedEigenstrain
-  base_name = phasegpp2
-  eigen_base = '0 1 0 0 0 0'   # [0, εc, 0, 0, 0, 0]
-  Euler_angles = '0 0 0'
-  prefactor = misfit_c
-  eigenstrain_name = eigenstrainpv3_c
-[../]
-
-# pv3: a-part
-[./eigen_straingpp2_a]
-  type = ComputeRotatedEigenstrain
-  base_name = phasegpp2
-  eigen_base = '1 0 1 0 0 0'   # [εa, 0, εa, 0, 0, 0]
-  Euler_angles = '0 0 0'
-  prefactor = misfit_a
-  eigenstrain_name = eigenstrainpv3_a
-[../]
+ [./eigen_strainpv2]
+    type = ComputeRotatedEigenstrain
+    base_name = phasegpp1
+    eigen_base = '0.0286 0.0067 0.0067 0 0 0'
+    Euler_angles = '0 0 0'
+    prefactor = misfit
+    eigenstrain_name = eigenstrainpv2
+  [../]
+ [./eigen_strainpv3]
+    type = ComputeRotatedEigenstrain
+    base_name = phasegpp2
+    eigen_base = '0.0067 0.0286 0.0067 0 0 0'
+    Euler_angles = '0 0 0'
+    prefactor = misfit
+    eigenstrain_name = eigenstrainpv3
+  [../]
 
 
   # Generate the global stress from the phase stresses
@@ -1019,16 +973,6 @@
     interfacial_vars =  'eta_gp  eta_gpp1  eta_gpp2'
     kappa_names =       'k_gp     k_gpp1     k_gpp2'
   [../]
-   [./misfit_c_out]
-    type     = MaterialRealAux
-    variable = misfit_c_mat
-    property = misfit_c
-  [../]
-  [./misfit_a_out]
-    type     = MaterialRealAux
-    variable = misfit_a_mat
-    property = misfit_a
-  [../]
   [./stress_xx]
     type = RankTwoAux
     variable = stress_xx
@@ -1134,7 +1078,7 @@
   nl_rel_tol = 1.0e-6
   nl_abs_tol = 1.0e-8
 
-  end_time = 100000
+  end_time = 30000
 
   [./TimeStepper]
     type = IterationAdaptiveDT
@@ -1238,44 +1182,20 @@
     variable = eta_gpp2
     use_absolute_value = true
   [../]
-    # Modified: Integrate clamped eta_pvX (instead of raw eta_pvX with absolute value)
-  [./eta_gp_clamped]
-    type = ElementIntegralVariablePostprocessor
-    variable = eta_gp_clamped
-    use_absolute_value = true
-  [../]
-  [./eta_gpp1_clamped]
-    type = ElementIntegralVariablePostprocessor
-    variable = eta_gpp1_clamped
-    use_absolute_value = true 
-  [../]
-  [./eta_gpp2_clamped]
-    type = ElementIntegralVariablePostprocessor
-    variable = eta_gpp2_clamped
-    use_absolute_value = true
-  [../]
-  [./af_pv1]
+   
+  [./af_gp]
     type = ElementAverageMaterialProperty
     mat_prop = hgp
   [../]
-  [./af_pv2]
+  [./af_gpp1]
     type = ElementAverageMaterialProperty
     mat_prop = hgpp1
   [../]
-  [./af_pv3]
+  [./af_gpp2]
     type = ElementAverageMaterialProperty
     mat_prop = hgpp2
   [../]
-   # Average value over the domain (should equal the function value each step)
-  [./misfit_c_avg]
-    type     = ElementAverageValue
-    variable = misfit_c_mat
-  [../]
-  [./misfit_a_avg]
-    type     = ElementAverageValue
-    variable = misfit_a_mat
-  [../]
-
+   
 
   # Time for plotting against the ramp
   [./time_pp]
@@ -1295,6 +1215,4 @@
      time_step_interval = 10
   [../]
 []
-
-
 

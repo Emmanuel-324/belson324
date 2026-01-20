@@ -20,7 +20,7 @@
     displacements = 'disp_x disp_y'
     variable = disp_x
     boundary = right
-    factor = 0
+    factor =-1.248
   [../]
   [./all_c1]
     type =  NeumannBC
@@ -613,7 +613,7 @@
     eigenstrain_name = eigenstrainpv1
   [../]
   # pv2: c-part (only the c-axis component)
-[./eigen_straingpp1_c]
+[./eigen_strainpv2_c]
   type = ComputeRotatedEigenstrain
   base_name = phasegpp1
   eigen_base = '1 0 0 0 0 0'   # [εc, 0, 0, 0, 0, 0]
@@ -623,7 +623,7 @@
 [../]
 
 # pv2: a-part (the two equal a-axis components)
-[./eigen_straingpp1_a]
+[./eigen_strainpv2_a]
   type = ComputeRotatedEigenstrain
   base_name = phasegpp1
   eigen_base = '0 1 1 0 0 0'   # [0, εa, εa, 0, 0, 0]
@@ -632,7 +632,7 @@
   eigenstrain_name = eigenstrainpv2_a
 [../]
   # pv3: c-part
-[./eigen_straingpp2_c]
+[./eigen_strainpv3_c]
   type = ComputeRotatedEigenstrain
   base_name = phasegpp2
   eigen_base = '0 1 0 0 0 0'   # [0, εc, 0, 0, 0, 0]
@@ -642,7 +642,7 @@
 [../]
 
 # pv3: a-part
-[./eigen_straingpp2_a]
+[./eigen_strainpv3_a]
   type = ComputeRotatedEigenstrain
   base_name = phasegpp2
   eigen_base = '1 0 1 0 0 0'   # [εa, 0, εa, 0, 0, 0]
@@ -682,7 +682,7 @@
     hj_names  = 'hgp hgpp1 hgpp2 hm'
     gi_name   = gp
     eta_i     = eta_gp
-    wi        = 0.47
+    wi        = 0.01
     coupled_variables      = 'c1gp c1gpp1 c1gpp2 c1m c2gp c2gpp1 c2gpp2 c2m eta_gpp1 eta_gpp2 eta_m'
   [../]
   [./ACBulkCpv1_c1]
@@ -721,7 +721,7 @@
     hj_names  = 'hgp hgpp1 hgpp2 hm'
     gi_name   = gpp1
     eta_i     = eta_gpp1
-    wi        = 0.93
+    wi        = 0.01
     coupled_variables      = 'c1gp c1gpp1 c1gpp2 c1m c2gp c2gpp1 c2gpp2 c2m eta_gp eta_gpp2 eta_m'
   [../]
   [./ACBulkCpv2_c1]
@@ -760,7 +760,7 @@
     hj_names  = 'hgp hgpp1 hgpp2 hm'
     gi_name   = gpp2
     eta_i     = eta_gpp2
-    wi        = 0.93
+    wi        = 0.01
     coupled_variables      = 'c1gp c1gpp1 c1gpp2 c1m c2gp c2gpp1 c2gpp2 c2m eta_gp eta_gpp1 eta_m'
   [../]
   [./ACBulkCpv3_c1]
@@ -1134,7 +1134,7 @@
   nl_rel_tol = 1.0e-6
   nl_abs_tol = 1.0e-8
 
-  end_time = 100000
+  end_time = 30000
 
   [./TimeStepper]
     type = IterationAdaptiveDT

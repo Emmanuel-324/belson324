@@ -3,13 +3,13 @@
 [Mesh]
   type = GeneratedMesh
   dim = 2
-  nx = 300
-  ny = 300
+  nx = 175
+  ny = 175
 #  nz = 2
   xmin = 0
-  xmax = 640
+  xmax = 500
   ymin = 0
-  ymax = 640
+  ymax = 500
   zmin = 0
   zmax = 0
 #  elem_type = QUAD4
@@ -20,7 +20,7 @@
     displacements = 'disp_x disp_y'
     variable = disp_x
     boundary = right
-    factor = 0
+    factor = -1.248 # 200 MPa in eV/nm^3
   [../]
   [./all_c1]
     type =  NeumannBC
@@ -272,34 +272,33 @@
     value = '0.0286 / (1 + exp(-((t/3600.57 - (-2.22))/2.89)))'
   [../]
 
-  [./misfit_a_fn]
-  type  = ParsedFunction
-  # ε_a(t_h) = A * ( (t_h/τ)^p ) * exp(-(t_h/τ))
-  # Choose p=2, τ=2.75 h → peak at t≈5.5 h; scale A for peak ≈0.0065
-  value = '(0.0120) * pow(( (t/3600.57)/2.75 ), 2.0) * exp(-( (t/3600.57)/2.75 ))'
- [../]
+ [./misfit_a_fn]
+  type = ParsedFunction
+  # Peak ≈ 0.003 at ~5.5 h, same shape
+  value = '(0.00554) * pow(((t/3600.57)/2.75), 2.0) * exp(-((t/3600.57)/2.75))'
+[../]
 []
 
 [ICs]
   [./eta_gp]
     variable = eta_gp
     type = RandomIC
-    min = -0.6
-    max = 0.6
+    min = -0.01
+    max = 0.01
     seed = 324
   [../]
   [./eta_gpp1]
     variable = eta_gpp1
     type = RandomIC
-    min = -0.6
-    max = 0.6
+    min = -0.01
+    max = 0.01
     seed = 230	
   [../]
   [./eta_gpp2]
     variable = eta_gpp2
     type = RandomIC
-    min = -0.6
-    max = 0.6
+    min = -0.01
+    max = 0.01
     seed = 307	
   [../]
   [./c1]
@@ -1134,7 +1133,7 @@
   nl_rel_tol = 1.0e-6
   nl_abs_tol = 1.0e-8
 
-  end_time = 100000
+  end_time = 28800
 
   [./TimeStepper]
     type = IterationAdaptiveDT
@@ -1238,31 +1237,16 @@
     variable = eta_gpp2
     use_absolute_value = true
   [../]
-    # Modified: Integrate clamped eta_pvX (instead of raw eta_pvX with absolute value)
-  [./eta_gp_clamped]
-    type = ElementIntegralVariablePostprocessor
-    variable = eta_gp_clamped
-    use_absolute_value = true
-  [../]
-  [./eta_gpp1_clamped]
-    type = ElementIntegralVariablePostprocessor
-    variable = eta_gpp1_clamped
-    use_absolute_value = true 
-  [../]
-  [./eta_gpp2_clamped]
-    type = ElementIntegralVariablePostprocessor
-    variable = eta_gpp2_clamped
-    use_absolute_value = true
-  [../]
-  [./af_pv1]
+ 
+  [./af_gp]
     type = ElementAverageMaterialProperty
     mat_prop = hgp
   [../]
-  [./af_pv2]
+  [./af_gpp1]
     type = ElementAverageMaterialProperty
     mat_prop = hgpp1
   [../]
-  [./af_pv3]
+  [./af_gpp2]
     type = ElementAverageMaterialProperty
     mat_prop = hgpp2
   [../]

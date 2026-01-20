@@ -613,7 +613,7 @@
     eigenstrain_name = eigenstrainpv1
   [../]
   # pv2: c-part (only the c-axis component)
-[./eigen_straingpp1_c]
+[./eigen_strainpv2_c]
   type = ComputeRotatedEigenstrain
   base_name = phasegpp1
   eigen_base = '1 0 0 0 0 0'   # [εc, 0, 0, 0, 0, 0]
@@ -623,7 +623,7 @@
 [../]
 
 # pv2: a-part (the two equal a-axis components)
-[./eigen_straingpp1_a]
+[./eigen_strainpv2_a]
   type = ComputeRotatedEigenstrain
   base_name = phasegpp1
   eigen_base = '0 1 1 0 0 0'   # [0, εa, εa, 0, 0, 0]
@@ -632,7 +632,7 @@
   eigenstrain_name = eigenstrainpv2_a
 [../]
   # pv3: c-part
-[./eigen_straingpp2_c]
+[./eigen_strainpv3_c]
   type = ComputeRotatedEigenstrain
   base_name = phasegpp2
   eigen_base = '0 1 0 0 0 0'   # [0, εc, 0, 0, 0, 0]
@@ -642,7 +642,7 @@
 [../]
 
 # pv3: a-part
-[./eigen_straingpp2_a]
+[./eigen_strainpv3_a]
   type = ComputeRotatedEigenstrain
   base_name = phasegpp2
   eigen_base = '1 0 1 0 0 0'   # [εa, 0, εa, 0, 0, 0]

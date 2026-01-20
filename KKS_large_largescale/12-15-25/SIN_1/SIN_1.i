@@ -3,13 +3,13 @@
 [Mesh]
   type = GeneratedMesh
   dim = 2
-  nx = 300
-  ny = 300
+  nx = 200
+  ny = 200
 #  nz = 2
   xmin = 0
-  xmax = 640
+  xmax = 500
   ymin = 0
-  ymax = 640
+  ymax = 500
   zmin = 0
   zmax = 0
 #  elem_type = QUAD4
@@ -1134,7 +1134,7 @@
   nl_rel_tol = 1.0e-6
   nl_abs_tol = 1.0e-8
 
-  end_time = 100000
+  end_time = 28800
 
   [./TimeStepper]
     type = IterationAdaptiveDT
@@ -1238,31 +1238,16 @@
     variable = eta_gpp2
     use_absolute_value = true
   [../]
-    # Modified: Integrate clamped eta_pvX (instead of raw eta_pvX with absolute value)
-  [./eta_gp_clamped]
-    type = ElementIntegralVariablePostprocessor
-    variable = eta_gp_clamped
-    use_absolute_value = true
-  [../]
-  [./eta_gpp1_clamped]
-    type = ElementIntegralVariablePostprocessor
-    variable = eta_gpp1_clamped
-    use_absolute_value = true 
-  [../]
-  [./eta_gpp2_clamped]
-    type = ElementIntegralVariablePostprocessor
-    variable = eta_gpp2_clamped
-    use_absolute_value = true
-  [../]
-  [./af_pv1]
+ 
+  [./af_gp]
     type = ElementAverageMaterialProperty
     mat_prop = hgp
   [../]
-  [./af_pv2]
+  [./af_gpp1]
     type = ElementAverageMaterialProperty
     mat_prop = hgpp1
   [../]
-  [./af_pv3]
+  [./af_gpp2]
     type = ElementAverageMaterialProperty
     mat_prop = hgpp2
   [../]
